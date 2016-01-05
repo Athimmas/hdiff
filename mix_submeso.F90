@@ -437,6 +437,7 @@
           endif 
        enddo
      enddo 
+
      do j=1,ny_block
           do i=1,nx_block
 
@@ -466,18 +467,32 @@
           enddo
      enddo
            
+     do j=1,ny_block
+          do i=1,nx_block
 
-     where ( CONTINUE_INTEGRAL .and.  ML_DEPTH <= zw(k)  &
-             .and.  ML_DEPTH > zw_top )
-       CONTINUE_INTEGRAL = .false.
-     endwhere  
+              if( CONTINUE_INTEGRAL(i,j) .and.  ML_DEPTH(i,j) <= zw(k)  &
+                        .and.  ML_DEPTH(i,j) > zw_top ) then
+                         CONTINUE_INTEGRAL(i,j) = .false.
+              endif  
 
+          enddo
+     enddo
+  
    enddo
 
 #ifdef CCSMCOUPLED
-   if ( any(CONTINUE_INTEGRAL) ) then
-     call shr_sys_abort ('Incorrect mixed layer depth in submeso subroutine (I)')
-   endif
+ 
+     do j=1,ny_block
+          do i=1,nx_block
+ 
+             if ( (CONTINUE_INTEGRAL(i,j)) ) then
+             call shr_sys_abort ('Incorrect mixed layer depth in submeso subroutine (I)')
+             endif
+
+          enddo
+     enddo
+
+
 #endif
 
    where ( KMT(:,:,bid) > 0 )
