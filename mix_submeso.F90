@@ -432,15 +432,21 @@
      WORK3 = c0
      do j=1,ny_block
        do i=1,nx_block
-          if( CONTINUE_INTEGRAL(i,j)  .and.  ML_DEPTH(i,j) > zw(k) )then
+            if( CONTINUE_INTEGRAL(i,j)  .and.  ML_DEPTH(i,j) > zw(k) )then
               WORK3(i,j) = dz(k)
           endif 
        enddo
      enddo 
-     where ( CONTINUE_INTEGRAL  .and.  ML_DEPTH <= zw(k)  &
-             .and.  ML_DEPTH > zw_top )
-       WORK3 = ML_DEPTH - zw_top
-     endwhere
+     do j=1,ny_block
+          do i=1,nx_block
+
+             if( CONTINUE_INTEGRAL(i,j)  .and.  ML_DEPTH(i,j) <= zw(k)  &
+             .and.  ML_DEPTH(i,j) > zw_top )then
+               WORK3(i,j) = ML_DEPTH(i,j) - zw_top
+           endif 
+
+          enddo
+     enddo 
 
      where ( CONTINUE_INTEGRAL )
        BX_VERT_AVG(:,:,1) = BX_VERT_AVG(:,:,1)        &
