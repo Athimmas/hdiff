@@ -504,8 +504,6 @@
      WORK                 ! temporary to hold tavg field
    real (POP_r8), dimension(nx_block,ny_block,nt) :: &
       TDTK                ! Hdiff(T) for nth tracer at level k from submeso_flux code
-   real (POP_r8) :: &
-      start_time,end_time ! Timers
 
 
 !-----------------------------------------------------------------------
@@ -527,16 +525,10 @@
       call hdifft_del4(k, HDTK, TMIX, tavg_HDIFE_TRACER, tavg_HDIFN_TRACER, this_block)
    case (hmix_tracer_type_gm)
       if (k == 1) then
-        start_time = omp_get_wtime() 
 	call tracer_diffs_and_isopyc_slopes(TMIX, this_block)
-        end_time = omp_get_wtime()
-        print *,"time at tracer_diffs 1 is ",end_time - start_time   
       endif
-       start_time = omp_get_wtime() 
       call hdifft_gm(k, HDTK, TMIX, UMIX, VMIX, tavg_HDIFE_TRACER, &
                      tavg_HDIFN_TRACER, tavg_HDIFB_TRACER, this_block)
-       end_time = omp_get_wtime() 
-       print *,"time at hdifft_gm is ",end_time - start_time
    end select
    
    call timer_stop(timer_hdifft, block_id=bid)
@@ -546,23 +538,14 @@
        call timer_start(timer_submeso, block_id=this_block%local_id)
         if (.not. hmix_tracer_itype == hmix_tracer_type_gm) then
 	 if (k == 1) then
-          start_time = omp_get_wtime()
 	  call tracer_diffs_and_isopyc_slopes(TMIX, this_block)
-          end_time = omp_get_wtime()
-          print *,"time at tracer_diffs 2 is ",end_time - start_time
 	 endif
 	endif
         if (k == 1) then
-         start_time = omp_get_wtime()
 	 call submeso_sf(TMIX, this_block)
-         end_time = omp_get_wtime()
-         print *,"time at submeso_sf is ",end_time - start_time
 	endif
-        start_time = omp_get_wtime()
         call submeso_flux(k, TDTK, TMIX, tavg_HDIFE_TRACER, &
                      tavg_HDIFN_TRACER, tavg_HDIFB_TRACER, this_block)
-        end_time = omp_get_wtime() 
-        print *,"time at submeso_flux is ",end_time - start_time
 	HDTK=HDTK+TDTK
        call timer_stop(timer_submeso, block_id=this_block%local_id)
    endif
