@@ -495,12 +495,18 @@
 
 #endif
 
-   where ( KMT(:,:,bid) > 0 )
-     BX_VERT_AVG(:,:,1) = - grav * BX_VERT_AVG(:,:,1) / ML_DEPTH
-     BX_VERT_AVG(:,:,2) = - grav * BX_VERT_AVG(:,:,2) / ML_DEPTH
-     BY_VERT_AVG(:,:,1) = - grav * BY_VERT_AVG(:,:,1) / ML_DEPTH
-     BY_VERT_AVG(:,:,2) = - grav * BY_VERT_AVG(:,:,2) / ML_DEPTH
-   endwhere
+     do j=1,ny_block
+          do i=1,nx_block
+ 
+               if ( KMT(i,j,bid) > 0 )then
+                    BX_VERT_AVG(i,j,1) = - grav * BX_VERT_AVG(i,j,1)/ML_DEPTH(i,j)
+                    BX_VERT_AVG(i,j,2) = - grav * BX_VERT_AVG(i,j,2) /ML_DEPTH(i,j)
+                    BY_VERT_AVG(i,j,1) = - grav * BY_VERT_AVG(i,j,1) /ML_DEPTH(i,j)
+                    BY_VERT_AVG(i,j,2) = - grav * BY_VERT_AVG(i,j,2) /ML_DEPTH(i,j)
+               endif
+
+          enddo
+     enddo
 
 !-----------------------------------------------------------------------
 !
