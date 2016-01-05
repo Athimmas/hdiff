@@ -34,6 +34,7 @@
    use registry
    use communicate
    use hmix_gm_submeso_share
+   use omp_lib   
    
 #ifdef CCSMCOUPLED
    use shr_sys_mod
@@ -373,6 +374,10 @@
 
    real (r8) :: &
       zw_top, factor
+
+   real (r8) :: &
+      start_time,end_time !Timers
+
       
 !-----------------------------------------------------------------------
 !
@@ -409,7 +414,10 @@
    
 
    CONTINUE_INTEGRAL = .true.
-   do j=1,ny_block
+
+   start_time = omp_get_wtime()
+
+   do j=1,ny_block !LOOP 1
       do i=1,nx_block
           if( KMT(i,j,bid) == 0 ) then
             CONTINUE_INTEGRAL(i,j) = .false.
@@ -429,8 +437,14 @@
      zw_top = c0
      if ( k > 1 )  zw_top = zw(k-1)
 
-     WORK3 = c0
-     do j=1,ny_block
+     do j=1,ny_block 
+       do i=1,nx_block
+           WORK3(i,j) = c0
+       enddo
+     enddo
+ 
+
+     do j=1,ny_block !LOOP 2
        do i=1,nx_block
             if( CONTINUE_INTEGRAL(i,j)  .and.  ML_DEPTH(i,j) > zw(k) )then
               WORK3(i,j) = dz(k)
@@ -438,7 +452,7 @@
        enddo
      enddo 
 
-     do j=1,ny_block
+     do j=1,ny_block !LOOP 3
           do i=1,nx_block
 
              if( CONTINUE_INTEGRAL(i,j)  .and.  ML_DEPTH(i,j) <= zw(k)  &
@@ -449,7 +463,7 @@
           enddo
      enddo 
  
-     do j=1,ny_block
+     do j=1,ny_block !LOOP 4
           do i=1,nx_block
 
              if( CONTINUE_INTEGRAL(i,j) ) then
@@ -466,8 +480,8 @@
 
           enddo
      enddo
-           
-     do j=1,ny_block
+          
+     do j=1,ny_block !LOOP 5
           do i=1,nx_block
 
               if( CONTINUE_INTEGRAL(i,j) .and.  ML_DEPTH(i,j) <= zw(k)  &
@@ -482,7 +496,7 @@
 
 #ifdef CCSMCOUPLED
  
-     do j=1,ny_block
+     do j=1,ny_block !LOOP 6
           do i=1,nx_block
  
              if ( (CONTINUE_INTEGRAL(i,j)) ) then
@@ -495,24 +509,29 @@
 
 #endif
 
-     do j=1,ny_block
+     do j=1,ny_block !LOOP 7
           do i=1,nx_block
  
                if ( KMT(i,j,bid) > 0 )then
                     BX_VERT_AVG(i,j,1) = - grav * BX_VERT_AVG(i,j,1)/ML_DEPTH(i,j)
-                    BX_VERT_AVG(i,j,2) = - grav * BX_VERT_AVG(i,j,2) /ML_DEPTH(i,j)
-                    BY_VERT_AVG(i,j,1) = - grav * BY_VERT_AVG(i,j,1) /ML_DEPTH(i,j)
-                    BY_VERT_AVG(i,j,2) = - grav * BY_VERT_AVG(i,j,2) /ML_DEPTH(i,j)
+                    BX_VERT_AVG(i,j,2) = - grav * BX_VERT_AVG(i,j,2)/ML_DEPTH(i,j)
+                    BY_VERT_AVG(i,j,1) = - grav * BY_VERT_AVG(i,j,1)/ML_DEPTH(i,j)
+                    BY_VERT_AVG(i,j,2) = - grav * BY_VERT_AVG(i,j,2)/ML_DEPTH(i,j)
                endif
 
           enddo
      enddo
 
+     end_time = omp_get_wtime()
+
+     print *,"1st part time is",end_time - start_time
 !-----------------------------------------------------------------------
 !
 !  compute horizontal length scale if necessary
 !
 !-----------------------------------------------------------------------
+
+   start_time = omp_get_wtime()
 
    if ( luse_const_horiz_len_scale ) then
 
@@ -577,6 +596,10 @@
      endwhere
 
    endif
+   
+   end_time = omp_get_wtime()
+
+   print *,"Time at 2nd part is",end_time - start_time
 
 !-----------------------------------------------------------------------
 !
@@ -584,6 +607,8 @@
 !
 !-----------------------------------------------------------------------
 
+   start_time = omp_get_wtime()
+  
    do k=1,km
 
      reference_depth(ktp) = zt(k) - p25 * dz(k)
@@ -621,8 +646,18 @@
 
    enddo
 
+   end_time = omp_get_wtime()
+
+   print *,"Time at sorry part is",end_time - start_time
+
    USMT = c0
    VSMT = c0
+
+   end_time = omp_get_wtime()
+
+   print *,"Time at 3rd part is",end_time - start_time
+
+   start_time = omp_get_wtime()
 
    do k=1,km
 
@@ -790,6 +825,10 @@
      WTOP_SUBM = WBOT_SUBM
 
    enddo
+
+   end_time = omp_get_wtime()
+
+   print *,"4th part time is",end_time - start_time
 
 !-----------------------------------------------------------------------
 !EOC
