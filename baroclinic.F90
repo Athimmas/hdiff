@@ -1732,13 +1732,13 @@
 
    WORKN = WORKN_PHI(:,:,:,k)
 
-   if(my_task==master_task)then
+   !if(my_task==master_task)then
 
-      open(unit=10,file="/home/aketh/ocn_correctness_data/changed.txt",status="unknown",position="append",action="write",form="formatted")
-      write(10),WORKN
-      close(10)
+   !   open(unit=10,file="/home/aketh/ocn_correctness_data/changed.txt",status="unknown",position="append",action="write",form="formatted")
+   !   write(10),WORKN
+   !   close(10)
 
-   endif
+   !endif
 
    FT = FT + WORKN
 
