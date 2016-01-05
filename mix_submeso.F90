@@ -409,9 +409,13 @@
    
 
    CONTINUE_INTEGRAL = .true.
-   where ( KMT(:,:,bid) == 0 ) 
-     CONTINUE_INTEGRAL = .false.
-   endwhere
+   do j=1,ny_block
+      do i=1,nx_block
+          if( KMT(i,j,bid) == 0 ) then
+           CONTINUE_INTEGRAL(i,j) = .false.
+          endif
+      enddo
+   enddo
 
 !-----------------------------------------------------------------------
 !
@@ -426,9 +430,13 @@
      if ( k > 1 )  zw_top = zw(k-1)
 
      WORK3 = c0
-     where ( CONTINUE_INTEGRAL  .and.  ML_DEPTH > zw(k) )
-        WORK3 = dz(k)
-     endwhere
+     do j=1,ny_block
+       do i=1,nx_block
+          if( CONTINUE_INTEGRAL(i,j)  .and.  ML_DEPTH(i,j) > zw(k) )then
+              WORK3(i,j) = dz(k)
+          endif 
+       enddo
+     enddo 
      where ( CONTINUE_INTEGRAL  .and.  ML_DEPTH <= zw(k)  &
              .and.  ML_DEPTH > zw_top )
        WORK3 = ML_DEPTH - zw_top
