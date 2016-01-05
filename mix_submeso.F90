@@ -412,7 +412,7 @@
    do j=1,ny_block
       do i=1,nx_block
           if( KMT(i,j,bid) == 0 ) then
-           CONTINUE_INTEGRAL(i,j) = .false.
+            CONTINUE_INTEGRAL(i,j) = .false.
           endif
       enddo
    enddo
@@ -447,17 +447,25 @@
 
           enddo
      enddo 
+ 
+     do j=1,ny_block
+          do i=1,nx_block
 
-     where ( CONTINUE_INTEGRAL )
-       BX_VERT_AVG(:,:,1) = BX_VERT_AVG(:,:,1)        &
-                           + RX(:,:,1,k,bid) * WORK3
-       BX_VERT_AVG(:,:,2) = BX_VERT_AVG(:,:,2)        &
-                           + RX(:,:,2,k,bid) * WORK3
-       BY_VERT_AVG(:,:,1) = BY_VERT_AVG(:,:,1)        &
-                           + RY(:,:,1,k,bid) * WORK3
-       BY_VERT_AVG(:,:,2) = BY_VERT_AVG(:,:,2)        &
-                           + RY(:,:,2,k,bid) * WORK3
-     endwhere
+             if( CONTINUE_INTEGRAL(i,j) ) then
+
+                 BX_VERT_AVG(i,j,1) = BX_VERT_AVG(i,j,1)        &
+                                     + RX(i,j,1,k,bid) * WORK3(i,j)
+                 BX_VERT_AVG(i,j,2) = BX_VERT_AVG(i,j,2)        &
+                                     + RX(i,j,2,k,bid) * WORK3(i,j)
+                 BY_VERT_AVG(i,j,1) = BY_VERT_AVG(i,j,1)        &
+                                     + RY(i,j,1,k,bid) * WORK3(i,j)
+                 BY_VERT_AVG(i,j,2) = BY_VERT_AVG(i,j,2)        &
+                                     + RY(i,j,2,k,bid) * WORK3(i,j)
+             endif  
+
+          enddo
+     enddo
+           
 
      where ( CONTINUE_INTEGRAL .and.  ML_DEPTH <= zw(k)  &
              .and.  ML_DEPTH > zw_top )
