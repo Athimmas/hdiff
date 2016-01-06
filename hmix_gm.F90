@@ -3630,7 +3630,7 @@
 
         do kk=1,2
  
-          !$OMP PARALLEL PRIVATE(I)DEFAULT(SHARED)num_threads(1)
+          !$OMP PARALLEL PRIVATE(I)DEFAULT(SHARED)num_threads(16)
  
           !$omp do  
           do j=1,ny_block

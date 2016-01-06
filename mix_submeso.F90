@@ -415,7 +415,6 @@
 
    CONTINUE_INTEGRAL = .true.
 
-   start_time = omp_get_wtime()
 
    do j=1,ny_block !LOOP 1
       do i=1,nx_block
@@ -432,39 +431,25 @@
 !
 !-----------------------------------------------------------------------
 
+   start_time = omp_get_wtime()
    do k=1,km
    
      zw_top = c0
      if ( k > 1 )  zw_top = zw(k-1)
 
+     !$OMP PARALLEL DO SHARED(CONTINUE_INTEGRAL,BX_VERT_AVG,RX,RY,ML_DEPTH)PRIVATE(i,WORK3)num_threads(16)SCHEDULE(dynamic,8)
      do j=1,ny_block 
        do i=1,nx_block
            WORK3(i,j) = c0
-       enddo
-     enddo
- 
 
-     do j=1,ny_block !LOOP 2
-       do i=1,nx_block
             if( CONTINUE_INTEGRAL(i,j)  .and.  ML_DEPTH(i,j) > zw(k) )then
               WORK3(i,j) = dz(k)
           endif 
-       enddo
-     enddo 
-
-     do j=1,ny_block !LOOP 3
-          do i=1,nx_block
 
              if( CONTINUE_INTEGRAL(i,j)  .and.  ML_DEPTH(i,j) <= zw(k)  &
              .and.  ML_DEPTH(i,j) > zw_top )then
                WORK3(i,j) = ML_DEPTH(i,j) - zw_top
            endif 
-
-          enddo
-     enddo 
- 
-     do j=1,ny_block !LOOP 4
-          do i=1,nx_block
 
              if( CONTINUE_INTEGRAL(i,j) ) then
 
@@ -478,21 +463,19 @@
                                      + RY(i,j,2,k,bid) * WORK3(i,j)
              endif  
 
-          enddo
-     enddo
-          
-     do j=1,ny_block !LOOP 5
-          do i=1,nx_block
-
-              if( CONTINUE_INTEGRAL(i,j) .and.  ML_DEPTH(i,j) <= zw(k)  &
+             if( CONTINUE_INTEGRAL(i,j) .and.  ML_DEPTH(i,j) <= zw(k)  &
                         .and.  ML_DEPTH(i,j) > zw_top ) then
                          CONTINUE_INTEGRAL(i,j) = .false.
-              endif  
+             endif  
 
           enddo
      enddo
-  
+     !$OMP END PARALLEL DO
    enddo
+
+   end_time = omp_get_wtime()
+
+   print *,"1st part time is",end_time - start_time,my_task
 
 #ifdef CCSMCOUPLED
  
@@ -522,16 +505,16 @@
           enddo
      enddo
 
-     end_time = omp_get_wtime()
+     !end_time = omp_get_wtime()
 
-     print *,"1st part time is",end_time - start_time
+     !print *,"1st part time is",end_time - start_time
 !-----------------------------------------------------------------------
 !
 !  compute horizontal length scale if necessary
 !
 !-----------------------------------------------------------------------
 
-   start_time = omp_get_wtime()
+   !start_time = omp_get_wtime()
 
    if ( luse_const_horiz_len_scale ) then
 
@@ -597,9 +580,9 @@
 
    endif
    
-   end_time = omp_get_wtime()
+   !end_time = omp_get_wtime()
 
-   print *,"Time at 2nd part is",end_time - start_time
+   !print *,"Time at 2nd part is",end_time - start_time
 
 !-----------------------------------------------------------------------
 !
@@ -607,7 +590,7 @@
 !
 !-----------------------------------------------------------------------
 
-   start_time = omp_get_wtime()
+   !start_time = omp_get_wtime()
   
    do k=1,km
 
@@ -646,18 +629,14 @@
 
    enddo
 
-   end_time = omp_get_wtime()
-
-   print *,"Time at sorry part is",end_time - start_time
-
    USMT = c0
    VSMT = c0
 
-   end_time = omp_get_wtime()
+   !end_time = omp_get_wtime()
 
-   print *,"Time at 3rd part is",end_time - start_time
+   !print *,"Time at 3rd part is",end_time - start_time
 
-   start_time = omp_get_wtime()
+   !start_time = omp_get_wtime()
 
    do k=1,km
 
@@ -673,6 +652,8 @@
        kp1 = k
        factor = c0
      endif
+  
+     start_time = omp_get_wtime() 
 
      do j=1,ny_block-1
        do i=1,nx_block-1
@@ -692,16 +673,26 @@
        enddo
      enddo
 
-     USMB = merge( WORK1, c0, k < KMT(:,:,bid) .and. k < KMTE(:,:,bid) )
-     VSMB = merge( WORK2, c0, k < KMT(:,:,bid) .and. k < KMTN(:,:,bid) )
+     do j=1,ny_block
+        do i=1,nx_block
+ 
+           USMB(i,j) = merge( WORK1(i,j), c0, k < KMT(i,j,bid) .and. k < KMTE(i,j,bid) )
+           VSMB(i,j) = merge( WORK2(i,j), c0, k < KMT(i,j,bid) .and. k < KMTN(i,j,bid) )
 
-     WORK1 = merge( USMT - USMB, c0, k <= KMT(:,:,bid)  &
-                               .and. k <= KMTE(:,:,bid) )
-     WORK2 = merge( VSMT - VSMB, c0, k <= KMT(:,:,bid)  &
-                               .and. k <= KMTN(:,:,bid) )
+           WORK1(i,j) = merge( USMT(i,j) - USMB(i,j), c0, k <= KMT(i,j,bid)  &
+                                      .and. k <= KMTE(i,j,bid) )
+           WORK2(i,j) = merge( VSMT(i,j) - VSMB(i,j), c0, k <= KMT(i,j,bid)  &
+                                      .and. k <= KMTN(i,j,bid) )
 
-     U_SUBM = WORK1 * dzr(k) / HTE(:,:,bid)
-     V_SUBM = WORK2 * dzr(k) / HTN(:,:,bid)
+           U_SUBM(i,j) = WORK1(i,j) * dzr(k) / HTE(i,j,bid)
+           V_SUBM(i,j) = WORK2(i,j) * dzr(k) / HTN(i,j,bid)
+
+        enddo 
+     enddo 
+
+     end_time = omp_get_wtime()     
+ 
+     !print *,end_time - start_time
 
      do j=this_block%jb,this_block%je
        do i=this_block%ib,this_block%ie
@@ -826,9 +817,9 @@
 
    enddo
 
-   end_time = omp_get_wtime()
+   !end_time = omp_get_wtime()
 
-   print *,"4th part time is",end_time - start_time
+   !print *,"4th part time is",end_time - start_time
 
 !-----------------------------------------------------------------------
 !EOC
