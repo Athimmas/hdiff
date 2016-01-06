@@ -437,7 +437,7 @@
      zw_top = c0
      if ( k > 1 )  zw_top = zw(k-1)
 
-     !$OMP PARALLEL DO SHARED(CONTINUE_INTEGRAL,BX_VERT_AVG,RX,RY,ML_DEPTH)PRIVATE(i,WORK3)num_threads(16)SCHEDULE(dynamic,8)
+     !$OMP PARALLEL DO SHARED(CONTINUE_INTEGRAL,BX_VERT_AVG,RX,RY,ML_DEPTH)PRIVATE(i,WORK3)num_threads(16)SCHEDULE(dynamic,16)
      do j=1,ny_block 
        do i=1,nx_block
            WORK3(i,j) = c0
