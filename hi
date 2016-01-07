@@ -1,0 +1,2621 @@
+./advection.F90:      write(stdout,blank_fmt)
+./advection.F90:      write(stdout,ndelim_fmt)
+./advection.F90:      write(stdout,blank_fmt)
+./advection.F90:      write(stdout,*) ' Advection:'
+./advection.F90:      write(stdout,blank_fmt)
+./advection.F90:      write(stdout,*) ' advect_nml namelist settings:'
+./advection.F90:      write(stdout,blank_fmt)
+./advection.F90:      write(stdout,advect_nml)
+./advection.F90:      write(stdout,blank_fmt)
+./advection.F90:      write(stdout,delim_fmt)
+./advection.F90:      write(stdout,blank_fmt)
+./advection.F90:      write(stdout,'(a17)') 'Advection options'
+./advection.F90:      write(stdout,blank_fmt)
+./advection.F90:      write(stdout,delim_fmt)
+./advection.F90:         write(stdout,*) 'Using ' /&
+./advection.F90:         write(stdout,docfmt) 'Tracer Name', 'Advection Option'
+./advection.F90:         write(stdout,docfmt) 'TEMP', trim(tadvect_ctype)
+./advection.F90:         write(stdout,docfmt) 'SALT', trim(tadvect_ctype)
+./advection.F90:            write(stdout,docfmt) trim(tracer_d(n)%short_name), &
+./advection.F90:            write(stdout,*) &
+./advection.F90:            write(stdout,*) ' advection type = ',tadvect_itype(n), &
+./advection.F90:            write(stdout,*) ' only upwind3 and lw_lim implemented'
+./baroclinic.F90:      write(stdout,blank_fmt)
+./baroclinic.F90:      write(stdout,ndelim_fmt)
+./baroclinic.F90:      write(stdout,blank_fmt)
+./baroclinic.F90:      write(stdout,*) ' Baroclinic:'
+./baroclinic.F90:      write(stdout,blank_fmt)
+./baroclinic.F90:      write(stdout,*) ' baroclinic_nml namelist settings:'
+./baroclinic.F90:      write(stdout,blank_fmt)
+./baroclinic.F90:      write(stdout,baroclinic_nml)
+./baroclinic.F90:      write(stdout,blank_fmt)
+./baroclinic.F90:      write(stdout,delim_fmt)
+./baroclinic.F90:      write(stdout,'(a18)') 'Baroclinic options'
+./baroclinic.F90:      write(stdout,blank_fmt)
+./baroclinic.F90:      write(stdout,delim_fmt)
+./baroclinic.F90:         write(stdout,'(a40)') &
+./baroclinic.F90:         write(stdout,'(a41)') &
+./baroclinic.F90:         write(stdout,*)' '
+./baroclinic.F90:         write(stdout,*) &
+./baroclinic.F90:         write(stdout,*)' '
+./baroclinic.F90:         write(stdout,*)' '
+./baroclinic.F90:         write(stdout,*)' Deploying drifter array # ',arrays_deployed
+./baroclinic.F90:         write(stdout,*)' '
+./baroclinic.F90:   if(mod(ihour,n_write_drifters).eq.0 .and. newhour) then
+./baroclinic.F90:   !   open(unit=10,file="/home/aketh/ocn_correctness_data/changed.txt",status="unknown",position="append",action="write",form="formatted")
+./baroclinic.F90:   !   write(10),WORKN
+./budget_diagnostics.F90:      write(stdout,blank_fmt)
+./budget_diagnostics.F90:      write(stdout,ndelim_fmt)
+./budget_diagnostics.F90:      write(stdout,blank_fmt)
+./budget_diagnostics.F90:      write(stdout,*) ' Budget Diagnostics:'
+./budget_diagnostics.F90:      write(stdout,blank_fmt)
+./budget_diagnostics.F90:      write(stdout,*) ' budget_diagnostics_nml namelist settings:'
+./budget_diagnostics.F90:      write(stdout,blank_fmt)
+./budget_diagnostics.F90:      write(stdout,budget_diagnostics_nml)
+./budget_diagnostics.F90:      write(stdout,blank_fmt)
+./budget_diagnostics.F90:      write(stdout,delim_fmt)
+./budget_diagnostics.F90:      write(stdout,blank_fmt)
+./budget_diagnostics.F90:      write(stdout,'(a)') 'Budget Diagnostic Options'
+./budget_diagnostics.F90:      write(stdout,blank_fmt)
+./budget_diagnostics.F90:      write(stdout,delim_fmt)
+./budget_diagnostics.F90:           write (stdout,*) 'Global tracer budgets diagnostics will be computed'
+./budget_diagnostics.F90:          write (stdout,*) 'Global tracer budgets diagnostics will not be computed'
+./budget_diagnostics.F90:        write(stdout,1100) 'no budget interval specified'
+./budget_diagnostics.F90:        write(stdout,1101) check_time_flag_int(tavg_flag,freq=.true.),' years'
+./budget_diagnostics.F90:        write(stdout,1101) check_time_flag_int(tavg_flag,freq=.true.),' months'
+./budget_diagnostics.F90:        write(stdout,1101) check_time_flag_int(tavg_flag,freq=.true.),' days'
+./budget_diagnostics.F90:        write(stdout,1101) check_time_flag_int(tavg_flag,freq=.true.),' hours'
+./budget_diagnostics.F90:        write(stdout,1101) check_time_flag_int(tavg_flag,freq=.true.),' seconds'
+./budget_diagnostics.F90:        write(stdout,1101) check_time_flag_int(tavg_flag,freq=.true.),' steps'
+./budget_diagnostics.F90:          write (stdout,1001) volume_t_initial,tracer_mean_initial(1),   &
+./budget_diagnostics.F90:     write (stdout,999) volume_t_final,        &
+./budget_diagnostics.F90:     write (stdout,1000) 
+./budget_diagnostics.F90:         write (stdout,10001)
+./budget_diagnostics.F90:     if (tmix_iopt == tmix_matsuno) write (stdout,1001 )
+./budget_diagnostics.F90:     write (stdout,1002)
+./budget_diagnostics.F90:     write (stdout,1003) volume_change, fw_mean, sum, explanation
+./budget_diagnostics.F90:     write (stdout,1004)
+./budget_diagnostics.F90:     write (stdout, 1005) T_change, shf_mean, qflux_t_mean, &
+./budget_diagnostics.F90:       write (stdout,1006)
+./budget_diagnostics.F90:       write (stdout,1007)
+./budget_diagnostics.F90:     write (stdout, 1008) S_change, sfwf_mean, qflux_s_mean, &
+./cfc11_mod.F90:          write(stdout,delim_fmt)
+./cfc11_mod.F90:          write(stdout,*) ' Initial 3-d CFC11 set to all zeros'
+./cfc11_mod.F90:          write(stdout,delim_fmt)
+./cfc11_mod.F90:          write(stdout,blank_fmt)
+./cfc11_mod.F90:          write(stdout,'(a12,a)') ' file read: ', &
+./cfc11_mod.F90:          write(stdout,blank_fmt)
+./cfc11_mod.F90:          write(stdout,'(a12,a)') ' file read: ', &
+./cfc11_mod.F90:          write(stdout,blank_fmt)
+./cfc11_mod.F90:          write(stdout,'(a12,a)') ' file read: ', &
+./cfc11_mod.F90:          write(stdout,*)  &
+./cfc11_mod.F90:          write(stdout,blank_fmt)
+./cfc11_mod.F90:          write(stdout,'(a12,a)') ' file read: ', &
+./cfc11_mod.F90:        write(stdout,*) 'Trying to read CFC11 time series from file:',  &
+./cfc11_mod.F90:        write(stdout,*)num_cfc11_years,' years to be read from file: ',  &
+./cfc11_mod.F90:        write(stdout,*)' done reading file: ', trim(cfc11_time_series_file)
+./cfc11_mod.F90:!   if (my_task == master_task) write(stdout,*)  &
+./cfc_mod.F90:          write(stdout,delim_fmt)
+./cfc_mod.F90:          write(stdout,*) ' Initial 3-d CFCs set to all zeros'
+./cfc_mod.F90:          write(stdout,delim_fmt)
+./cfc_mod.F90:         write(stdout,*)  &
+./cfc_mod.F90:         write(stdout,*) 'error from nf_open: ', nf90_strerror(stat)
+./cfc_mod.F90:         write(stdout,*) 'error from nf_inq_varid for pcfc11_nh: ', nf90_strerror(stat)
+./cfc_mod.F90:         write(stdout,*) 'nf_inq_varndims for pcfc11_nh: ', nf90_strerror(stat)
+./cfc_mod.F90:         write(stdout,*) 'ndims /= 1 for pcfc11_nh'
+./cfc_mod.F90:         write(stdout,*) 'nf_inq_vardimid for pcfc11_nh: ', nf90_strerror(stat)
+./cfc_mod.F90:         write(stdout,*) 'nf_inq_dimlen for pcfc11_nh: ', nf90_strerror(stat)
+./cfc_mod.F90:         write(stdout,*) 'nf_inq_dimname for dim of pcfc11_nh: ', nf90_strerror(stat)
+./cfc_mod.F90:         write(stdout,*) 'nf_close: ', nf90_strerror(stat)
+./cfc_mod.F90:      write(stdout,*) 'nf_inq_varid for ', trim(varname), ' : ', nf90_strerror(stat)
+./cfc_mod.F90:      write(stdout,*) 'nf_inq_varndims for ', trim(varname), ' : ', nf90_strerror(stat)
+./cfc_mod.F90:      write(stdout,*) 'ndims /= 1 for ', trim(varname)
+./cfc_mod.F90:      write(stdout,*) 'nf_inq_vardimid for ', trim(varname), ' : ', nf90_strerror(stat)
+./cfc_mod.F90:      write(stdout,*) 'dimid mismatch for ', trim(varname)
+./cfc_mod.F90:      write(stdout,*) 'nf_get_var_double for ', trim(varname), ' : ', nf90_strerror(stat)
+./co2calc.F90:             WRITE(stdout,*) '(co2calc.F90:drtsafe_row) ', &
+./co2calc.F90:             WRITE(stdout,*) '(co2calc.F90:drtsafe_row) ', &
+./co2calc.F90:             WRITE(stdout,*) '(co2calc.F90:drtsafe_row) ', &
+./current_meters.F90:         write(stdout,*)' '
+./current_meters.F90:         write(stdout,*)' Too many current meter files listed in file '
+./current_meters.F90:         write(stdout,*)' Increase the value of num_cmeters_max'
+./current_meters.F90:         write(stdout,*)' '
+./current_meters.F90:         write(stdout,*)' No current meter files will be read'
+./current_meters.F90:      write(stdout,*)' '
+./current_meters.F90:      write(stdout,"(' Attempting to read in ',i4,
+./current_meters.F90:      write(stdout,*)' '
+./current_meters.F90:         write(stdout,*)' Reading file: ',cmeter_file(cmeter)
+./current_meters.F90:                 write(stdout,*)' '
+./current_meters.F90:                 write(stdout,*)' *** Warning ***'
+./current_meters.F90:                 write(stdout,*)
+./current_meters.F90:                 write(stdout,"(' Proceeding with first ',i4,' buoys')")
+./current_meters.F90:         write (cday,'(i10)') iday + 1000000000  !  allows 2.7 million years
+./current_meters.F90:         write(stdout,*)' '
+./current_meters.F90:         write(stdout,*)' Writing file: ',temp_file
+./current_meters.F90:     &       write(stdout,*) ' i/o error writing ',ITEMP
+./current_meters.F90:          call write_status(iostat)
+./current_meters.F90:     &       write(stdout,*) ' i/o error writing ',DIST_TEMP
+./current_meters.F90:          call write_status(iostat)
+./current_meters.F90:     &       write(stdout,*) ' i/o error writing ',XY_TEMP
+./current_meters.F90:          call write_status(iostat)
+./current_meters.F90:     &       write(stdout,*) ' i/o error writing ',FIELDS_BUOYS
+./current_meters.F90:          call write_status(iostat)
+./diag_bsf.F90:     write(stdout,blank_fmt)
+./diag_bsf.F90:     write(stdout,ndelim_fmt)
+./diag_bsf.F90:     write(stdout,blank_fmt)
+./diag_bsf.F90:     write(stdout,*) ' Barotropic Streamfunction Diagnostic:'
+./diag_bsf.F90:     write(stdout,blank_fmt)
+./diag_bsf.F90:     write(stdout,*) ' bsf_diagnostic_nml namelist settings:'
+./diag_bsf.F90:     write(stdout,blank_fmt)
+./diag_bsf.F90:     write(stdout,bsf_diagnostic_nml)
+./diag_bsf.F90:     write(stdout,blank_fmt)
+./diag_bsf.F90:     write (stdout,*) 'Initializing diagnostic BSF variables ....'
+./diag_bsf.F90:     write (stdout,*) ' '
+./diag_bsf.F90:     write (stdout,*) ' island coefficients: '
+./diag_bsf.F90:     write (stdout,*) ' island ', isle, ' coefficient = ', c1/aislandr(isle)
+./diag_bsf.F90:     write (stdout,*) ' '
+./diag_bsf.F90:     write (stdout,*) ' convergence info from pcg_diag_bsf: '
+./diag_bsf.F90:     write (stdout,*) ' iter = ', 0, ' rms_resid = ', rms_residual
+./diag_bsf.F90:            write (stdout,*) ' iter = ', m, ' rms_resid = ', rms_residual 
+./diag_bsf.F90:          write (stdout,*)                                    &
+./diag_bsf.F90:     write (stdout,*) ' '
+./diag_bsf.F90:     write (stdout,*) ' number of islands = ', nisle
+./diag_bsf.F90:     write (stdout,*) ' '
+./diag_bsf.F90:       write (stdout,*) ' island ', i,' # points on boundary = ', npts_is(i)  
+./diagnostics.F90:      cfl_all_levels,        &! writes cfl  diags for all vert levels
+./diagnostics.F90:      diag_all_levels         ! writes some diags for all vert levels
+./diagnostics.F90:      write(stdout,blank_fmt)
+./diagnostics.F90:      write(stdout,delim_fmt)
+./diagnostics.F90:      write(stdout,blank_fmt)
+./diagnostics.F90:      write(stdout,'(a18)') 'Diagnostic options'
+./diagnostics.F90:      write(stdout,blank_fmt)
+./diagnostics.F90:      write(stdout,delim_fmt)
+./diagnostics.F90:         write(stdout,'(a31)') 'Global diagnostics not computed'
+./diagnostics.F90:         write(stdout,gfreq_fmt) diag_global_freq, ' years  '
+./diagnostics.F90:         write(stdout,gfreq_fmt) diag_global_freq, ' months '
+./diagnostics.F90:         write(stdout,gfreq_fmt) diag_global_freq, ' days   '
+./diagnostics.F90:         write(stdout,gfreq_fmt) diag_global_freq, ' hours  '
+./diagnostics.F90:         write(stdout,gfreq_fmt) diag_global_freq, ' seconds'
+./diagnostics.F90:         write(stdout,gfreq_fmt) diag_global_freq, ' steps  '
+./diagnostics.F90:           write(stdout,'(a36,a)') &
+./diagnostics.F90:            write(stdout,'(a42)') &
+./diagnostics.F90:        write (stdout,'(a39,a)') 'Equatorial velocities written to file: ', &
+./diagnostics.F90:         write(stdout,'(a28)') 'CFL diagnostics not computed'
+./diagnostics.F90:         write(stdout,cfreq_fmt) diag_cfl_freq, ' years  '
+./diagnostics.F90:         write(stdout,cfreq_fmt) diag_cfl_freq, ' months '
+./diagnostics.F90:         write(stdout,cfreq_fmt) diag_cfl_freq, ' days   '
+./diagnostics.F90:         write(stdout,cfreq_fmt) diag_cfl_freq, ' hours  '
+./diagnostics.F90:         write(stdout,cfreq_fmt) diag_cfl_freq, ' seconds'
+./diagnostics.F90:         write(stdout,cfreq_fmt) diag_cfl_freq, ' steps  '
+./diagnostics.F90:           write(stdout,'(a33,a)') &
+./diagnostics.F90:            write(stdout,'(a46)') &
+./diagnostics.F90:         write(stdout,'(a34)') 'Transport diagnostics not computed'
+./diagnostics.F90:         write(stdout,tfreq_fmt) diag_transp_freq, ' years  '
+./diagnostics.F90:         write(stdout,tfreq_fmt) diag_transp_freq, ' months '
+./diagnostics.F90:         write(stdout,tfreq_fmt) diag_transp_freq, ' days   '
+./diagnostics.F90:         write(stdout,tfreq_fmt) diag_transp_freq, ' hours  '
+./diagnostics.F90:         write(stdout,tfreq_fmt) diag_transp_freq, ' seconds'
+./diagnostics.F90:         write(stdout,tfreq_fmt) diag_transp_freq, ' steps  '
+./diagnostics.F90:         write(stdout,'(a39,a)') &
+./diagnostics.F90:         write(stdout,blank_fmt)
+./diagnostics.F90:         write(stdout,'(a14,i4,1x,a27)') 'The following ',num_transports, &
+./diagnostics.F90:            write(stdout,'(a2,a)') '  ',trim(transports(n)%name)
+./diagnostics.F90:!  open output files if required, then write a blank and close.
+./diagnostics.F90:          write(diag_unit,*)' '
+./diagnostics.F90:         write(trans_unit,*)' '
+./diagnostics.F90:       write(velocity_unit,*)' '
+./diagnostics.F90:   write(stdout,*) ' '
+./diagnostics.F90:   write(stdout,*) '   Velocity diagnostics will be computed at the following locations:'
+./diagnostics.F90:   write(stdout,'(2x,a,i3,a,i3,a, 3x, a,F25.15,a,F25.15,a)' ) &
+./diagnostics.F90:      write(stdout,blank_fmt)
+./diagnostics.F90:      write(stdout,delim_fmt)
+./diagnostics.F90:      write(stdout,blank_fmt)
+./diagnostics.F90:      write(stdout,'(a18)') 'End Diagnostic options'
+./diagnostics.F90:      write(stdout,blank_fmt)
+./diagnostics.F90:      write(stdout,delim_fmt)
+./diagnostics.F90:!  write some stuff to log file (stdout)
+./diagnostics.F90:      write(stdout,blank_fmt)
+./diagnostics.F90:      write(stdout,time_fmt1) 'Step number  : ',nsteps_total
+./diagnostics.F90:      write(stdout,date_fmt1) 'Date         : ',cday,cmonth3,cyear
+./diagnostics.F90:      write(stdout,time_fmt1) 'Hour         : ',ihour
+./diagnostics.F90:      write(stdout,time_fmt1) 'Minute       : ',iminute
+./diagnostics.F90:      write(stdout,time_fmt1) 'Second       : ',isecond
+./diagnostics.F90:         write(stdout,time_fmt2) 'Time(seconds): ', tsecond
+./diagnostics.F90:         write(stdout,time_fmt2) 'Time(hours)  : ', &
+./diagnostics.F90:         write(stdout,time_fmt2) 'Time(days)   : ', tday
+./diagnostics.F90:         write(stdout,time_fmt2) 'Time(years)  : ', tyear
+./diagnostics.F90:!  Writes scalar diagnostic info to both stdout and diagnostic output
+./diagnostics.F90:         write(stdout,blank_fmt)
+./diagnostics.F90:         write(stdout,'(a17)') 'K.E. diagnostics:'
+./diagnostics.F90:         write(stdout,stdo_fmt) &
+./diagnostics.F90:         write(stdout,stdo_fmt) &
+./diagnostics.F90:         write(stdout,stdo_fmt) &
+./diagnostics.F90:         write(stdout,stdo_fmt) &
+./diagnostics.F90:         write(stdout,blank_fmt)
+./diagnostics.F90:         write(stdout,stdo_fmt) &
+./diagnostics.F90:         write(stdout,stdo_fmt) &
+./diagnostics.F90:         write(stdout,stdo_fmt) &
+./diagnostics.F90:         write(stdout,stdo_fmt) &
+./diagnostics.F90:         write(stdout,stdo_fmt) &
+./diagnostics.F90:         write(stdout,stdo_fmt) &
+./diagnostics.F90:         write(stdout,blank_fmt)
+./diagnostics.F90:         write(stdout,*) 'Tracer diagnostics:'
+./diagnostics.F90:            write(stdout,blank_fmt)
+./diagnostics.F90:            write(stdout,trcr_fmt) &
+./diagnostics.F90:            write(stdout,trcr_fmt) &
+./diagnostics.F90:            write(stdout,trcr_fmt) &
+./diagnostics.F90:            write(stdout,trcr_fmt) &
+./diagnostics.F90:            write(stdout,trcr_fmt) &
+./diagnostics.F90:            write(stdout,trcr_fmt) &
+./diagnostics.F90:            write(stdout,trcr_fmt) &
+./diagnostics.F90:            write(stdout,trcr_fmt) &
+./diagnostics.F90:                   write(stdout,'(a22,i3,a10,i3,a3,1pe22.15)') &
+./diagnostics.F90:         write(stdout,blank_fmt)
+./diagnostics.F90:         write(stdout,'(a18)') 'Other diagnostics:'
+./diagnostics.F90:         write(stdout,'(a24,1pe22.15)') ' global mean sea level: ', &
+./diagnostics.F90:         write(stdout,'(a19,1pe22.15,2x,i4)') ' residual, scans : ', &
+./diagnostics.F90:         write(diag_unit,diag_fmt) tday, diag_ke, diag_name
+./diagnostics.F90:            write(diag_name,'(a12,i2)') 'mean tracer ',n
+./diagnostics.F90:            write(diag_unit,diag_fmt) tday, avg_tracer(n), diag_name
+./diagnostics.F90:                  write(diag_name,'(a12,i2,a8,i2)') &
+./diagnostics.F90:                  write(diag_unit,diag_fmt) tday, avg_tracer_k(k,n), &
+./diagnostics.F90:         write(diag_unit,diag_fmt) tday, diag_sealevel, diag_name
+./diagnostics.F90:         write(diag_unit,diag_fmt) tday, rmsResidual, diag_name
+./diagnostics.F90:         write(diag_unit,diag_fmt) tday, real(iterationCount), diag_name
+./diagnostics.F90:            write(diag_name,'(a7,i3,a11)') 'Tracer ',n,' change avg'
+./diagnostics.F90:            write(diag_unit,diag_fmt) tday, dtracer_avg(n), diag_name
+./diagnostics.F90:            write(diag_name,'(a7,i3,a11)') 'Tracer ',n,' change abs'
+./diagnostics.F90:            write(diag_unit,diag_fmt) tday, dtracer_abs(n), diag_name
+./diagnostics.F90:            write(diag_name,'(a7,i3,a14)') 'Tracer ',n,' change advect'
+./diagnostics.F90:            write(diag_unit,diag_fmt) tday, diag_tracer_adv(n), diag_name
+./diagnostics.F90:            write(diag_name,'(a7,i3,a13)') 'Tracer ',n,' change hdiff'
+./diagnostics.F90:            write(diag_unit,diag_fmt) tday, diag_tracer_hdiff(n), diag_name
+./diagnostics.F90:            write(diag_name,'(a7,i3,a13)') 'Tracer ',n,' change vdiff'
+./diagnostics.F90:            write(diag_unit,diag_fmt) tday, diag_tracer_vdiff(n), diag_name
+./diagnostics.F90:            write(diag_name,'(a7,i3,a14)') 'Tracer ',n,' change source'
+./diagnostics.F90:            write(diag_unit,diag_fmt) tday, diag_tracer_source(n), diag_name
+./diagnostics.F90:            write(diag_name,'(a7,i3,a14)') 'Tracer ',n,' surface flux'
+./diagnostics.F90:            write(diag_unit,diag_fmt) tday, sfc_tracer_flux(n), diag_name
+./diagnostics.F90:         write(diag_unit,diag_fmt) tday, diag_ke_hmix, diag_name
+./diagnostics.F90:         write(diag_unit,diag_fmt) tday, diag_ke_vmix, diag_name
+./diagnostics.F90:         write(diag_unit,diag_fmt) tday, diag_ws, diag_name
+./diagnostics.F90:         write(diag_unit,diag_fmt) tday, diag_ke_adv, diag_name
+./diagnostics.F90:         write(diag_unit,diag_fmt) tday, diag_ke_free, diag_name
+./diagnostics.F90:         write(diag_unit,diag_fmt) tday, diag_pe, diag_name
+./diagnostics.F90:         write(diag_unit,diag_fmt) tday, diag_ke_press, diag_name
+./diagnostics.F90:         write(diag_unit,diag_fmt) tday, diag_ke_psfc, diag_name
+./diagnostics.F90:         write(diag_unit,diag_fmt) tday, diag_press_free, diag_name
+./diagnostics.F90:!     and write to output file
+./diagnostics.F90:            write(trans_unit,'(4(1pe13.6,2x), a)')           &
+./diagnostics.F90:!  Writes velocity diagnostics info to velocity output file.
+./diagnostics.F90:          write (velocity_unit,diag_fmt) tday, vlon_loc(n), vlat_loc(n), &
+./diagnostics.F90:!     write results to stdout
+./diagnostics.F90:         write(stdout,blank_fmt)
+./diagnostics.F90:         write(stdout,cfl_fmt1) name_temp1, cfl_advu, cfladd_advu(:)
+./diagnostics.F90:         write(stdout,cfl_fmt1) name_temp1, cfl_advv, cfladd_advv(:)
+./diagnostics.F90:         write(stdout,cfl_fmt1) name_temp1, cfl_advw, cfladd_advw(:)
+./diagnostics.F90:         write(stdout,cfl_fmt1) name_temp1, cfl_advt, cfladd_advt(:)
+./diagnostics.F90:            write(stdout,cfl_fmt1) name_temp1, cfl_vdifft, &
+./diagnostics.F90:            write(stdout,cfl_fmt1) name_temp1, cfl_vdiffu, &
+./diagnostics.F90:         write(stdout,cfl_fmt1) name_temp1, cfl_hdifft, cfladd_hdifft(:)
+./diagnostics.F90:         write(stdout,cfl_fmt1) name_temp1, cfl_hdiffu, cfladd_hdiffu(:)
+./diagnostics.F90:            write(stdout,'(a27)') 'CFL numbers at all levels: '
+./diagnostics.F90:               write(stdout,cfl_fmt1) name_temp1, cfl_advtk(k), &
+./diagnostics.F90:               write(stdout,cfl_fmt1) name_temp1, cfl_hdifftk(k), &
+./diagnostics.F90:!        write results to output file
+./diagnostics.F90:         write(diag_unit,cfl_fmt2) tday, cfl_advu, name_temp1
+./diagnostics.F90:         write(diag_unit,cfl_fmt2) tday, cfl_advv, name_temp2
+./diagnostics.F90:         write(diag_unit,cfl_fmt2) tday, cfl_advw, name_temp1
+./diagnostics.F90:         write(diag_unit,cfl_fmt2) tday, cfl_advt, name_temp2
+./diagnostics.F90:            write(diag_unit,cfl_fmt2) tday, cfl_vdifft, name_temp1
+./diagnostics.F90:            write(diag_unit,cfl_fmt2) tday, cfl_vdiffu, name_temp2
+./diagnostics.F90:         write(diag_unit,cfl_fmt2) tday, cfl_hdifft, name_temp1
+./diagnostics.F90:         write(diag_unit,cfl_fmt2) tday, cfl_hdiffu, name_temp2
+./diagnostics.F90:               write(name_temp1,"('cfl_advtk ',i3)") k
+./diagnostics.F90:               write(name_temp2,"('cfl_advuk ',i3)") k
+./diagnostics.F90:               write(diag_unit,cfl_fmt2) tday,cfl_advtk(k),  name_temp1
+./diagnostics.F90:               write(diag_unit,cfl_fmt2) tday,cfl_hdifftk(k),name_temp2
+./diags_on_lat_aux_grid.F90:      write(stdout,blank_fmt)
+./diags_on_lat_aux_grid.F90:      write(stdout,ndelim_fmt)
+./diags_on_lat_aux_grid.F90:      write(stdout,blank_fmt)
+./diags_on_lat_aux_grid.F90:      write(stdout,*) ' Transport Diagnostics:'
+./diags_on_lat_aux_grid.F90:      write(stdout,blank_fmt)
+./diags_on_lat_aux_grid.F90:      write(stdout,*) ' transports_nml namelist settings:'
+./diags_on_lat_aux_grid.F90:      write(stdout,blank_fmt)
+./diags_on_lat_aux_grid.F90:      write(stdout,transports_nml)
+./diags_on_lat_aux_grid.F90:      write(stdout,blank_fmt)
+./diags_on_lat_aux_grid.F90:     write (stdout,*)
+./diags_on_lat_aux_grid.F90:     write (stdout,'(a)  ') 'Transport Diagnostics Information'
+./diags_on_lat_aux_grid.F90:     write (stdout,'(a,/)') '_________________________________'
+./diags_on_lat_aux_grid.F90:     write (stdout,'(a)  ') 'Latitudinal Auxiliary Grid Choice is:'
+./diags_on_lat_aux_grid.F90:       write (stdout,'(a)')  &
+./diags_on_lat_aux_grid.F90:       write (stdout,'(a)') ' ... full model latitudinal grid'
+./diags_on_lat_aux_grid.F90:       write (stdout,'(a)') ' ... user-specified w/ equal spacing '
+./diags_on_lat_aux_grid.F90:     write (stdout,*)
+./diags_on_lat_aux_grid.F90:     write (stdout,'(a)  ') 'Transport diagnostics include:'
+./diags_on_lat_aux_grid.F90:     if (moc_requested)          write (stdout,'(a)') 'MOC'
+./diags_on_lat_aux_grid.F90:     if (n_heat_trans_requested) write (stdout,'(a)') 'N_HEAT'
+./diags_on_lat_aux_grid.F90:     if (n_salt_trans_requested) write (stdout,'(a)') 'N_SALT'
+./diags_on_lat_aux_grid.F90:     write (stdout,*)
+./diags_on_lat_aux_grid.F90:     write(stdout,*) 'The following ',nreg2_transport,  &
+./diags_on_lat_aux_grid.F90:       write(stdout,1000) transport_region_info(nrtr)%name,  &
+./diags_on_lat_aux_grid.F90:     write(stdout,blank_fmt)
+./diags_on_lat_aux_grid.F90:     write(stdout,*) 'End of transport regions initialization'
+./diags_on_lat_aux_grid.F90:     write(stdout,blank_fmt)
+./diags_on_lat_aux_grid.F90:     write(stdout,ndelim_fmt)
+./diags_on_lat_aux_grid.F90:     write(stdout,blank_fmt)
+./distribution.F90:            write(stdout,*) 'debug: cre_dist_rr ',pe,pecnt,pework,petargetwork
+./distribution.F90:   write(stdout,*) 'debug: cre_dist_rr ',pe,pecnt,pework,petargetwork
+./domain.F90:     write(stdout,delim_fmt)
+./domain.F90:     write(stdout,blank_fmt)
+./domain.F90:     write(stdout,'(a18)') 'Domain Information'
+./domain.F90:     write(stdout,blank_fmt)
+./domain.F90:     write(stdout,delim_fmt)
+./domain.F90:     write(stdout,'(a26,i6)') '  Horizontal domain: nx = ',nx_global
+./domain.F90:     write(stdout,'(a26,i6)') '                     ny = ',ny_global
+./domain.F90:     write(stdout,'(a26,i6)') '  Vertical   domain: km = ',km
+./domain.F90:     write(stdout,'(a26,i6)') '  Number of tracers: nt = ',nt
+./domain.F90:     write(stdout,'(a26,i6)') '  Block size:  nx_block = ',nx_block
+./domain.F90:     write(stdout,'(a26,i6)') '               ny_block = ',ny_block
+./domain.F90:     write(stdout,'(a26,i6)') '      max_blocks_clinic = ', max_blocks_clinic
+./domain.F90:     write(stdout,'(a26,i6)') '      max_blocks_tropic = ', max_blocks_tropic
+./domain.F90:     write(stdout,'(a29,i6)') '  Processors for baroclinic: ', &
+./domain.F90:     write(stdout,'(a29,i6)') '  Processors for barotropic: ', &
+./domain.F90:     write(stdout,'(a31,a10)') '  Distribution for baroclinic: ', &
+./domain.F90:     write(stdout,'(a31,a10)') '  Distribution for barotropic: ', &
+./domain.F90:     write(stdout,'(a25,i2)') '  Number of ghost cells: ', nghost
+./domain.F90:      write(stdout,'(a22,i6)') ' Active Ocean blocks: ',count(work_per_block > 0)
+./domain.F90:     write(outstring,*) 'clinic blocks exceed max: increase max to',&
+./domain.F90:     write(outstring,*) 'clinic blocks too large: decrease max to',&
+./domain.F90:     if (my_task == master_task) write(stdout,*) trim(outstring)
+./domain.F90:     write(outstring,*) 'tropic blocks exceed max: increase max to',&
+./domain.F90:     write(outstring,*) 'tropic blocks too large: decrease max to',&
+./domain.F90:     if (my_task == master_task) write(stdout,*) trim(outstring)
+./drifters.F90:         write(nu)ulong
+./drifters.F90:         write(nu)ulat
+./drifters.F90:         write(nu)kmt
+./drifters.F90:         write(nu)angle
+./drifters.F90:         write(*,*)' ** WARNING: ndrifters > ndrifters_max'
+./drifters.F90:         write(*,*)'             Only first ',ndrifters_max,
+./drifters.F90:      write(*,*)' '
+./drifters.F90:      write(*,*)ndrifters_total,' drifters read in...'
+./drifters.F90:      write(*,*)arrays_deployed,' drifter arrays deployed...'
+./drifters.F90:      write(*,*)' Each drifter array has ',array_size,' elements'
+./drifters.F90:      write(*,*)' '
+./drifters.F90:c     Open the drifters data file and write # of drifters.
+./drifters.F90:      write(nu_drift,*)ndrifters_total
+./drifters.F90:c     Write logical positions of drifters.
+./drifters.F90:c     Write in drifter positions in logical space for restart.
+./drifters.F90:      write(nu,*)ndrifters_total,array_size,arrays_deployed
+./drifters.F90:         write(nu,*)np,
+./drifters.F90:      write(stdout,*)' '
+./drifters.F90:      write(stdout,*)'file written: ',filename
+./drifters.F90:c     trilinear interpolation.  Information is then write to the file
+./drifters.F90:c     Write the time to the out_drifters file
+./drifters.F90:      write(37,*)tday
+./drifters.F90:c     Write data to out_drifters file
+./drifters.F90:         write(37,'(i5,8e13.5)')np,drifter_long,drifter_lat,drifter_z,
+./ecosys_mod.F90:      ecosys_write_restart,         &
+./ecosys_mod.F90:      write (stdout,*) '----- autotroph tracer indices -----'
+./ecosys_mod.F90:         write (stdout,*) 'Chl_ind(', trim(autotrophs(auto_ind)%sname), ') = ', autotrophs(auto_ind)%Chl_ind
+./ecosys_mod.F90:         write (stdout,*) 'C_ind(', trim(autotrophs(auto_ind)%sname), ') = ', autotrophs(auto_ind)%C_ind
+./ecosys_mod.F90:         write (stdout,*) 'Fe_ind(', trim(autotrophs(auto_ind)%sname), ') = ', autotrophs(auto_ind)%Fe_ind
+./ecosys_mod.F90:         write (stdout,*) 'Si_ind(', trim(autotrophs(auto_ind)%sname), ') = ', autotrophs(auto_ind)%Si_ind
+./ecosys_mod.F90:         write (stdout,*) 'CaCO3_ind(', trim(autotrophs(auto_ind)%sname), ') = ', autotrophs(auto_ind)%CaCO3_ind
+./ecosys_mod.F90:      write (stdout,*) '------------------------------------'
+./ecosys_mod.F90:      write(stdout,blank_fmt)
+./ecosys_mod.F90:      write(stdout,ndelim_fmt)
+./ecosys_mod.F90:      write(stdout,blank_fmt)
+./ecosys_mod.F90:      write(stdout,*) ' ecosys:'
+./ecosys_mod.F90:      write(stdout,blank_fmt)
+./ecosys_mod.F90:      write(stdout,*) ' ecosys_nml namelist settings:'
+./ecosys_mod.F90:      write(stdout,blank_fmt)
+./ecosys_mod.F90:      write(stdout,ecosys_nml)
+./ecosys_mod.F90:      write(stdout,blank_fmt)
+./ecosys_mod.F90:      write(stdout,delim_fmt)
+./ecosys_mod.F90:      write(stdout,*)' Calculating surface tracer averages'
+./ecosys_mod.F90:            write(stdout,*) n, surf_avg(n)
+./ecosys_mod.F90:! !IROUTINE: ecosys_write_restart
+./ecosys_mod.F90: subroutine ecosys_write_restart(restart_file, action)
+./ecosys_mod.F90:!  write auxiliary fields & scalars to restart files
+./ecosys_mod.F90:   if (trim(action) == 'write') then
+./ecosys_mod.F90:      call data_set (restart_file, 'write', PH_SURF)
+./ecosys_mod.F90:      call data_set (restart_file, 'write', PH_SURF_ALT_CO2)
+./ecosys_mod.F90: end subroutine ecosys_write_restart
+./ecosys_parms.F90:       WRITE (stdout,*) '----------------------------------------'
+./ecosys_parms.F90:       WRITE (stdout,*) '----- ecosys_parms namelist values -----'
+./ecosys_parms.F90:       WRITE (stdout,*) 'parm_Fe_bioavail       = ', parm_Fe_bioavail
+./ecosys_parms.F90:       WRITE (stdout,*) 'parm_o2_min            = ', parm_o2_min
+./ecosys_parms.F90:       WRITE (stdout,*) 'parm_o2_min_delta      = ', parm_o2_min_delta
+./ecosys_parms.F90:       WRITE (stdout,*) 'parm_kappa_nitrif      = ', parm_kappa_nitrif
+./ecosys_parms.F90:       WRITE (stdout,*) 'parm_nitrif_par_lim    = ', parm_nitrif_par_lim
+./ecosys_parms.F90:       WRITE (stdout,*) 'parm_z_mort_0          = ', parm_z_mort_0
+./ecosys_parms.F90:       WRITE (stdout,*) 'parm_z_mort2_0         = ', parm_z_mort2_0
+./ecosys_parms.F90:       WRITE (stdout,*) 'parm_labile_ratio      = ', parm_labile_ratio
+./ecosys_parms.F90:       WRITE (stdout,*) 'parm_POMbury           = ', parm_POMbury
+./ecosys_parms.F90:       WRITE (stdout,*) 'parm_BSIbury           = ', parm_BSIbury
+./ecosys_parms.F90:       WRITE (stdout,*) 'parm_fe_scavenge_rate0 = ', parm_fe_scavenge_rate0
+./ecosys_parms.F90:       WRITE (stdout,*) 'parm_f_prod_sp_CaCO3   = ', parm_f_prod_sp_CaCO3
+./ecosys_parms.F90:       WRITE (stdout,*) 'parm_POC_diss          = ', parm_POC_diss
+./ecosys_parms.F90:       WRITE (stdout,*) 'parm_SiO2_diss         = ', parm_SiO2_diss
+./ecosys_parms.F90:       WRITE (stdout,*) 'parm_CaCO3_diss        = ', parm_CaCO3_diss
+./ecosys_parms.F90:       WRITE (stdout,*) 'parm_scalelen_z        = ', parm_scalelen_z
+./ecosys_parms.F90:       WRITE (stdout,*) 'parm_scalelen_vals     = ', parm_scalelen_vals
+./ecosys_parms.F90:          WRITE (stdout,*) 'lname(', trim(autotrophs(auto_ind)%sname), ') = ', autotrophs(auto_ind)%lname
+./ecosys_parms.F90:          WRITE (stdout,*) 'Nfixer(', trim(autotrophs(auto_ind)%sname), ') = ', autotrophs(auto_ind)%Nfixer
+./ecosys_parms.F90:          WRITE (stdout,*) 'imp_calcifier(', trim(autotrophs(auto_ind)%sname), ') = ', autotrophs(auto_ind)%imp_calcifier
+./ecosys_parms.F90:          WRITE (stdout,*) 'exp_calcifier(', trim(autotrophs(auto_ind)%sname), ') = ', autotrophs(auto_ind)%exp_calcifier
+./ecosys_parms.F90:          WRITE (stdout,*) 'grazee_ind(', trim(autotrophs(auto_ind)%sname), ') = ', autotrophs(auto_ind)%grazee_ind
+./ecosys_parms.F90:          WRITE (stdout,*) 'kFe(', trim(autotrophs(auto_ind)%sname), ') = ', autotrophs(auto_ind)%kFe
+./ecosys_parms.F90:          WRITE (stdout,*) 'kPO4(', trim(autotrophs(auto_ind)%sname), ') = ', autotrophs(auto_ind)%kPO4
+./ecosys_parms.F90:          WRITE (stdout,*) 'kDOP(', trim(autotrophs(auto_ind)%sname), ') = ', autotrophs(auto_ind)%kDOP
+./ecosys_parms.F90:          WRITE (stdout,*) 'kNO3(', trim(autotrophs(auto_ind)%sname), ') = ', autotrophs(auto_ind)%kNO3
+./ecosys_parms.F90:          WRITE (stdout,*) 'kNH4(', trim(autotrophs(auto_ind)%sname), ') = ', autotrophs(auto_ind)%kNH4
+./ecosys_parms.F90:          WRITE (stdout,*) 'kSiO3(', trim(autotrophs(auto_ind)%sname), ') = ', autotrophs(auto_ind)%kSiO3
+./ecosys_parms.F90:          WRITE (stdout,*) 'Qp(', trim(autotrophs(auto_ind)%sname), ') = ', autotrophs(auto_ind)%Qp
+./ecosys_parms.F90:          WRITE (stdout,*) 'gQfe_0(', trim(autotrophs(auto_ind)%sname), ') = ', autotrophs(auto_ind)%gQfe_0
+./ecosys_parms.F90:          WRITE (stdout,*) 'gQfe_min(', trim(autotrophs(auto_ind)%sname), ') = ', autotrophs(auto_ind)%gQfe_min
+./ecosys_parms.F90:          WRITE (stdout,*) 'alphaPI(', trim(autotrophs(auto_ind)%sname), ') = ', autotrophs(auto_ind)%alphaPI
+./ecosys_parms.F90:          WRITE (stdout,*) 'PCref(', trim(autotrophs(auto_ind)%sname), ') = ', autotrophs(auto_ind)%PCref
+./ecosys_parms.F90:          WRITE (stdout,*) 'thetaN_max(', trim(autotrophs(auto_ind)%sname), ') = ', autotrophs(auto_ind)%thetaN_max
+./ecosys_parms.F90:          WRITE (stdout,*) 'loss_thres(', trim(autotrophs(auto_ind)%sname), ') = ', autotrophs(auto_ind)%loss_thres
+./ecosys_parms.F90:          WRITE (stdout,*) 'loss_thres2(', trim(autotrophs(auto_ind)%sname), ') = ', autotrophs(auto_ind)%loss_thres2
+./ecosys_parms.F90:          WRITE (stdout,*) 'temp_thres(', trim(autotrophs(auto_ind)%sname), ') = ', autotrophs(auto_ind)%temp_thres
+./ecosys_parms.F90:          WRITE (stdout,*) 'mort(', trim(autotrophs(auto_ind)%sname), ') = ', autotrophs(auto_ind)%mort
+./ecosys_parms.F90:          WRITE (stdout,*) 'mort2(', trim(autotrophs(auto_ind)%sname), ') = ', autotrophs(auto_ind)%mort2
+./ecosys_parms.F90:          WRITE (stdout,*) 'agg_rate_max(', trim(autotrophs(auto_ind)%sname), ') = ', autotrophs(auto_ind)%agg_rate_max
+./ecosys_parms.F90:          WRITE (stdout,*) 'agg_rate_min(', trim(autotrophs(auto_ind)%sname), ') = ', autotrophs(auto_ind)%agg_rate_min
+./ecosys_parms.F90:          WRITE (stdout,*) 'z_umax_0(', trim(autotrophs(auto_ind)%sname), ') = ', autotrophs(auto_ind)%z_umax_0
+./ecosys_parms.F90:          WRITE (stdout,*) 'z_grz(', trim(autotrophs(auto_ind)%sname), ') = ', autotrophs(auto_ind)%z_grz
+./ecosys_parms.F90:          WRITE (stdout,*) 'graze_zoo(', trim(autotrophs(auto_ind)%sname), ') = ', autotrophs(auto_ind)%graze_zoo
+./ecosys_parms.F90:          WRITE (stdout,*) 'graze_poc(', trim(autotrophs(auto_ind)%sname), ') = ', autotrophs(auto_ind)%graze_poc
+./ecosys_parms.F90:          WRITE (stdout,*) 'graze_doc(', trim(autotrophs(auto_ind)%sname), ') = ', autotrophs(auto_ind)%graze_doc
+./ecosys_parms.F90:          WRITE (stdout,*) 'loss_poc(', trim(autotrophs(auto_ind)%sname), ') = ', autotrophs(auto_ind)%loss_poc
+./ecosys_parms.F90:          WRITE (stdout,*) 'f_zoo_detr(', trim(autotrophs(auto_ind)%sname), ') = ', autotrophs(auto_ind)%f_zoo_detr
+./ecosys_parms.F90:       WRITE (stdout,*) '----------------------------------------'
+./exit_mod.F90:      write (local_unit,delim_fmt)
+./exit_mod.F90:      write (local_unit,blank_fmt)
+./exit_mod.F90:         write (local_unit,'(a14)') 'POP exiting...'
+./exit_mod.F90:         write (local_unit,'(a15)') 'POP aborting...'
+./exit_mod.F90:         write (local_unit,'(a37)') 'POP exiting with unknown exit mode...'
+./exit_mod.F90:      write (local_unit,*) exit_message
+./exit_mod.F90:      write (local_unit,blank_fmt)
+./exit_mod.F90:      write (local_unit,delim_fmt)
+./forcing_ap.F90:         write(stdout,blank_fmt)
+./forcing_ap.F90:         write(stdout,'(a22,a)') ' AP Annual file read: ', &
+./forcing_ap.F90:         write(stdout,blank_fmt)
+./forcing_ap.F90:         write(stdout,'(a23,a)') ' Monthly AP file read: ', &
+./forcing_ap.F90:            write(stdout,blank_fmt)
+./forcing_ap.F90:            write(stdout,*) ' AP n-hour file read: ', forcing_filename
+./forcing_coupled.F90:          write(stdout,blank_fmt)
+./forcing_coupled.F90:          write(stdout,ndelim_fmt)
+./forcing_coupled.F90:          write(stdout,blank_fmt)
+./forcing_coupled.F90:          write(stdout,*) ' Coupling:'
+./forcing_coupled.F90:          write(stdout,blank_fmt)
+./forcing_coupled.F90:          write(stdout,*) ' coupled_nml namelist settings:'
+./forcing_coupled.F90:          write(stdout,blank_fmt)
+./forcing_coupled.F90:          write(stdout, coupled_nml)
+./forcing_coupled.F90:          write(stdout,blank_fmt)
+./forcing_coupled.F90:!  Note that the cpl_write_xxx flags have _no_ default value;
+./forcing_coupled.F90:     write(stdout,*) message
+./forcing_coupled.F90:     write(stdout,*) message
+./forcing_coupled.F90:     write(stdout,*) message
+./forcing_coupled.F90:     write(stdout,*) message
+./forcing_coupled.F90:     write(stdout,*) message
+./forcing.F90:!  write out header for forcing options to stdout.
+./forcing.F90:      write(stdout,blank_fmt)
+./forcing.F90:      write(stdout,ndelim_fmt)
+./forcing.F90:      write(stdout,blank_fmt)
+./forcing.F90:      write(stdout,'(a15)') 'Forcing options'
+./forcing.F90:      write(stdout,blank_fmt)
+./forcing.F90:      write(stdout,delim_fmt)
+./forcing_pt_interior.F90:         write(stdout,blank_fmt)
+./forcing_pt_interior.F90:         write(stdout,'(a31,a)') ' Interior PT Annual file read: ', &
+./forcing_pt_interior.F90:         write(pt_interior_data_names(n),'(a11,i2)') 'TEMPERATURE',n
+./forcing_pt_interior.F90:         write(stdout,blank_fmt)
+./forcing_pt_interior.F90:         write(stdout,'(a32,a)') ' Interior PT Monthly file read: ', &
+./forcing_pt_interior.F90:            write(stdout,blank_fmt)
+./forcing_pt_interior.F90:            write(stdout,'(a31,a)') ' Interior PT n-hour file read: ', &
+./forcing_pt_interior.F90:      write(stdout,'(a57)') &
+./forcing_sfwf.F90:         write(stdout,blank_fmt)
+./forcing_sfwf.F90:         write(stdout,'(a25,a)') ' SFWF Annual file read: ', &
+./forcing_sfwf.F90:         write(stdout,blank_fmt)
+./forcing_sfwf.F90:         write(stdout,'(a25,a)') ' SFWF Monthly file read: ', &
+./forcing_sfwf.F90:            write(stdout,blank_fmt)
+./forcing_sfwf.F90:            write(stdout,'(a24,a)') ' SFWF n-hour file read: ', &
+./forcing_sfwf.F90:         write(stdout,'(a47)') &
+./forcing_sfwf.F90:            write(stdout,blank_fmt)
+./forcing_sfwf.F90:            write(stdout,'(a22,1pe23.15)') &
+./forcing_sfwf.F90:      !   write(stdout,blank_fmt)
+./forcing_sfwf.F90:      !   write(stdout,'(a32,1pe22.15)') &
+./forcing_sfwf.F90:            write(stdout,blank_fmt)
+./forcing_sfwf.F90:            write(stdout,'(a22,1pe23.15)') &
+./forcing_sfwf.F90:      write (stdout,'(a58,1pe22.15)') &
+./forcing_sfwf.F90:      write (stdout,'(a22)') ' precip_adjustment: '
+./forcing_sfwf.F90:      write (stdout,'(a28,1pe22.15)') '   sal_tendency (kg/m^2/s): ', &
+./forcing_sfwf.F90:      write (stdout,'(a28,1pe22.15)') '    fw_tendency (kg/m^2/s): ', &
+./forcing_sfwf.F90:      write (stdout,'(a33,e14.8)') ' Changed precipitation factor to ',&
+./forcing_shf.F90:         write(stdout,blank_fmt)
+./forcing_shf.F90:         write(stdout,'(a23,a)') ' SHF Annual file read: ', &
+./forcing_shf.F90:         write(stdout,blank_fmt)
+./forcing_shf.F90:         write(stdout,'(a24,a)') ' SHF Monthly file read: ', &
+./forcing_shf.F90:            write(stdout,blank_fmt)
+./forcing_shf.F90:            write(stdout,'(a23,a)') ' SHF n-hour file read: ', &
+./forcing_s_interior.F90:         write(stdout,blank_fmt)
+./forcing_s_interior.F90:         write(stdout,'(a30,a)') ' Interior S Annual file read: ', &
+./forcing_s_interior.F90:         write(s_interior_data_names(n),'(a9,i2)') 'SALINITY ',n
+./forcing_s_interior.F90:         write(stdout,blank_fmt)
+./forcing_s_interior.F90:         write(stdout,'(a31,a)') ' Interior S Monthly file read: ', &
+./forcing_s_interior.F90:            write(stdout,blank_fmt)
+./forcing_s_interior.F90:            write(stdout,'(a30,a)') ' Interior S n-hour file read: ', &
+./forcing_s_interior.F90:      write(stdout,"('Variable Interior Salinity Restoring enabled')")
+./forcing_tools.F90:         write(stdout,'(a52)') &
+./forcing_tools.F90:         write(stdout,'(a54)') &
+./forcing_tools.F90:!  write year, day, and hour into character variables and use them
+./forcing_tools.F90:   write(file_chour,'(i3)') 100   + file_hour
+./forcing_tools.F90:   write(file_cday, '(i4)') 1000  + file_day
+./forcing_tools.F90:   write(file_cyear,'(i5)') 10000 + file_year
+./forcing_tools.F90:         write(stdout,blank_fmt)
+./forcing_tools.F90:         write(stdout,'(a9,f12.3,1x,a,a12,a)') 'tday00 = ', tday00, &
+./forcing_tools.F90:!  Writes out forcing options to stdout (or log file).
+./forcing_tools.F90:!  echo forcing selections to stdout. only write from master task.
+./forcing_tools.F90:         write(stdout,'(a3,a)') 'No ', trim(forcing_label)
+./forcing_tools.F90:!     if there is some kind of forcing, write out the type (eg, annual)
+./forcing_tools.F90:!     then write increment between forcing data if appropriate.
+./forcing_tools.F90:            write(stdout,'(a,a1,a)') trim(forcing_label), ':', &
+./forcing_tools.F90:            write(stdout,'(a,a1,a,a1,a)') trim(forcing_label),    ':', &
+./forcing_tools.F90:            write(stdout,'(a,a29,f7.3)') trim(forcing_label),      &
+./forcing_tools.F90:!        write the frequency that the forcing is updated.
+./forcing_tools.F90:            write(stdout,'(a,a27)') trim(forcing_label), &
+./forcing_tools.F90:            write(stdout,'(a,a25,f7.3,a5)') trim(forcing_label), &
+./forcing_tools.F90:            write(stdout,'(a,a33)') trim(forcing_label), &
+./forcing_tools.F90:!        write order of interpolation if appropriate.
+./forcing_tools.F90:            write(stdout,'(a,a21,a)') trim(forcing_label), &
+./forcing_tools.F90:      write(stdout,blank_fmt)
+./forcing_ws.F90:         write(stdout,blank_fmt)
+./forcing_ws.F90:         write(stdout,'(a22,a)') ' WS Annual file read: ', &
+./forcing_ws.F90:         write(stdout,blank_fmt)
+./forcing_ws.F90:         write(stdout,'(a23,a)') ' WS Monthly file read: ', &
+./forcing_ws.F90:            write(stdout,blank_fmt)
+./forcing_ws.F90:            write(stdout,'(a22,a)') ' WS n-hour file read: ', &
+./grid.F90:      write(stdout,blank_fmt)
+./grid.F90:      write(stdout,ndelim_fmt)
+./grid.F90:      write(stdout,blank_fmt)
+./grid.F90:      write(stdout,*) ' Grid:'
+./grid.F90:      write(stdout,blank_fmt)
+./grid.F90:      write(stdout,*) ' grid_nml namelist settings:'
+./grid.F90:      write(stdout,blank_fmt)
+./grid.F90:      write(stdout, grid_nml)
+./grid.F90:      write(stdout,delim_fmt)
+./grid.F90:      write(stdout,blank_fmt)
+./grid.F90:      write(stdout,'(a13)') ' Grid options'
+./grid.F90:      write(stdout,blank_fmt)
+./grid.F90:         write(stdout,'(a36)') ' Creating horizontal grid internally'
+./grid.F90:         write(stdout,*) ' Reading horizontal grid from file:', &
+./grid.F90:   if (my_task == master_task) write(stdout,blank_fmt)
+./grid.F90:      if (my_task == master_task) write(stdout,'(a39)') &
+./grid.F90:      if (my_task == master_task) write(stdout,'(a30)') &
+./grid.F90:      if (my_task == master_task) write(stdout,'(a40)') &
+./grid.F90:         write(stdout,'(a34)') ' Creating vertical grid internally'
+./grid.F90:         write(stdout,*) ' Reading vertical grid from file:', &
+./grid.F90:      write(stdout,blank_fmt)
+./grid.F90:      write(stdout,'(a15)') ' Vertical grid:'
+./grid.F90:      write(stdout,vgrid_fmt1)
+./grid.F90:      write(stdout,vgrid_fmt2)
+./grid.F90:         write(stdout,vgrid_fmt3) k,dz(k),zt(k)
+./grid.F90:      write(stdout,blank_fmt)
+./grid.F90:      if (my_task == master_task) write(stdout,'(a33)') &
+./grid.F90:      if (my_task == master_task) write(stdout,'(a33)') &
+./grid.F90:!     if (my_task == master_task) write(stdout,'(a30,a)') &
+./grid.F90:      if (my_task == master_task) write(stdout,'(a21)') &
+./grid.F90:      if (my_task == master_task) write(stdout,'(a58)') &
+./grid.F90:      if (my_task == master_task) write(stdout,'(a33)') &
+./grid.F90:   !*** write out topo file if needed
+./grid.F90:         write(nu, rec=1, iostat=ioerr) KMT_G
+./grid.F90:         write(stdout,'(a30)') ' Partial bottom cells  enabled'
+./grid.F90:         write(stdout,'(a27,a)') ' Reading bottom cell file: ', &
+./grid.F90:      if (my_task == master_task) write(stdout,'(a30)') &
+./grid.F90:      write(stdout,blank_fmt)
+./grid.F90:      write(stdout,topo_fmt1) nsurface_t, nsurface_u
+./grid.F90:      write(stdout,topo_fmt2) nocean_t, nocean_u
+./grid.F90:      write(stdout,topo_fmt3) area_t*1.0e-10_POP_r8, &
+./grid.F90:      write(stdout,topo_fmt4) volume_t*1.0e-15_POP_r8, &
+./grid.F90:      write(stdout,blank_fmt)
+./grid.F90:      if (my_task == master_task) write(stdout,'(a36,a)') &
+./grid.F90:      if (my_task == master_task) write(stdout,'(a24)') &
+./grid.F90:      if (my_task == master_task) write(stdout,*) d0,d1,zmax
+./grid.F90:         if (my_task == master_task) write(stdout,*) d0,d1,depth,zmax
+./grid.F90:         write(stdout,*) 'Integrated depth = ',depth,'   zmax = ',zmax
+./grid.F90:            write(stdout,*) 'i, KMT_G(i,1),KMT_G(i,ny_global) = ', &
+./grid.F90:      write(stdout,blank_fmt)
+./grid.F90:      write(stdout,rmpts_fmt) npoints_removed_total
+./grid.F90:      write(stdout,blank_fmt)
+./grid.F90:      write(stdout,rmpts_fmt) npoints_removed
+./grid.F90:       write(stdout,*)'area_masks: maximum number of marginal seas exceeded'   
+./grid.F90:         write(stdout,"('Region #',i2,' is a marginal sea')") region
+./grid.F90:         write(stdout, &
+./grid.F90:     write(stdout,blank_fmt)
+./grid.F90:     write(stdout,1003)
+./grid.F90:        write(stdout,1004) region_info(n)%number                   , &
+./grid.F90:        write(stdout,1004) region_info(n)%number, trim(region_info(n)%name)
+./grid.F90:     write(stdout,blank_fmt)
+./grid.F90:     write(stdout,1005)
+./grid.F90:        write(stdout,1006) region_info(n)%number        , &
+./grid.F90:     write(stdout,blank_fmt)
+./history.F90:             write_history
+./history.F90:! !IROUTINE: write_history
+./history.F90: subroutine write_history
+./history.F90:!  This routine writes snapshots of requested fields to a file.
+./history.F90:      lhistory_write     ! true if time to write a file
+./history.F90:!  check to see whether it is time to write files
+./history.F90:   lhistory_write = .false.
+./history.F90:      lhistory_write = check_time_flag(history_flag)
+./history.F90:!  write history files if it is time
+./history.F90:   if (lhistory_write) then
+./history.F90:      write(hist_string,'(a23,a8,1x,a10)') & 
+./history.F90:!     write fields to file - this requires two phases
+./history.F90:!     write fields to file 
+./history.F90:!     in this second phase, we actually write the data
+./history.F90:            call data_set (hist_file_desc,'write',hist_fields(nfield))
+./history.F90:         write(stdout,blank_fmt)
+./history.F90:         write(stdout,*) 'Wrote file: ', trim(hist_file_desc%full_name)
+./history.F90: end subroutine write_history
+./history.F90:      write(stdout,blank_fmt)
+./history.F90:      write(stdout,ndelim_fmt)
+./history.F90:      write(stdout,blank_fmt)
+./history.F90:      write(stdout,'(a23)') ' History output options'
+./history.F90:      write(stdout,blank_fmt)
+./history.F90:      write(stdout,delim_fmt)
+./history.F90:         write(stdout,'(a23)') 'History output disabled'
+./history.F90:         write(stdout,'(a21,i6,a8)') 'History output every ', &
+./history.F90:         write(stdout,'(a21,i6,a9)') 'History output every ', &
+./history.F90:         write(stdout,'(a21,i6,a7)') 'History output every ', &
+./history.F90:         write(stdout,'(a21,i6,a8)') 'History output every ', &
+./history.F90:         write(stdout,'(a21,i6,a8)') 'History output every ', &
+./history.F90:         write(stdout,'(a21,i6,a6)') 'History output every ', &
+./history.F90:      if (my_task == master_task) write(stdout,'(a24,a)') &
+./history.F90:         write(stdout,*) 'Requested hist field: ', trim(short_name)
+./history.F90:      write (file_suffix(cindx1:cindx2),'(a1,i2)') ':',ihour
+./history.F90:      write (char_temp,'(i10)') nint(tsecond)
+./history.F90:      write (char_temp,'(i10)') nsteps_total
+./hmix_aniso.F90:      write(stdout,blank_fmt)
+./hmix_aniso.F90:      write(stdout,ndelim_fmt)
+./hmix_aniso.F90:      write(stdout,'(a30)') 'Anisotropic viscosity options:'
+./hmix_aniso.F90:      write(stdout,blank_fmt)
+./hmix_aniso.F90:      write(stdout,hmix_aniso_nml)
+./hmix_aniso.F90:      write(stdout,blank_fmt)
+./hmix_aniso.F90:         write(stdout,'(a47)') &
+./hmix_aniso.F90:         write(stdout,'(a46)') &
+./hmix_aniso.F90:         write(stdout,'(a43)') &
+./hmix_aniso.F90:         write(stdout,'(a52)') &
+./hmix_aniso.F90:         write(stdout,'(a36)') 'Using input anisotropic viscosities:'
+./hmix_aniso.F90:         write(stdout,param_fmt) '   visc_para = ',visc_para
+./hmix_aniso.F90:         write(stdout,param_fmt) '   visc_perp = ',visc_perp
+./hmix_aniso.F90:         write(stdout,'(a38)') 'Using nonlinear Smagorinski viscosites'
+./hmix_aniso.F90:         write(stdout,'(a37)') '  input anistropic smag coefficients:'
+./hmix_aniso.F90:         write(stdout,param_fmt) '      c_para = ',c_para
+./hmix_aniso.F90:         write(stdout,param_fmt) '      c_perp = ',c_perp
+./hmix_aniso.F90:         write(stdout,param_fmt) '      u_para = ',u_para
+./hmix_aniso.F90:         write(stdout,param_fmt) '      u_perp = ',u_perp
+./hmix_aniso.F90:            write(stdout,'(a31)') 'Using latitudinal variation in '
+./hmix_aniso.F90:            write(stdout,'(a35)') 'Smagorinski perpendicular viscosity'
+./hmix_aniso.F90:            write(stdout,param_fmt) 'smag_lat      =',smag_lat
+./hmix_aniso.F90:            write(stdout,param_fmt) 'smag_lat_fact =',smag_lat_fact
+./hmix_aniso.F90:            write(stdout,param_fmt) 'smag_lat_gauss=',smag_lat_gauss
+./hmix_aniso.F90:            write(stdout,'(a38)') &
+./hmix_aniso.F90:            write(stdout,param_fmt) '   vconst_1  = ',vconst_1 
+./hmix_aniso.F90:            write(stdout,param_fmt) '   vconst_2  = ',vconst_2 
+./hmix_aniso.F90:            write(stdout,param_fmt) '   vconst_3  = ',vconst_3 
+./hmix_aniso.F90:            write(stdout,param_fmt) '   vconst_4  = ',vconst_4 
+./hmix_aniso.F90:            write(stdout,'(a15,2x,i6)') '   vconst_5  = ',vconst_5 
+./hmix_aniso.F90:            write(stdout,param_fmt) '   vconst_6  = ',vconst_6 
+./hmix_aniso.F90:            write(stdout,param_fmt) '   vconst_7  = ',vconst_7 
+./hmix_aniso.F90:               write(stdout,'(a44,a)') &
+./hmix_aniso.F90:            write(stdout,'(a47,a)') &
+./hmix_aniso.F90:            write(stdout,"('  vertical level = ',i3)") k
+./hmix_aniso.F90:            write(stdout,'(a14,1x,1pe12.5,3x,a12,1x,1pe12.5)') &
+./hmix_aniso.F90:            write(stdout,'(a14,1x,1pe12.5,3x,a12,1x,1pe12.5)') &
+./hmix_aniso.F90:           call write_var_viscosity(trim(var_viscosity_outfile),   &
+./hmix_aniso.F90:               write(stdout,'(a21)') 'WARNING (hmix_aniso):'
+./hmix_aniso.F90:               write(stdout,'(a51)') &
+./hmix_aniso.F90:               write(stdout,'(a21)') 'WARNING (hmix_aniso):'
+./hmix_aniso.F90:               write(stdout,'(a56)') &
+./hmix_aniso.F90:!  deallocate work space and write viscosity if required
+./hmix_aniso.F90:      write(stdout,blank_fmt)
+./hmix_aniso.F90:! !IROUTINE: write_var_viscosity
+./hmix_aniso.F90: subroutine write_var_viscosity(outfile, outfile_fmt)
+./hmix_aniso.F90:!  This routine writes the spatially-varying anisotropic viscosity
+./hmix_aniso.F90:!  write arrays then clean up
+./hmix_aniso.F90:   call data_set (visc_file, 'write', F_PARA_d)
+./hmix_aniso.F90:   call data_set (visc_file, 'write', F_PERP_d)
+./hmix_aniso.F90: end subroutine write_var_viscosity
+./hmix_del2.F90:      write(stdout,blank_fmt)
+./hmix_del2.F90:      write(stdout,'(a33)') 'Laplacian momentum mixing options'
+./hmix_del2.F90:      write(stdout,blank_fmt)
+./hmix_del2.F90:         write(stdout,'(a33)') 'Using input horizontal viscosity:'
+./hmix_del2.F90:         write(stdout,'(a7,2x,1pe12.5)') '  am =',am
+./hmix_del2.F90:         write(stdout,'(a44)') &
+./hmix_del2.F90:         write(stdout,'(a44)') &
+./hmix_del2.F90:         write(stdout,'(a7,2x,1pe12.5)') '  am =',am
+./hmix_del2.F90:         write(stdout,'(a37)') 'Variable horizontal viscosity enabled'
+./hmix_del2.F90:         write(stdout,'(a12,1x,1pe12.5,3x,a9,1x,1pe12.5)') &
+./hmix_del2.F90:      write(stdout,blank_fmt)
+./hmix_del2.F90:      write(stdout,'(a31)') 'Laplacian tracer mixing options'
+./hmix_del2.F90:      write(stdout,blank_fmt)
+./hmix_del2.F90:         write(stdout,'(a35)') 'Using input horizontal diffusivity:'
+./hmix_del2.F90:         write(stdout,'(a7,2x,1pe12.5)') '  ah =',ah
+./hmix_del2.F90:         write(stdout,'(a43)') &
+./hmix_del2.F90:         write(stdout,'(a46)') &
+./hmix_del2.F90:         write(stdout,'(a7,2x,1pe12.5)') '  ah =',ah
+./hmix_del2.F90:         write(stdout,'(a39)')  &
+./hmix_del2.F90:         write(stdout,'(a12,1x,1pe12.5,3x,a9,1x,1pe12.5)') &
+./hmix_del4.F90:      write(stdout,blank_fmt)
+./hmix_del4.F90:      write(stdout,'(a34)') 'Biharmonic momentum mixing options'
+./hmix_del4.F90:      write(stdout,blank_fmt)
+./hmix_del4.F90:         write(stdout,'(a44)') &
+./hmix_del4.F90:         write(stdout,'(a33)') 'Using input horizontal viscosity:'
+./hmix_del4.F90:      write(stdout,'(a7,2x,1pe12.5)') '  am =',am
+./hmix_del4.F90:         write(stdout,'(a44)') &
+./hmix_del4.F90:         write(stdout,'(a37)') 'Variable horizontal viscosity enabled'
+./hmix_del4.F90:         write(stdout,'(a12,1x,1pe12.5,3x,a9,1x,1pe12.5)') &
+./hmix_del4.F90:      write(stdout,blank_fmt)
+./hmix_del4.F90:      write(stdout,'(a32)') 'Biharmonic tracer mixing options'
+./hmix_del4.F90:      write(stdout,blank_fmt)
+./hmix_del4.F90:         write(stdout,'(a46)') &
+./hmix_del4.F90:         write(stdout,'(a35)') 'Using input horizontal diffusivity:'
+./hmix_del4.F90:      write(stdout,'(a7,2x,1pe12.5)') '  ah =',ah
+./hmix_del4.F90:         write(stdout,'(a43)') &
+./hmix_del4.F90:         write(stdout,'(a39)') &
+./hmix_del4.F90:         write(stdout,'(a12,1x,1pe12.5,3x,a9,1x,1pe12.5)') &
+./hmix_gm.F90:     write(stdout,*) ' '
+./hmix_gm.F90:     write(stdout,*) ' Document Namelist Parameters:'
+./hmix_gm.F90:     write(stdout,*) ' ============================ '
+./hmix_gm.F90:     write(stdout,*) ' '
+./hmix_gm.F90:     write(stdout,  hmix_gm_nml)
+./hmix_gm.F90:     write(stdout,*) ' '
+./hmix_gm.F90:     write(stdout,*) '  Gent-McWilliams options:'
+./hmix_gm.F90:     write(stdout,*) '    kappa_isop choice is ',  &
+./hmix_gm.F90:     write(stdout,*) '    kappa_thic choice is ',  &
+./hmix_gm.F90:     write(stdout,*) '    kappa computation frequency choice is ',  &
+./hmix_gm.F90:     write(stdout,*) '    slope control choice is ',  &
+./hmix_gm.F90:     write(stdout,'(a28,1pe13.6)') ' isopycnal diffusion      = ',  &
+./hmix_gm.F90:     write(stdout,'(a28,1pe13.6)') ' thickness diffusion      = ',  &
+./hmix_gm.F90:     write(stdout,'(a28,1pe13.6)') ' backgroud diff. (bottom) = ',  &
+./hmix_gm.F90:     write(stdout,'(a28,1pe13.6)') ' backgroud diff. (srfbl)  = ',  &
+./hmix_gm.F90:     write(stdout,'(a28,1pe13.6)') ' max. slope for redi      = ',  &
+./hmix_gm.F90:     write(stdout,'(a28,1pe13.6)') ' max. slope for bolus     = ',  &
+./hmix_gm.F90:       write(stdout,'(a47)')  &
+./hmix_gm.F90:       write(stdout,1001)
+./hmix_gm.F90:       write(stdout,1002)
+./hmix_gm.F90:       write(stdout,'(a33)') '  transition layer scheme is on. '
+./hmix_gm.F90:         write(stdout,'(a32)') ' using climatological N^2 data. '
+./hmix_gm.F90:         write(stdout,'(a34)') ' using model data to compute N^2. '
+./hmix_gm.F90:         write(stdout,'(a30)') ' KAPPA_ISOP varies with depth.'
+./hmix_gm.F90:         write(stdout,'(a30)') ' KAPPA_THIC varies with depth.'
+./hmix_gm.F90:       write(stdout,'(a20,1pe13.6)') '    kappa_depth_1 = ',  &
+./hmix_gm.F90:       write(stdout,'(a20,1pe13.6)') '    kappa_depth_2 = ',  &
+./hmix_gm.F90:       write(stdout,'(a24,1pe13.6)') '    kappa_depth_scale = ',  &
+./hmix_gm.F90:       write(stdout,'(a16,1pe13.6)') '     const_eg = ',  &
+./hmix_gm.F90:       write(stdout,'(a16,1pe13.6)') '     gamma_eg = ',  &
+./hmix_gm.F90:       write(stdout,'(a16,1pe13.6)') ' kappa_min_eg = ',  &
+./hmix_gm.F90:       write(stdout,'(a16,1pe13.6)') ' kappa_max_eg = ',  &
+./hmix_gm.F90:       write(stdout,blank_fmt)
+./hmix_gm.F90:       write(stdout,'(a43,a)')                                 &
+./hmix_gm.F90:       !open(unit=10,file="/home/aketh/ocn_correctness_data/changed.txt",status="unknown",position="append",action="write",form="formatted")
+./hmix_gm.F90:       !write(10,*),WORK1,WORK2,WORK3,WORK4,WORk2_NEXT,WORK4_NEXT
+./horizontal_mix.F90:      write(stdout,blank_fmt)
+./horizontal_mix.F90:      write(stdout,ndelim_fmt)
+./horizontal_mix.F90:      write(stdout,blank_fmt)
+./horizontal_mix.F90:      write(stdout,'(a25)') 'Horizontal mixing options'
+./horizontal_mix.F90:      write(stdout,blank_fmt)
+./horizontal_mix.F90:      write(stdout,*) ' hmix_nml namelist settings:'
+./horizontal_mix.F90:      write(stdout,blank_fmt)
+./horizontal_mix.F90:      write(stdout,hmix_nml)
+./horizontal_mix.F90:      write(stdout,blank_fmt)
+./horizontal_mix.F90:      write(stdout,delim_fmt)
+./horizontal_mix.F90:         write(stdout,'(a42)') &
+./horizontal_mix.F90:         write(stdout,'(a43)') &
+./horizontal_mix.F90:         write(stdout,'(a44)') &
+./horizontal_mix.F90:         write(stdout,'(a44)') &
+./horizontal_mix.F90:         write(stdout,'(a43)') &
+./horizontal_mix.F90:         write(stdout,'(a35)') &
+./horizontal_mix.F90:        write (stdout,blank_fmt)
+./horizontal_mix.F90:        write (stdout, '(a48)') &
+./horizontal_mix.F90:      if (my_task == master_task) write(stdout,'(a59)') &
+./hydro_sections.F90:         write(*,*)' '
+./hydro_sections.F90:         write(*,*)' Too many cruise files listed in file ',in_cruises
+./hydro_sections.F90:         write(*,*)' Increase the value of num_cruises_max'
+./hydro_sections.F90:         write(*,*)' '
+./hydro_sections.F90:         write(*,*)' No cruise files will be read'
+./hydro_sections.F90:      write(*,*)' '
+./hydro_sections.F90:      write(*,"(' Attempting to read in ',i4,' cruise files')")
+./hydro_sections.F90:      write(*,*)' '
+./hydro_sections.F90:         write(*,*)' Reading file: ',cruise_file(cruise)
+./hydro_sections.F90:            write(*,*)' '
+./hydro_sections.F90:            write(*,*)' *** Warning ***'
+./hydro_sections.F90:            write(*,*)' More stations on this cruise than allowed'
+./hydro_sections.F90:            write(*,"(' Proceeding with first ',i4,' stations')")
+./hydro_sections.F90:c     alone.  Otherwise, it writes the number of stations on the first
+./hydro_sections.F90:      write(*,*)' '
+./hydro_sections.F90:         write(*,*)' Creating file ',temp_file
+./hydro_sections.F90:         write(31,*)num_stations(cruise)
+./hydro_sections.F90:               write(*,*)' '
+./hydro_sections.F90:               write(*,*)' Appending file: ',temp_file
+./hydro_sections.F90:c     First write long, lat, time and number of neighbors of station data.  
+./hydro_sections.F90:               write(31,'(3f12.3,1x,i4)')
+./hydro_sections.F90:                  write(31,*)DIST_STATIONS(station,cruise,n)
+./hydro_sections.F90:                     write(31,'(5e15.6)')
+./hydro_sections.F90:         write(*,*)' '
+./hydro_sections.F90:         write(*,*)' Too many slice files listed in file ',in_slices
+./hydro_sections.F90:         write(*,*)' Increase the value of num_slices_max'
+./hydro_sections.F90:         write(*,*)' '
+./hydro_sections.F90:         write(*,*)' No slice files will be read'
+./hydro_sections.F90:      write(*,*)' '
+./hydro_sections.F90:      write(*,"(' Attempting to read in ',i4,' slice files')")
+./hydro_sections.F90:      write(*,*)' '
+./hydro_sections.F90:         write(*,*)' Reading file: ',slice_file(slice)
+./hydro_sections.F90:            write(*,*)' '
+./hydro_sections.F90:            write(*,*)' *** Warning ***'
+./hydro_sections.F90:            write(*,*)' More columns on this slice than allowed'
+./hydro_sections.F90:            write(*,'(i4)')' Proceeding with first ',num_columns_max,
+./hydro_sections.F90:         write (cday,'(i10)') iday + 1000000000  !  allows 2.7 million years
+./hydro_sections.F90:         write(*,*)' '
+./hydro_sections.F90:         write(*,*)' Writing file: ',temp_file
+./hydro_sections.F90:     &       write(*,*) ' i/o error writing ',ITEMP
+./hydro_sections.F90:          call write_status(iostat)
+./hydro_sections.F90:     &       write(*,*) ' i/o error writing ',DIST_TEMP
+./hydro_sections.F90:          call write_status(iostat)
+./hydro_sections.F90:     &       write(*,*) ' i/o error writing ',XY_TEMP
+./hydro_sections.F90:          call write_status(iostat)
+./hydro_sections.F90:     &       write(*,*) ' i/o error writing ',FIELDS_COLUMNS
+./hydro_sections.F90:          call write_status(iostat)
+./iage_mod.F90:          write(stdout,delim_fmt)
+./iage_mod.F90:          write(stdout,*) ' Initial 3-d Ideal Age set to all zeros' 
+./iage_mod.F90:          write(stdout,delim_fmt)
+./ice.F90:      write(stdout,blank_fmt)
+./ice.F90:      write(stdout,ndelim_fmt)
+./ice.F90:      write(stdout,blank_fmt)
+./ice.F90:      write(stdout,*) 'Ice:'
+./ice.F90:      write(stdout,blank_fmt)
+./ice.F90:      write(stdout,*) ' ice_nml namelist settings:'
+./ice.F90:      write(stdout,blank_fmt)
+./ice.F90:      write(stdout,ice_nml)
+./ice.F90:      write(stdout,delim_fmt)
+./ice.F90:         write(stdout,'(a22)') 'Ice formation disabled'
+./ice.F90:         write(stdout,'(a44)') &
+./ice.F90:         write(stdout,'(a29,i4,a9)') 'Ice formation computed every ', &
+./ice.F90:         write(stdout,'(a29,i4,a9)') 'Ice formation computed every ', &
+./ice.F90:         write(stdout,'(a29,i4,a9)') 'Ice formation computed every ', &
+./ice.F90:         write(stdout,'(a29,i4,a9)') 'Ice formation computed every ', &
+./ice.F90:         write(stdout,'(a29,i4,a9)') 'Ice formation computed every ', &
+./ice.F90:         write(stdout,'(a29,i4,a9)') 'Ice formation computed every ', &
+./ice.F90:         write(stdout,'(a20,1pe10.3)') 'Ice salinity(ppt) = ', &
+./ice.F90:         write(stdout,'(a30,i3,a13)') 'Ice formation computed in top ', &
+./initial.F90:!  write version information to output log after output redirection
+./initial.F90:      write(stdout,blank_fmt)
+./initial.F90:      write(stdout,ndelim_fmt)
+./initial.F90:      write(stdout,blank_fmt)
+./initial.F90:      write(stdout,'(a)') ' Parallel Ocean Program (POP) '
+./initial.F90:      write(stdout,'(a)') ' Based on Version 2.1alpha Jan 2005'
+./initial.F90:      write(stdout,'(a)') ' Modified for CESM  2005-2010'
+./initial.F90:      write(stdout,blank_fmt)
+./initial.F90:!  write model information into log file
+./initial.F90:       write(stdout,blank_fmt)
+./initial.F90:       write(stdout,ndelim_fmt)
+./initial.F90:       write(stdout,blank_fmt)
+./initial.F90:       write(stdout,*) ' Context:'
+./initial.F90:       write(stdout,blank_fmt)
+./initial.F90:       write(stdout,*) ' context_nml namelist settings:'
+./initial.F90:       write(stdout,blank_fmt)
+./initial.F90:       write(stdout, context_nml)
+./initial.F90:       write(stdout,blank_fmt)
+./initial.F90:       write(stdout,blank_fmt)
+./initial.F90:       write(stdout,ndelim_fmt)
+./initial.F90:       write(stdout,blank_fmt)
+./initial.F90:       write(stdout,*) ' Initial T,S:'
+./initial.F90:       write(stdout,blank_fmt)
+./initial.F90:       write(stdout,*) ' init_ts_nml namelist settings:'
+./initial.F90:       write(stdout,blank_fmt)
+./initial.F90:       write(stdout, init_ts_nml)
+./initial.F90:       write(stdout,blank_fmt)
+./initial.F90:               write(stdout,*) ' In this case, the init_ts_file' /&
+./initial.F90:               write(stdout,*) ' '
+./initial.F90:         write(stdout,'(a35,a)') 'Initial T,S read from restart file:',&
+./initial.F90:         write(stdout,'(a40,a)') &
+./initial.F90:         write(stdout,'(a80,a)') &
+./initial.F90:         write(stdout,*) ' ccsm_startup_spunup option'
+./initial.F90:         write(stdout,*) ' init_ts_option = ', init_ts_option
+./initial.F90:         write(stdout,'(a80,a)') &
+./initial.F90:         write(stdout,'(a31,a)') 'Initial 3-d T,S read from file:', &
+./initial.F90:         write(stdout,blank_fmt)
+./initial.F90:         write(stdout,'(a12,a)') ' file read: ', trim(init_ts_file)
+./initial.F90:                               write(stdout,100) ovf(n)%loc_kmt(m)%i, &
+./initial.F90:         write(stdout,'(a40,a)') &
+./initial.F90:         write(stdout,'(a63)') & 
+./initial.F90:         write(stdout,'(a63)') &
+./initial.F90:         write(stdout,*) ' init_ts_option = PHC'
+./initial.F90:          write(stdout,*) 'remapped initial T & S written to',trim(init_ts_outfile)
+./initial.F90:        call write_init_ts(trim(init_ts_outfile),trim(init_ts_outfile_fmt))
+./initial.F90:         write(stdout,*) &
+./initial.F90:         write(stdout,*) &
+./initial.F90:! This routine writes the values of POP model constants to the output log file
+./initial.F90:     write(stdout,ndelim_fmt)
+./initial.F90:     write(stdout,blank_fmt)
+./initial.F90:     write(stdout,*) ' Constants used in this run:'
+./initial.F90:     write(stdout,blank_fmt)
+./initial.F90:     write(stdout,1020) 'grav',    grav,      'cm/s^2'  
+./initial.F90:     write(stdout,1020) 'omega',   omega,     'rad/s'
+./initial.F90:     write(stdout,1020) 'radius',  radius,    'cm'
+./initial.F90:     write(stdout,1020) 'cp_sw',   cp_sw,     'erg/g/K'
+./initial.F90:     write(stdout,1020) 'cp_air',  cp_air,    'J/kg/K'
+./initial.F90:     write(stdout,1020) 'rho_air', rho_air,   'kg/m^3'
+./initial.F90:     write(stdout,1020) 'rho_sw',  rho_sw,    'g/cm^3'
+./initial.F90:     write(stdout,1020) 'rho_fw',  rho_fw,    'g/cm^3'
+./initial.F90:     write(stdout,1020) 'sound',   sound,     'cm/s' 
+./initial.F90:     write(stdout,1020) 'vonkar',  vonkar,    ' '        
+./initial.F90:     write(stdout,1020) 'emissivity',emissivity, ' '
+./initial.F90:     write(stdout,1020) 'stefan_boltzmann', stefan_boltzmann,  &
+./initial.F90:     write(stdout,1020) 'latent_heat_vapor_mks',latent_heat_vapor_mks,  &
+./initial.F90:     write(stdout,1020) 'latent_heat_fusion',latent_heat_fusion, &
+./initial.F90:     write(stdout,1020) 'ocn_ref_salinity', ocn_ref_salinity, 'psu' 
+./initial.F90:     write(stdout,1020) 'sea_ice_salinity', sea_ice_salinity, 'psu' 
+./initial.F90:     write(stdout,1020) 'T0_Kelvin',        T0_Kelvin,        'K' 
+./initial.F90:     write(stdout,1020) 'pi',               pi,               ' ' 
+./initial.F90:     write(stdout,blank_fmt)
+./initial.F90:     write(stdout,ndelim_fmt)
+./initial.F90:     write(stdout,blank_fmt)
+./initial.F90:!  two or more modules, then writes warning and error messages to the output log file.
+./initial.F90:      write(stdout,blank_fmt)
+./initial.F90:      write(stdout,ndelim_fmt)
+./initial.F90:      write(stdout,blank_fmt)
+./initial.F90:      write(stdout,*)' POP_check: Check for Option Inconsistencies'
+./initial.F90:      write(stdout,blank_fmt)
+./initial.F90:! !IROUTINE: write_init_ts
+./initial.F90: subroutine write_init_ts(outfile, outfile_fmt)
+./initial.F90:!  This routine writes out initial TEMP and SALT mapped to
+./initial.F90:!  write arrays then clean up
+./initial.F90:   call data_set (ts_file, 'write', TEMP_d)
+./initial.F90:   call data_set (ts_file, 'write', SALT_d)
+./initial.F90: end subroutine write_init_ts
+./io_binary.F90:        PIO_write_darray, PIO_read_darray, &
+./io_binary.F90:        PIO_numToRead, PIO_numToWrite
+./io_binary.F90:             write_field_binary
+./io_binary.F90:   interface write_array
+./io_binary.F90:      module procedure write_int_2d,   &
+./io_binary.F90:                       write_real4_2d, &
+./io_binary.F90:                       write_real8_2d, &
+./io_binary.F90:                       write_int_3d,   &
+./io_binary.F90:                       write_real4_3d, &
+./io_binary.F90:                       write_real8_3d
+./io_binary.F90:         write(stdout,*) 'WARNING: Input header file does not exist'
+./io_binary.F90:         write(stdout,*) 'for file: ',trim(path)
+./io_binary.F90:         write(stdout,*) &
+./io_binary.F90:            !*** call to add_attrib will overwrite value
+./io_binary.F90:!  and writes global file attributes to the header file.
+./io_binary.F90:!  write attributes to header file
+./io_binary.F90:      write(hdr_unit,hdr_fmt) work_line
+./io_binary.F90:      write(work_line(12:),*) trim(data_file%title)
+./io_binary.F90:      write(hdr_unit,hdr_fmt) work_line
+./io_binary.F90:      write(work_line(14:),*) trim(data_file%history)
+./io_binary.F90:      write(hdr_unit,hdr_fmt) work_line
+./io_binary.F90:      write(work_line(16:),*) trim(data_file%conventions)
+./io_binary.F90:      write(hdr_unit,hdr_fmt) work_line
+./io_binary.F90:      !*** file definition, write these as well
+./io_binary.F90:            write(work_line(cindx1:),*) trim(data_file%add_attrib_cval(n))
+./io_binary.F90:            write(hdr_unit,hdr_fmt) work_line
+./io_binary.F90:            write(work_line(cindx1:),*) data_file%add_attrib_lval(n)
+./io_binary.F90:            write(hdr_unit,hdr_fmt) work_line
+./io_binary.F90:            write(work_line(cindx1:),*) data_file%add_attrib_ival(n)
+./io_binary.F90:            write(hdr_unit,hdr_fmt) work_line
+./io_binary.F90:            write(work_line(cindx1:),*) data_file%add_attrib_rval(n)
+./io_binary.F90:            write(hdr_unit,hdr_fmt) work_line
+./io_binary.F90:            write(work_line(cindx1:),*) data_file%add_attrib_dval(n)
+./io_binary.F90:            write(hdr_unit,hdr_fmt) work_line
+./io_binary.F90:!  for output files, set id to current record number and write
+./io_binary.F90:      !*** now write attributes to header file
+./io_binary.F90:         !*** first write variable name header
+./io_binary.F90:         write(unit,'(a1,a)') '&',trim(io_field%short_name)
+./io_binary.F90:         !*** write standard attributes to header file
+./io_binary.F90:            write(unit,'(a9,a1,a4,a1,a)') 'long_name', attrib_separator, &
+./io_binary.F90:            write(unit,'(a5,a1,a4,a1,a)') 'units', attrib_separator, &
+./io_binary.F90:            write(unit,'(a5,a1,a4,a1,a)') 'coordinates', attrib_separator, &
+./io_binary.F90:            write(unit,'(a8,a1,a4,a1,a4)') 'grid_loc', attrib_separator, &
+./io_binary.F90:            write(work_line(16:),*) io_field%valid_range(:)
+./io_binary.F90:            write(unit,'(a)') trim(work_line)
+./io_binary.F90:         write(work_line(8:),*) io_field%id
+./io_binary.F90:         write(unit,'(a)') trim(work_line)
+./io_binary.F90:         write(work_line(17:),*) io_field%nfield_dims
+./io_binary.F90:         write(unit,'(a)') trim(work_line)
+./io_binary.F90:         ! write field_dim stuff
+./io_binary.F90:         !*** write additional attributes to header file
+./io_binary.F90:               write(unit,'(a)') trim(work_line)
+./io_binary.F90:               write(work_line(cindx2:),*) io_field%add_attrib_lval(n)
+./io_binary.F90:               write(unit,'(a)') trim(work_line)
+./io_binary.F90:               write(work_line(cindx2:),*) io_field%add_attrib_ival(n)
+./io_binary.F90:               write(unit,'(a)') trim(work_line)
+./io_binary.F90:               write(work_line(cindx2:),*) io_field%add_attrib_rval(n)
+./io_binary.F90:               write(unit,'(a)') trim(work_line)
+./io_binary.F90:               write(work_line(cindx2:),*) io_field%add_attrib_dval(n)
+./io_binary.F90:               write(unit,'(a)') work_line
+./io_binary.F90:               write(unit,'(a)') trim(work_line)
+./io_binary.F90:         write(unit,'(a1)') '/'
+./io_binary.F90:! !IROUTINE: write_field_binary
+./io_binary.F90: subroutine write_field_binary(data_file, io_field)
+./io_binary.F90:!  This routine writes a binary field to the data file.
+./io_binary.F90:!  write the io field
+./io_binary.F90:      call write_array(data_file,io_field%varDesc, io_field%ioDesc, io_field%field_i_2d,record)
+./io_binary.F90:      call write_array(data_file,io_field%varDesc, io_field%ioDesc, io_field%field_i_3d,record)
+./io_binary.F90:      call write_array(data_file,io_field%varDesc, io_field%ioDesc, io_field%field_r_2d,record)
+./io_binary.F90:      call write_array(data_file,io_field%varDesc, io_field%ioDesc, io_field%field_r_3d,record)
+./io_binary.F90:      call write_array(data_file,io_field%varDesc, io_field%ioDesc, io_field%field_d_2d,record)
+./io_binary.F90:      call write_array(data_file,io_field%varDesc, io_field%ioDesc, io_field%field_d_3d,record)
+./io_binary.F90:                   'write: No known binary field descriptor associated')
+./io_binary.F90:      call write_array(data_file,io_field%field_i_2d,record)
+./io_binary.F90:      call write_array(data_file,io_field%field_i_3d,record)
+./io_binary.F90:      call write_array(data_file,io_field%field_r_2d,record)
+./io_binary.F90:      call write_array(data_file,io_field%field_r_3d,record)
+./io_binary.F90:      call write_array(data_file,io_field%field_d_2d,record)
+./io_binary.F90:      call write_array(data_file,io_field%field_d_3d,record)
+./io_binary.F90:                   'write: No known binary field descriptor associated')
+./io_binary.F90: end subroutine write_field_binary
+./io_binary.F90:!DBG      write(*,*) 'read_int_2d'
+./io_binary.F90:!      write(*,*) 'read_real4_2d'
+./io_binary.F90:!      write(*,*) 'read_real8_2d'
+./io_binary.F90:!      write(*,*) 'read_int_3d'
+./io_binary.F90:!      write(*,*) 'read_real4_3d'
+./io_binary.F90:!      write(*,*) 'read_real8_3d'
+./io_binary.F90:! !IROUTINE: write_int_2d
+./io_binary.F90: subroutine write_int_2d(data_file,varDesc, ioDesc, INT2D,start_record)
+./io_binary.F90: subroutine write_int_2d(data_file,INT2D,start_record)
+./io_binary.F90:!  Writes a 2-d slab of integers to a binary file.
+./io_binary.F90:     llen = PIO_numToWrite(ioDesc)
+./io_binary.F90:     call PIO_write_darray(data_file%file,varDesc,ioDesc,lbuf_i4,iostat)
+./io_binary.F90:!  write global 2-d slice from one processor
+./io_binary.F90:      write(data_file%id(1),rec=start_record) IOBUFI
+./io_binary.F90: end subroutine write_int_2d
+./io_binary.F90:! !IROUTINE: write_real4_2d
+./io_binary.F90: subroutine write_real4_2d(data_file,varDesc,ioDesc, REAL2D,start_record)
+./io_binary.F90: subroutine write_real4_2d(data_file,REAL2D,start_record)
+./io_binary.F90:!  Writes a 2-d slab of reals to a binary file.
+./io_binary.F90:     llen = PIO_numToWrite(ioDesc)
+./io_binary.F90:!DBG     write(*,*) 'write_array(2D,R4): IAM: ',my_task,' rec: ',start_record
+./io_binary.F90:     call PIO_write_darray(data_file%file,varDesc,ioDesc,lbuf_r4,iostat)
+./io_binary.F90:!  write global 2-d slice from one processor
+./io_binary.F90:      write(data_file%id(1),rec=start_record) IOBUFR
+./io_binary.F90: end subroutine write_real4_2d
+./io_binary.F90:! !IROUTINE: write_real8_2d
+./io_binary.F90: subroutine write_real8_2d(data_file,varDesc, ioDesc, DBL2D,start_record)
+./io_binary.F90: subroutine write_real8_2d(data_file,DBL2D,start_record)
+./io_binary.F90:!  Writes a 2-d slab of doubles to a binary file.
+./io_binary.F90:     llen = PIO_numToWrite(ioDesc)
+./io_binary.F90:!     write(*,*) 'before PIO_write_darray IAM: ',my_task,' rec: ',start_record,rsum
+./io_binary.F90:     call PIO_write_darray(data_file%file,varDesc,ioDesc,lbuf_r8,iostat)
+./io_binary.F90:!  write global 2-d slice from one processor
+./io_binary.F90:      write(data_file%id(1),rec=start_record) IOBUFD
+./io_binary.F90: end subroutine write_real8_2d
+./io_binary.F90:! !IROUTINE: write_int_3d
+./io_binary.F90: subroutine write_int_3d(data_file,varDesc,ioDesc,INT3D,start_record)
+./io_binary.F90: subroutine write_int_3d(data_file,INT3D,start_record)
+./io_binary.F90:!  Writes a 3-d integer array as a series of 2-d slabs to a binary
+./io_binary.F90:      krecs,  &  ! number of records each iotask must write
+./io_binary.F90:!  determine the number of records each i/o process must write to
+./io_binary.F90:     llen = PIO_numToWrite(ioDesc)
+./io_binary.F90:         call PIO_write_darray(data_file%file,varDesc,ioDesc,lbuf_i4,iostat)
+./io_binary.F90:!  gather and write num_iotasks records at a time to keep the
+./io_binary.F90:!     iotasks wait for the gather to be complete and write global
+./io_binary.F90:            write(data_file%id(1), rec=start_record+klvl-1) IOBUFI
+./io_binary.F90: end subroutine write_int_3d
+./io_binary.F90:! !IROUTINE: write_real4_3d
+./io_binary.F90: subroutine write_real4_3d(data_file,varDesc,ioDesc, REAL3D,start_record)
+./io_binary.F90: subroutine write_real4_3d(data_file,REAL3D,start_record)
+./io_binary.F90:!  Writes a 3-d real array as a series of 2-d slabs to a binary
+./io_binary.F90:      krecs,  &  ! number of records each iotask must write
+./io_binary.F90:!  determine the number of records each i/o process must write to
+./io_binary.F90:     llen = PIO_numToWrite(ioDesc)
+./io_binary.F90:!DBG         write(*,*) 'write_array(3D,R4): IAM: ',my_task,' rec: ',varDesc%rec
+./io_binary.F90:         call PIO_write_darray(data_file%file,varDesc,ioDesc,lbuf_r4,iostat)
+./io_binary.F90:!  gather and write num_iotasks records at a time to keep the
+./io_binary.F90:!     iotasks wait for the gather to be complete and write global
+./io_binary.F90:            write(data_file%id(1), rec=start_record+klvl-1) IOBUFR
+./io_binary.F90: end subroutine write_real4_3d
+./io_binary.F90:! !IROUTINE: write_real8_3d
+./io_binary.F90: subroutine write_real8_3d(data_file,varDesc, ioDesc, DBL3D,start_record)
+./io_binary.F90: subroutine write_real8_3d(data_file,DBL3D,start_record)
+./io_binary.F90:!  Writes a 3-d 64-bit real array as a series of 2-d slabs to a binary
+./io_binary.F90:      krecs,  &  ! number of records each iotask must write
+./io_binary.F90:!  determine the number of records each i/o process must write to
+./io_binary.F90:!DBG     write(*,*) 'write_array(3D,R8): IAM: rec: ',data_file%file%comp_rank,start_record
+./io_binary.F90:     llen = PIO_numToWrite(ioDesc)
+./io_binary.F90:!DBG             write(*,*) 'IAM: ',my_task,' write_array(3D,R8) [slice]: ',k
+./io_binary.F90:         call PIO_write_darray(data_file%file,varDesc,ioDesc,lbuf_r8,iostat)
+./io_binary.F90:!  gather and write num_iotasks records at a time to keep the
+./io_binary.F90:!     iotasks wait for the gather to be complete and write global
+./io_binary.F90:            write(data_file%id(1), rec=start_record+klvl-1) IOBUFD
+./io_binary.F90: end subroutine write_real8_3d
+./io_ccsm.F90:!  write an io field
+./io_ccsm.F90:   case ('write')
+./io_ccsm.F90:      call write_nstd_netcdf(                     &
+./io_ccsm.F90:           indata_2d_r8=data_2d_r8,               & ! to write_nstd_netcdf
+./io_ccsm.F90:         write(stdout,*) 'data_set_nstd_ccsm operation: ',trim(operation)
+./io.F90:!  including read, write, open, close.
+./io.F90:!  Open means open for write.  We also at this time write any global
+./io.F90:!  write an io field
+./io.F90:   case ('write')
+./io.F90:         call exit_POP(sigAbort,'data_file write: missing io_field arg')
+./io.F90:         call write_field_binary(data_file,io_field)
+./io.F90:         call write_field_netcdf(data_file,io_field)
+./io.F90:         write(stdout,*) 'data_set operation: ',trim(operation)
+./io_netcdf.F90:             write_field_netcdf,  &
+./io_netcdf.F90:             write_nstd_netcdf,   &
+./io_netcdf.F90:             write_time_bounds
+./io_netcdf.F90:                  write(stdout,*) 'string too short; not enough room to read title from ' /&
+./io_netcdf.F90:                  write(stdout,*) 'string too short; not enough room to read history attribute from ' /&
+./io_netcdf.F90:                  write(stdout,*) 'string too short; not enough room to read conventions from ' /&
+./io_netcdf.F90:                  write(stdout,*) 'string too short; not enough room to read ' /&
+./io_netcdf.F90:!  writes global file attributes.
+./io_netcdf.F90:   call io_pio_init(mode='write', filename=path, File=data_file%File, &
+./io_netcdf.F90:                     write(stdout,*) 'string too short; not enough room to read long_name of ' /&
+./io_netcdf.F90:                     write(stdout,*) 'string too short; not enough room to read units of ' /&
+./io_netcdf.F90:                     write(stdout,*) 'string too short; not enough room to read coordinates of ' /&
+./io_netcdf.F90:                  write(stdout,*) 'string too short; not enough room to read grid_loc of ' /&
+./io_netcdf.F90:                     write(stdout,*) 'string too short; not enough room to read ' /&
+./io_netcdf.F90:         write(stdout,*) '(define_field_netcdf) ', trim(io_field%short_name)
+./io_netcdf.F90:! !IROUTINE: write_field_netcdf
+./io_netcdf.F90: subroutine write_field_netcdf(data_file, io_field)
+./io_netcdf.F90:!  This routine writes a field to a netCDF data file.
+./io_netcdf.F90:      io_field              ! field to write to file
+./io_netcdf.F90:      write_error         ! error flag
+./io_netcdf.F90:   write_error = .false.
+./io_netcdf.F90:      call exit_POP(sigAbort,'Attempt to write undefined field in netCDF write')
+./io_netcdf.F90:!  write data based on type
+./io_netcdf.F90:         call document('write_field_netcdf', 'short_name', io_field%short_name)
+./io_netcdf.F90:      call pio_write_darray(data_file%File, io_field%vardesc, io_field%iodesc, &
+./io_netcdf.F90:      call pio_write_darray(data_file%File, io_field%vardesc, io_field%iodesc, &
+./io_netcdf.F90:      call pio_write_darray(data_file%File, io_field%vardesc, io_field%iodesc, &
+./io_netcdf.F90:      call pio_write_darray(data_file%File, io_field%vardesc, io_field%iodesc, &
+./io_netcdf.F90:      call pio_write_darray(data_file%File, io_field%vardesc, io_field%iodesc, &
+./io_netcdf.F90:      call pio_write_darray(data_file%File, io_field%vardesc, io_field%iodesc, &
+./io_netcdf.F90:      write_error = .true.
+./io_netcdf.F90:   if (write_error) then
+./io_netcdf.F90:      call document('write_field_netcdf', 'short_name', io_field%short_name)
+./io_netcdf.F90: end subroutine write_field_netcdf
+./io_netcdf.F90:       write(stdout,*) '(define_nstd_netcdf) Error for field = ', trim(short_name)
+./io_netcdf.F90:! !IROUTINE: write_time_bounds
+./io_netcdf.F90: subroutine  write_time_bounds (data_file, time_bound_id, &
+./io_netcdf.F90:      write_error         ! error flag
+./io_netcdf.F90:   write_error = .false.
+./io_netcdf.F90:   if (time_bound_id == 0) write_error = .true.
+./io_netcdf.F90:   if (write_error) then
+./io_netcdf.F90:      write(stdout,*) '(write_time_bounds) ERROR: undefined field -- time_bound'
+./io_netcdf.F90:      call exit_POP(sigAbort,' Attempt to write undefined time_bound in netCDF write')
+./io_netcdf.F90: end subroutine write_time_bounds
+./io_netcdf.F90:! !IROUTINE: write_nstd_netcdf
+./io_netcdf.F90: subroutine write_nstd_netcdf(data_file,field_id,            &
+./io_netcdf.F90:!  This is a specialized, CCSM-speicific routine to write any desired
+./io_netcdf.F90:      write_error,       &! error flag
+./io_netcdf.F90:   write_error = .false.
+./io_netcdf.F90:   if (field_id == 0) write_error = .true.
+./io_netcdf.F90:   if (write_error) &
+./io_netcdf.F90:          '(write_nstd_netcdf) Attempt to write undefined field in netCDF write')
+./io_netcdf.F90:          '(write_nstd_netcdf) ndims > max_dims -- increase max_dims')
+./io_netcdf.F90:     call document('write_nstd_netcdf', 'ndims', ndims)
+./io_netcdf.F90:     call document('write_nstd_netcdf', 'nftype', trim(nftype))
+./io_netcdf.F90:     call document('write_nstd_netcdf', 'lactive_time_dim', lactive_time_dim)
+./io_netcdf.F90:     call exit_POP(sigAbort, '(write_nstd_netcdf) option not supported')
+./io_netcdf.F90: end subroutine write_nstd_netcdf
+./io_netcdf.F90:      write_error         ! error flag
+./io_pio.F90:   if (trim(mode) == 'write') then
+./io_pio.F90:                  write(stdout,*) subname,' create file ',trim(filename)
+./io_pio.F90:               status = pio_openfile(io_pio_subsystem, File, pio_iotype, trim(filename), pio_write)
+./io_pio.F90:                  write(stdout,*) subname,' open file ',trim(filename)
+./io_pio.F90:               write(stdout,*) subname,' create file ',trim(filename)
+./io_pio.F90:         status = pio_openfile(io_pio_subsystem, File, pio_iotype, trim(filename), pio_nowrite)
+./io_pio.F90:            write(stdout,*) 'io_pio_ropen ERROR: file invalid ',trim(filename)
+./io_tools.F90:!  This routine writes out the calling subroutine name and two
+./io_tools.F90:       write(stdout,fmt2)  sub_name, message, trim(char_val)
+./io_tools.F90:       write(stdout,fmt1)  sub_name, trim(message)
+./io_tools.F90:!  This routine writes out the calling subroutine name and an
+./io_tools.F90:      write(stdout,fmt)  sub_name, message, ival
+./io_tools.F90:!  This routine writes out the calling subroutine name and an
+./io_tools.F90:      write(stdout,fmt)  sub_name, message, lval
+./io_tools.F90:!  This routine writes out the calling subroutine name and an
+./io_tools.F90:      write(stdout,fmt)  sub_name, message, dval
+./io_tools.F90:!  This routine writes out the calling subroutine name and an
+./io_tools.F90:      write(stdout,fmt)  sub_name, message, rval
+./io_types.F90:!  if not the first, see if it already exists and over-write value
+./io_types.F90:!  if not the first, see if it already exists and over-write value
+./io_types.F90:!  if not the first, see if it already exists and over-write value
+./io_types.F90:!  if not the first, see if it already exists and over-write value
+./io_types.F90:!  if not the first, see if it already exists and over-write value
+./io_types.F90:         write(stdout,*) 'Attribute name: ',trim(att_name)
+./io_types.F90:         write(stdout,*) 'Attribute name: ',trim(att_name)
+./io_types.F90:         write(stdout,*) 'Attribute name: ',trim(att_name)
+./io_types.F90:         write(stdout,*) 'Attribute name: ',trim(att_name)
+./io_types.F90:         write(stdout,*) 'Attribute name: ',trim(att_name)
+./io_types.F90:!  if not the first, see if it exists and over-write value
+./io_types.F90:         write(stdout,*) 'Attribute name: ',trim(att_name)
+./io_types.F90:         write(stdout,*) 'Attribute name: ',trim(att_name)
+./io_types.F90:         write(stdout,*) 'Attribute name: ',trim(att_name)
+./io_types.F90:         write(stdout,*) 'Attribute name: ',trim(att_name)
+./io_types.F90:         write(stdout,*) 'Attribute name: ',trim(att_name)
+./io_types.F90:       write(stdout,blank_fmt)
+./io_types.F90:       write(stdout,ndelim_fmt)
+./io_types.F90:       write(stdout,blank_fmt)
+./io_types.F90:       write(stdout,*)' I/O:'
+./io_types.F90:       write(stdout,blank_fmt)
+./io_types.F90:       write(stdout,*) 'io_nml namelist settings:'
+./io_types.F90:       write(stdout,blank_fmt)
+./io_types.F90:       write(stdout,io_nml)
+./io_types.F90:       write(stdout,blank_fmt)
+./mix_submeso.F90:     write(stdout,*) ' '
+./mix_submeso.F90:     write(stdout,*) ' Document Namelist Parameters:'
+./mix_submeso.F90:     write(stdout,*) ' ============================ '
+./mix_submeso.F90:     write(stdout,*) ' '
+./mix_submeso.F90:     write(stdout,  mix_submeso_nml)
+./mix_submeso.F90:     write(stdout,*) ' '
+./mix_submeso.F90:     write(stdout,*) ' Submesoscale mixing options:'
+./mix_submeso.F90:     write(stdout,'(a21,1pe13.6)') ' efficiency factor = ', efficiency_factor
+./mix_submeso.F90:     write(stdout,'(a23,1pe13.6)') ' time scale constant = ', time_scale_constant
+./mix_submeso.F90:       write(stdout,'(a45,1pe13.6)')  &
+./mix_submeso.F90:       write(stdout,'(a54)') ' horizontal length scale varies both in space and time'
+./moby_mod.F90:      moby_write_restart,         &
+./moby_mod.F90:! !IROUTINE: moby_write_restart
+./moby_mod.F90: subroutine moby_write_restart(restart_file, action)
+./moby_mod.F90:!  write auxiliary fields & scalars to restart files
+./moby_mod.F90: end subroutine moby_write_restart
+./moby_parms.F90:       WRITE (stdout,*) '----------------------------------------'
+./moby_parms.F90:       WRITE (stdout,*) '----- moby_parms_nml namelist values -----'
+./moby_parms.F90:       WRITE (stdout,*) 'parm_Fe_bioavail    = ', parm_Fe_bioavail
+./moby_parms.F90:       WRITE (stdout,*) '----------------------------------------'
+./movie.F90:             write_movie
+./movie.F90:      write(stdout,delim_fmt)
+./movie.F90:      write(stdout,blank_fmt)
+./movie.F90:      write(stdout,'(a12)') 'Movie options'
+./movie.F90:      write(stdout,blank_fmt)
+./movie.F90:      write(stdout,delim_fmt)
+./movie.F90:      write(stdout,blank_fmt)
+./movie.F90:      write(stdout,ndelim_fmt)
+./movie.F90:      write(stdout,blank_fmt)
+./movie.F90:      write(stdout,*) ' Movie:'
+./movie.F90:      write(stdout,blank_fmt)
+./movie.F90:      write(stdout,*) ' movie_nml namelist settings:'
+./movie.F90:      write(stdout,blank_fmt)
+./movie.F90:      write(stdout,movie_nml)
+./movie.F90:      write(stdout,blank_fmt)
+./movie.F90:         write(stdout,'(a21)') 'movie diagnostics off'
+./movie.F90:         write(stdout,freq_fmt) movie_freq,' years  '
+./movie.F90:         write(stdout,freq_fmt) movie_freq,' months '
+./movie.F90:         write(stdout,freq_fmt) movie_freq,' days   '
+./movie.F90:         write(stdout,freq_fmt) movie_freq,' hours  '
+./movie.F90:         write(stdout,freq_fmt) movie_freq,' seconds'
+./movie.F90:         write(stdout,freq_fmt) movie_freq,' steps  '
+./movie.F90:         write(stdout,'(a38)') 'movie diagnostics requested for fields:'
+./movie.F90:            write(stdout,*) '  ',trim(char_temp),' at level ',k
+./movie.F90:! !IROUTINE: write_movie
+./movie.F90: subroutine write_movie
+./movie.F90:!  This routine writes requested movie fields to a file.
+./movie.F90:      io_phase      !'define' or 'write'
+./movie.F90:      lmovie_write       ! time to write a file
+./movie.F90:!  is it time to write a file - if yes, create a file suffix
+./movie.F90:   lmovie_write = .false.
+./movie.F90:      lmovie_write = check_time_flag(movie_flag)
+./movie.F90:   if (lmovie_write) then
+./movie.F90:      write(hist_string,'(a24,a8,1x,a10)') & 
+./movie.F90:!     write fields to file - this requires two phases
+./movie.F90:!     write fields to file
+./movie.F90:!     in this second phase, we actually write the data for all the fields
+./movie.F90:            call data_set (movie_file_desc, 'write', movie_fields(nfield))
+./movie.F90:         write(stdout,blank_fmt)
+./movie.F90:         write(stdout,*) 'Wrote file: ', trim(movie_file_desc%full_name)
+./movie.F90:   endif ! lwrite_movie
+./movie.F90: end subroutine write_movie
+./movie.F90:     write (stdout,blank_fmt)
+./movie.F90:     write (stdout,'(a22)') 'Global Time Averages: '
+./movie.F90:            write (stdout,*) trim(avail_movie_fields(nfield)%short_name), &
+./movie.F90:      write(char_depth,'(i5)') 10000 + nearest_integer_depth
+./movie.F90:     write(char_depth,'(i5)') 10000 + nearest_integer_depth
+./movie.F90:      if (my_task == master_task) write(stdout,*) 'Requested ', &
+./movie.F90:   write(cstep_end,'(i10)') nsteps_total - 1
+./ms_balance.F90:     write(stdout,delim_fmt)
+./ms_balance.F90:     write(stdout,blank_fmt)
+./ms_balance.F90:     write(stdout,'(a)') ' Marginal-sea balancing information'
+./ms_balance.F90:     write(stdout,blank_fmt)
+./ms_balance.F90:     write(stdout,delim_fmt)
+./ms_balance.F90:                    write(stdout,1002)'(init_ms_balance) ', &
+./ms_balance.F90:          write(stdout,1000) '(init_ms_balance) ','marginal sea '/&
+./ms_balance.F90:        write(stdout,1000) '(init_ms_balance)', &
+./ms_balance.F90:            write(stdout,*)'(init_ms_balance)', ' region1 : ' ,&
+./ms_balance.F90:            write(stdout,*) '(init_ms_balance)', ' region2 : ', &
+./ms_balance.F90:      write(stdout,1002)'(init_ms_balance) ','actual area = ',area 
+./ms_balance.F90:      write(stdout,*) trim(region_info(n)%name)
+./ms_balance.F90:      write(stdout,*)'pt   ipts   jpts   TLAT  TLON  REGION_MASK frac'
+./ms_balance.F90:         write(stdout,*) pt, ipts(pt), jpts(pt),      & 
+./ms_balance.F90:      write(stdout,*) ' '   
+./ms_balance.F90:      write(stdout,*) cyear/&
+./ms_balance.F90:           write(stdout,1100) &
+./ms_balance.F90:      write(stdout,*) ' '
+./ms_balance.F90:      write(stdout,*) ' '
+./ms_balance.F90:           write(stdout,1102) month3_all(imonth) /&
+./ms_balance.F90:      write(stdout,*) ' '
+./ms_balance.F90:      write(stdout,*) ' '
+./ms_balance.F90:           write(stdout,1101) &
+./ms_balance.F90:      write(stdout,*) ' '
+./ms_balance.F90:   write(stdout,1000) trim(string), i,j
+./ms_balance.F90:     write(stdout,2000) 'j ', (i, i=i1,i2)
+./ms_balance.F90:           write(line(i-i1+1),'(a4)') '-'
+./ms_balance.F90:           write(line(i-i1+1),'(i4)') REGION_MASK_G(i,j)
+./ms_balance.F90:      write (stdout,2001) j, (line(i-i1+1), i=i1,i2)
+./ms_balance.F90:     write(stdout,*) ' '
+./ms_balance.F90:     write(stdout,*) ' '
+./msg_mod.F90:!  All msg_write calls have a routine name as the first argument
+./msg_mod.F90:       msg_write
+./msg_mod.F90:  INTERFACE msg_write
+./msg_mod.F90:          msg_write_A, &
+./msg_mod.F90:          msg_write_AA, &
+./msg_mod.F90:          msg_write_AI, &
+./msg_mod.F90:          msg_write_AAA, &
+./msg_mod.F90:          msg_write_AAI, &
+./msg_mod.F90:          msg_write_AIA, &
+./msg_mod.F90:          msg_write_AAAA, &
+./msg_mod.F90:          msg_write_AIAI, &
+./msg_mod.F90:          msg_write_AAAI, &
+./msg_mod.F90:          msg_write_AAIA, &
+./msg_mod.F90:          msg_write_AAAIAI
+./msg_mod.F90:  subroutine msg_write_A(sub_name, A1_1)
+./msg_mod.F90:       write(unit=msg_iunit, fmt="('(', A, ') ', A)") &
+./msg_mod.F90:  end subroutine msg_write_A
+./msg_mod.F90:  subroutine msg_write_AA(sub_name, A1_1, A2_2)
+./msg_mod.F90:       write(unit=msg_iunit, fmt="('(', A, ') ', A, A)") &
+./msg_mod.F90:  end subroutine msg_write_AA
+./msg_mod.F90:  subroutine msg_write_AI(sub_name, A1_1, I1_2)
+./msg_mod.F90:       write(unit=msg_iunit, fmt="('(', A, ') ', A, I6)") &
+./msg_mod.F90:  end subroutine msg_write_AI
+./msg_mod.F90:  subroutine msg_write_AAA(sub_name, A1_1, A2_2, A3_3)
+./msg_mod.F90:       write(unit=msg_iunit, fmt="('(', A, ') ', A, A, A)") &
+./msg_mod.F90:  end subroutine msg_write_AAA
+./msg_mod.F90:  subroutine msg_write_AAI(sub_name, A1_1, A2_2, I1_3)
+./msg_mod.F90:       write(unit=msg_iunit, fmt="('(', A, ') ', A, A, I6)") &
+./msg_mod.F90:  end subroutine msg_write_AAI
+./msg_mod.F90:  subroutine msg_write_AIA(sub_name, A1_1, I1_2, A2_3)
+./msg_mod.F90:       write(unit=msg_iunit, fmt="('(', A, ') ', A, I6, A)") &
+./msg_mod.F90:  end subroutine msg_write_AIA
+./msg_mod.F90:  subroutine msg_write_AAAA(sub_name, A1_1, A2_2, A3_3, A4_4)
+./msg_mod.F90:       write(unit=msg_iunit, fmt="('(', A, ') ', A, A, A, A)") &
+./msg_mod.F90:  end subroutine msg_write_AAAA
+./msg_mod.F90:  subroutine msg_write_AIAI(sub_name, A1_1, I1_2, A2_3, I2_4)
+./msg_mod.F90:       write(unit=msg_iunit, fmt="('(', A, ') ', A, I6, A, I6)") &
+./msg_mod.F90:  end subroutine msg_write_AIAI
+./msg_mod.F90:  subroutine msg_write_AAAI(sub_name, A1_1, A2_2, A3_3, I1_4)
+./msg_mod.F90:       write(unit=msg_iunit, fmt="('(', A, ') ', A, A, A, I6)") &
+./msg_mod.F90:  end subroutine msg_write_AAAI
+./msg_mod.F90:  subroutine msg_write_AAIA(sub_name, A1_1, A2_2, I1_3, A3_4)
+./msg_mod.F90:       write(unit=msg_iunit, fmt="('(', A, ') ', A, A, I6, A)") &
+./msg_mod.F90:  end subroutine msg_write_AAIA
+./msg_mod.F90:  subroutine msg_write_AAAIAI(sub_name, A1_1, A2_2, A3_3, I1_4, A4_5, I2_6)
+./msg_mod.F90:       write(unit=msg_iunit, &
+./msg_mod.F90:  end subroutine msg_write_AAAIAI
+Binary file ./msg_mod.mod matches
+./niw_mixing.F90:      write(stdout,blank_fmt)
+./niw_mixing.F90:      write(stdout,ndelim_fmt)
+./niw_mixing.F90:      write(stdout,blank_fmt)
+./niw_mixing.F90:      write(stdout,*) ' NIW mixing information'
+./niw_mixing.F90:      write(stdout,blank_fmt)
+./niw_mixing.F90:      write(stdout,*) ' niw_nml namelist settings:'
+./niw_mixing.F90:      write(stdout,blank_fmt)
+./niw_mixing.F90:      write(stdout,niw_nml)
+./niw_mixing.F90:      write(stdout,blank_fmt)
+./niw_mixing.F90:      write(stdout,1010) ' lniw_mixing                   = ',  lniw_mixing
+./niw_mixing.F90:      write(stdout,1020) ' niw_boundary layer absorption = ',  niw_boundary_layer_absorption
+./niw_mixing.F90:      write(stdout,1020) ' niw_local_mixing_fraction     = ',  niw_local_mixing_fraction
+./niw_mixing.F90:      write(stdout,1020) ' niw_mixing_efficiency         = ',  niw_mixing_efficiency
+./niw_mixing.F90:      write(stdout,1020) ' niw_obs2model_ratio           = ',  niw_obs2model_ratio
+./niw_mixing.F90:      write(stdout,1020) ' niw_vert_decay_scale          = ',  niw_vert_decay_scale
+./niw_mixing.F90:      write(stdout,1020) ' niw_mix_max                   = ',  niw_mix_max
+./niw_mixing.F90:      write(stdout,1030) ' niw_energy_type               = ',  niw_energy_type
+./niw_mixing.F90:      write(stdout,1030) ' niw_energy_file               = ',  niw_energy_file
+./niw_mixing.F90:      write(stdout,1030) ' niw_energy_file_fmt           = ',  niw_energy_file_fmt
+./niw_mixing.F90:     write (stdout,blank_fmt)
+./niw_mixing.F90:     write (stdout,*) warning_string
+./niw_mixing.F90:       write (stdout,blank_fmt)
+./niw_mixing.F90:       write (stdout,*) ' file read: ', trim(niw_energy_file)
+./output.F90:   use restart, only: write_restart, init_restart, lrestart_write
+./output.F90:   use history, only: write_history, init_history
+./output.F90:   use movie, only: write_movie, init_movie
+./output.F90:   use tavg, only: write_tavg, init_tavg, final_tavg
+./output.F90:!  write history, movie files - the decision when to write
+./output.F90:!  write these first so that if I/O fails, no restart is written
+./output.F90:! Insufficient memory to write history files on Blue Gene
+./output.F90:   call write_history
+./output.F90:   call write_movie
+./output.F90:!  check for restart and write restart if required
+./output.F90:   call write_restart(restart_type)
+./output.F90:!  write tavg - the decision when to write
+./output.F90:!  note that lrestart_write is now a module variable, which allows
+./output.F90:!  the overflows module to coordinate an overflows restart write
+./output.F90:   call write_tavg(restart_type)
+./output.F90:!  write overflow restart file (coordinate with write_restart)
+./output.F90:    if ( lrestart_write .and. overflows_on .and. overflows_interactive ) then
+./output.F90:       call ovf_write_restart
+./overflows.F90:             ovf_write_restart,         &   ! step_mod.F90
+./overflows.F90:!  writes out to stdout and overflows_diag_outfile, and then broadcasts ovf info 
+./overflows.F90:      write(stdout,blank_fmt)
+./overflows.F90:      write(stdout,ndelim_fmt)
+./overflows.F90:      write(stdout,blank_fmt)
+./overflows.F90:      write(stdout,'(a11)') ' Overflows:'
+./overflows.F90:      write(stdout,blank_fmt)
+./overflows.F90:      write(stdout,blank_fmt)
+./overflows.F90:      write(stdout,'(a33)') ' overflows_nml namelist settings:'
+./overflows.F90:      write(stdout,blank_fmt)
+./overflows.F90:      write(stdout,overflows_nml)
+./overflows.F90:      write(stdout,blank_fmt)
+./overflows.F90:      write(stdout,2345) ovf_error
+./overflows.F90:      write(stdout,'(a41)') 'reading overflows_infile: contents echoed'
+./overflows.F90:         write(stdout,'(a88)') line
+./overflows.F90:      write(stdout,*) num_ovf
+./overflows.F90:        write(stdout,*) index,ovf(n)%name
+./overflows.F90:        write(stdout,*) ovf(n)%ovf_params%lat
+./overflows.F90:        write(stdout,*) ovf(n)%ovf_params%width
+./overflows.F90:        write(stdout,*) ovf(n)%ovf_params%source_thick
+./overflows.F90:        write(stdout,*) ovf(n)%ovf_params%distnc_str_ssb
+./overflows.F90:        write(stdout,*) ovf(n)%ovf_params%bottom_slope
+./overflows.F90:        write(stdout,*) ovf(n)%ovf_params%bottom_drag
+./overflows.F90:        write(stdout,*) ovf(n)%num_kmt
+./overflows.F90:           write(stdout,*) ovf(n)%loc_kmt(m)%i,    &
+./overflows.F90:        write(stdout,*) ovf(n)%reg_inf%imin, &
+./overflows.F90:        write(stdout,*) ovf(n)%reg_src%imin, &
+./overflows.F90:        write(stdout,*) ovf(n)%reg_ent%imin, &
+./overflows.F90:        write(stdout,*) ovf(n)%num_src
+./overflows.F90:          write(stdout,*) ovf(n)%loc_src(m)%i, &
+./overflows.F90:        write(stdout,*) ovf(n)%num_ent
+./overflows.F90:          write(stdout,*) ovf(n)%loc_ent(m)%i, &
+./overflows.F90:        write(stdout,*) ovf(n)%num_prd_sets
+./overflows.F90:          write(stdout,*) ovf(n)%num_prd(m)
+./overflows.F90:            write(stdout,*) ovf(n)%loc_prd(m,mp)%i, &
+./overflows.F90:        write(stdout,13)       &
+./overflows.F90:        write(stdout,14)       &
+./overflows.F90:          write(stdout,15) m,       &
+./overflows.F90:      write(stdout,*) 'ERROR on overflow input'
+./overflows.F90:         write(stdout,*) 'Overflows on but number requested out of range'
+./overflows.F90:         write(stdout,*) 'Number requested = ',num_req
+./overflows.F90:         write(stdout,*) 'Must be > 0 and not greater than ',max_ovf
+./overflows.F90:         write(stdout,*) 'Overflows on with kmt topography changes out of range'
+./overflows.F90:         write(stdout,*) 'Number requested = ',num_req
+./overflows.F90:         write(stdout,*) 'Must be >= 0 and not greater than ',max_kmt
+./overflows.F90:         write(stdout,*) 'Overflows on with number source points out of range'
+./overflows.F90:         write(stdout,*) 'Number requested = ',num_req
+./overflows.F90:         write(stdout,*) 'Must be > 1 and not greater than ',max_src
+./overflows.F90:         write(stdout,*) 'Overflows on with number entrainment points out of range'
+./overflows.F90:         write(stdout,*) 'Number requested = ',num_req
+./overflows.F90:         write(stdout,*) 'Must be > 1 and not greater than ',max_ent
+./overflows.F90:         write(stdout,*) 'Overflows on with number of product sets out of range'
+./overflows.F90:         write(stdout,*) 'Number requested = ',num_req
+./overflows.F90:         write(stdout,*) 'Must be > 0 and not greater than ',max_prd_sets
+./overflows.F90:         write(stdout,*) 'Overflows on with number of product points out of range'
+./overflows.F90:         write(stdout,*) 'Number requested = ',num_req
+./overflows.F90:         write(stdout,*) 'Must be > 1 and not greater than ',max_prd
+./overflows.F90:         write(stdout,*) 'Overflows on with non-monotonic increasing i or j'
+./overflows.F90:         write(stdout,*) 'Overflows on with no change in i and j'
+./overflows.F90:         write(stdout,*) 'Overflows on with both i and j increasing'
+./overflows.F90:         write(stdout,*) 'Overflows on with non-constant level k'
+./overflows.F90:         write(stdout,*) 'Overflows on with orientation either < 0 or > 4'
+./overflows.F90:         write(stdout,*) 'Overflows on with non-constant orientation'
+./overflows.F90:      if (my_task == master_task) write(stdout,'(a30,a)') &
+./overflows.F90:                         write(stdout,100) KMT(i,j,iblock),ovf(n)%loc_kmt(m)%i, &
+./overflows.F90:         write(stdout,200) kmterr
+./overflows.F90:                         write(stdout,30) ovf(n)%name,this_block%i_glob(i), &
+./overflows.F90:                         write(stdout,31) ovf(n)%name,this_block%i_glob(i), &
+./overflows.F90:                         write(stdout,32) ovf(n)%name,this_block%i_glob(i), &
+./overflows.F90:                         write(stdout,33) ovf(n)%name,this_block%i_glob(i), &
+./overflows.F90:                         write(stdout,34) ovf(n)%name,this_block%i_glob(i), &
+./overflows.F90:                            write(stdout,35) ovf(n)%name,this_block%i_glob(i), &
+./overflows.F90:       write(ovf_diag_unit,*)' '
+./overflows.F90:       write(stdout,'(a,a)') &
+./overflows.F90:! !IROUTINE: ovf_write_restart
+./overflows.F90: subroutine ovf_write_restart
+./overflows.F90:!  This routine writes the overflow restart file using 
+./overflows.F90:      write_restart_filename,   &! modified file name for restart file
+./overflows.F90:      write(stdout,*) 'ovf_write_restart called '
+./overflows.F90:   write_restart_filename = char_blank
+./overflows.F90:     write_restart_filename = trim(overflows_restfile)/&
+./overflows.F90:     write_restart_filename = trim(overflows_restfile)
+./overflows.F90:      open(mu, file=write_restart_filename, status='unknown',iostat=ovf_error)
+./overflows.F90:      write(stdout,987) mu,write_restart_filename
+./overflows.F90:987   format(' ovf_write_restart  unit (mu) = ',i5,' file name = ',a64)
+./overflows.F90:      write(stdout,99) cdate
+./overflows.F90:99    format(' ovf write restart   cdate yyyymmdd = ',a10)
+./overflows.F90:      write(mu,100) cdate,num_ovf
+./overflows.F90:         write(mu,101) ovf(n)%name
+./overflows.F90:         write(mu,102) ovf(n)%ovf_params%lat
+./overflows.F90:         write(mu,103) ovf(n)%ovf_params%width
+./overflows.F90:         write(mu,105) ovf(n)%ovf_params%source_thick
+./overflows.F90:         write(mu,106) ovf(n)%ovf_params%distnc_str_ssb
+./overflows.F90:         write(mu,107) ovf(n)%ovf_params%bottom_slope
+./overflows.F90:         write(mu,108) ovf(n)%ovf_params%bottom_drag
+./overflows.F90:         write(mu,1090) ovf(n)%num_kmt
+./overflows.F90:            write(mu,1091) ovf(n)%loc_kmt(m)%i
+./overflows.F90:            write(mu,1092) ovf(n)%loc_kmt(m)%j
+./overflows.F90:            write(mu,1093) ovf(n)%loc_kmt(m)%korg
+./overflows.F90:            write(mu,1094) ovf(n)%loc_kmt(m)%knew
+./overflows.F90:         write(mu,110) ovf(n)%reg_inf%imin
+./overflows.F90:         write(mu,111) ovf(n)%reg_inf%imax
+./overflows.F90:         write(mu,112) ovf(n)%reg_inf%jmin
+./overflows.F90:         write(mu,113) ovf(n)%reg_inf%jmax
+./overflows.F90:         write(mu,114) ovf(n)%reg_inf%kmin
+./overflows.F90:         write(mu,115) ovf(n)%reg_inf%kmax
+./overflows.F90:         write(mu,116) ovf(n)%reg_src%imin
+./overflows.F90:         write(mu,117) ovf(n)%reg_src%imax
+./overflows.F90:         write(mu,118) ovf(n)%reg_src%jmin
+./overflows.F90:         write(mu,119) ovf(n)%reg_src%jmax
+./overflows.F90:         write(mu,120) ovf(n)%reg_src%kmin
+./overflows.F90:         write(mu,121) ovf(n)%reg_src%kmax
+./overflows.F90:         write(mu,122) ovf(n)%reg_ent%imin
+./overflows.F90:         write(mu,123) ovf(n)%reg_ent%imax
+./overflows.F90:         write(mu,124) ovf(n)%reg_ent%jmin
+./overflows.F90:         write(mu,125) ovf(n)%reg_ent%jmax
+./overflows.F90:         write(mu,126) ovf(n)%reg_ent%kmin
+./overflows.F90:         write(mu,127) ovf(n)%reg_ent%kmax
+./overflows.F90:         write(mu,128) ovf(n)%num_src
+./overflows.F90:            write(mu,129) ovf(n)%loc_src(m)%i
+./overflows.F90:            write(mu,130) ovf(n)%loc_src(m)%j
+./overflows.F90:            write(mu,131) ovf(n)%loc_src(m)%i_adv
+./overflows.F90:            write(mu,132) ovf(n)%loc_src(m)%j_adv
+./overflows.F90:            write(mu,133) ovf(n)%loc_src(m)%i_u
+./overflows.F90:            write(mu,134) ovf(n)%loc_src(m)%j_u
+./overflows.F90:            write(mu,135) ovf(n)%loc_src(m)%k
+./overflows.F90:            write(mu,136) ovf(n)%loc_src(m)%orient
+./overflows.F90:         write(mu,137) ovf(n)%num_ent
+./overflows.F90:            write(mu,138) ovf(n)%loc_ent(m)%i
+./overflows.F90:            write(mu,139) ovf(n)%loc_ent(m)%j
+./overflows.F90:            write(mu,140) ovf(n)%loc_ent(m)%i_adv
+./overflows.F90:            write(mu,141) ovf(n)%loc_ent(m)%j_adv
+./overflows.F90:            write(mu,142) ovf(n)%loc_ent(m)%i_u
+./overflows.F90:            write(mu,143) ovf(n)%loc_ent(m)%j_u
+./overflows.F90:            write(mu,144) ovf(n)%loc_ent(m)%k
+./overflows.F90:            write(mu,145) ovf(n)%loc_ent(m)%orient
+./overflows.F90:         write(mu,146) ovf(n)%num_prd_sets
+./overflows.F90:            write(mu,147) ovf(n)%num_prd(m)
+./overflows.F90:               write(mu,148) ovf(n)%loc_prd(m,mp)%i
+./overflows.F90:               write(mu,149) ovf(n)%loc_prd(m,mp)%j
+./overflows.F90:               write(mu,150) ovf(n)%loc_prd(m,mp)%i_adv
+./overflows.F90:               write(mu,151) ovf(n)%loc_prd(m,mp)%j_adv
+./overflows.F90:               write(mu,152) ovf(n)%loc_prd(m,mp)%i_u
+./overflows.F90:               write(mu,153) ovf(n)%loc_prd(m,mp)%j_u
+./overflows.F90:               write(mu,154) ovf(n)%loc_prd(m,mp)%k
+./overflows.F90:               write(mu,155) ovf(n)%loc_prd(m,mp)%orient
+./overflows.F90:       write(mu,156) ovf(n)%adj_src%imin 
+./overflows.F90:       write(mu,157) ovf(n)%adj_src%imax 
+./overflows.F90:       write(mu,158) ovf(n)%adj_src%jmin 
+./overflows.F90:       write(mu,159) ovf(n)%adj_src%jmax 
+./overflows.F90:       write(mu,160) ovf(n)%adj_src%kmin 
+./overflows.F90:       write(mu,161) ovf(n)%adj_src%kmax 
+./overflows.F90:       write(mu,162) ovf(n)%adj_ent%imin 
+./overflows.F90:       write(mu,163) ovf(n)%adj_ent%imax 
+./overflows.F90:       write(mu,164) ovf(n)%adj_ent%jmin 
+./overflows.F90:       write(mu,165) ovf(n)%adj_ent%jmax 
+./overflows.F90:       write(mu,166) ovf(n)%adj_ent%kmin 
+./overflows.F90:       write(mu,167) ovf(n)%adj_ent%kmax 
+./overflows.F90:          write(mu,168) ovf(n)%adj_prd(m)%imin 
+./overflows.F90:          write(mu,169) ovf(n)%adj_prd(m)%imax 
+./overflows.F90:          write(mu,170) ovf(n)%adj_prd(m)%jmin 
+./overflows.F90:          write(mu,171) ovf(n)%adj_prd(m)%jmax 
+./overflows.F90:          write(mu,172) ovf(n)%adj_prd(m)%kmin 
+./overflows.F90:          write(mu,173) ovf(n)%adj_prd(m)%kmax 
+./overflows.F90:       write(mu,174) ovf(n)%Ms
+./overflows.F90:       write(mu,175) ovf(n)%Ms_n
+./overflows.F90:       write(mu,176) ovf(n)%Ms_nm1
+./overflows.F90:       write(mu,177) ovf(n)%Me
+./overflows.F90:       write(mu,178) ovf(n)%Me_n
+./overflows.F90:       write(mu,179) ovf(n)%Me_nm1
+./overflows.F90:       write(mu,180) ovf(n)%phi
+./overflows.F90:       write(mu,181) ovf(n)%Mp
+./overflows.F90:       write(mu,182) ovf(n)%Mp_n
+./overflows.F90:       write(mu,183) ovf(n)%Mp_nm1
+./overflows.F90:       write(mu,184) ovf(n)%Tp
+./overflows.F90:       write(mu,185) ovf(n)%Sp
+./overflows.F90:       write(mu,186) ovf(n)%prd_set_n
+./overflows.F90:       write(mu,186) ovf(n)%prd_set
+./overflows.F90:!  if pointer files are used, write filename to pointer file
+./overflows.F90:       write(mu,'(a)') trim(write_restart_filename)
+./overflows.F90:       write(stdout,blank_fmt)
+./overflows.F90:       write(stdout,*) ' overflow restart pointer file written: ',trim(ovf_restart_pointer_file)
+./overflows.F90: end subroutine ovf_write_restart
+./overflows.F90:      write(stdout,*) 'ovf_read_restart called '
+./overflows.F90:        write(stdout,*) 'Reading overflow pointer file: ', trim(restart_pointer_file)
+./overflows.F90:    write(stdout,987) mu,read_overflows_restfile
+./overflows.F90:    write(stdout,100) cdate_label,num_ovf
+./overflows.F90:!      write(stdout,*) 'ovf_advt called '
+./overflows.F90:                           write(stdout,5) nsteps_total,n,ovf(ovf_id)%loc_src(m)%i_adv, &
+./overflows.F90:                           write(stdout,10) nsteps_total,n,ovf(ovf_id)%loc_src(m)%i_adv, &
+./overflows.F90:                           write(stdout,15) nsteps_total,n,ovf(ovf_id)%loc_ent(m)%i_adv, &
+./overflows.F90:                           write(stdout,20) nsteps_total,n,ovf(ovf_id)%loc_ent(m)%i_adv, &
+./overflows.F90:                           write(stdout,25) nsteps_total,n,ovf(ovf_id)%loc_prd(m,mp)%i_adv, &
+./overflows.F90:                           write(stdout,35) nsteps_total,n,ovf(ovf_id)%loc_prd(m,mp)%i_adv, &
+./overflows.F90:                           write(stdout,26) nsteps_total,n,ovf(ovf_id)%loc_prd(m,mp)%i_adv, &
+./overflows.F90:                           write(stdout,36) nsteps_total,n,ovf(ovf_id)%loc_prd(m,mp)%i_adv, &
+./overflows.F90:      write(stdout,*) 'ovf_wtkb_check called '
+./overflows.F90:                           write(stdout,10) n,nsteps_total,ovf(ovf_id)%loc_src(m)%i, &
+./overflows.F90:                           write(stdout,20) n,nsteps_total,ovf(ovf_id)%loc_ent(m)%i, &
+./overflows.F90:                           write(stdout,30) n,nsteps_total,ovf(ovf_id)%loc_prd(m,mp)%i, & 
+./overflows.F90:                           write(stdout,31) n,nsteps_total,ovf(ovf_id)%loc_prd(m,mp)%i, & 
+./overflows.F90:                           write(stdout,40) n,nsteps_total,ovf(ovf_id)%loc_src(m)%i_adv, &
+./overflows.F90:                           write(stdout,50) n,nsteps_total,ovf(ovf_id)%loc_ent(m)%i_adv, &
+./overflows.F90:                           write(stdout,60) n,nsteps_total,ovf(ovf_id)%loc_prd(m,mp)%i_adv, & 
+./overflows.F90:                           write(stdout,61) n,nsteps_total,ovf(ovf_id)%loc_prd(m,mp)%i_adv, & 
+./overflows.F90:      write(stdout,*) 'ovf_UV_check called '
+./overflows.F90:     write(stdout,5) nsteps_total
+./overflows.F90:                   write(stdout,15) n,ovf(ovf_id)%loc_src(m)%i_u, &
+./overflows.F90:!                     write(stdout,10) k,UVEL(i,j,k,oldtime,iblock), &
+./overflows.F90:                   write(stdout,25) n,ovf(ovf_id)%loc_ent(m)%i_u, &
+./overflows.F90:!                     write(stdout,20) k,UVEL(i,j,k,oldtime,iblock), &
+./overflows.F90:                   write(stdout,35) n,ovf(ovf_id)%loc_prd(m,mp)%i_u, &
+./overflows.F90:                     write(stdout,30) nsteps_total,n, &
+./overflows.F90:      write(stdout,*) 'ovf_Utlda called '
+./overflows.F90:                        write(stdout,10) n,ovf(ovf_id)%loc_src(m)%i_u, &
+./overflows.F90:                           write(stdout,15) k,ovf(ovf_id)%loc_src(m)%Utlda(k), &
+./overflows.F90:                        write(stdout,20) n,ovf(ovf_id)%loc_ent(m)%i_u, &
+./overflows.F90:                           write(stdout,25) k,ovf(ovf_id)%loc_ent(m)%Utlda(k), &
+./overflows.F90:                           write(stdout,30) n,ovf(ovf_id)%loc_prd(m,mp)%i_u, &
+./overflows.F90:                              write(stdout,35) k,ovf(ovf_id)%loc_prd(m,mp)%Utlda(k), &
+./overflows.F90:      write(stdout,*) ' ovf_driver entered '
+./overflows.F90:      write(stdout,*) ' ovf_reg_avgs called '
+./overflows.F90:            write(stdout,10) n,ovf(n)%trcr_reg%inf(1),                   &
+./overflows.F90:               write(stdout,11) n,ovf(n)%trcr_adj%src(1),                   &
+./overflows.F90:               write(stdout,12) n,ovf(n)%trcr_adj%src(1),                   &
+./overflows.F90:               write(ovf_diag_unit,1234) tday,n,phi,1.e-12*Ms,1.e-12*Me,1.e-12*Mp,m,zt(k_p)/100.
+./overflows.F90:               write(ovf_diag_unit,1235) tday, n,T_i,S_i*c1000,T_s,S_s*c1000,T_e,S_e*c1000,T_p,S_p*c1000
+./overflows.F90:               write(ovf_diag_unit,1234) myRecvBuff(loc),r_n, myRecvBuff(loc+2), &
+./overflows.F90:               write(ovf_diag_unit,1235) myRecvBuff(loc), r_n, myRecvBuff(loc+8), &
+./overflows.F90:      write(stdout,*) 'ovf_loc_prd called '
+./overflows.F90:                        write(stdout,5) m, 0.0, &
+./overflows.F90:                           write(stdout,5) m,(ovf(ovf_id)%rho_adj%prd(m-1)-c1)*c1000, &
+./overflows.F90:               write(stdout,10) T_p,S_p,rho_p
+./overflows.F90:               write(stdout,20) n,T_p,S_p*c1000,(rho_p-c1)*c1000,m_neut
+./overflows.F90:                  write(stdout,*) 'ovf_loc_prd: nsteps_total=',nsteps_total, &
+./overflows.F90:                                    write(stdout,30) ovf(ovf_id)%loc_prd(m,mp)%i,ovf(ovf_id)%loc_prd(m,mp)%j, &
+./overflows.F90:                  write(stdout,50) ib1, rb2, rb3, ib4, rb5, rb6, rb7, rb8
+./overflows.F90:               write(stdout,200) ib1, rb2, rb3, rb4, ib5
+./overflows.F90:            write(stdout,101) T_p,S_p,rho_p
+./overflows.F90:               write(stdout,*) 'ovf_loc_prd: nsteps_total=',nsteps_total, &
+./overflows.F90:                                 write(stdout,31) ovf(ovf_id)%loc_prd(m,mp)%i,ovf(ovf_id)%loc_prd(m,mp)%j, &
+./overflows.F90:      write(stdout,*) 'ovf_W called '
+./overflows.F90:                           write(stdout,10) n,ovf(ovf_id)%loc_src(m)%i, &
+./overflows.F90:                           write(stdout,20) n,ovf(ovf_id)%loc_ent(m)%i, &
+./overflows.F90:                           write(stdout,30) n,ovf(ovf_id)%loc_prd(m,mp)%i, &
+./overflows.F90:      write(stdout,*) 'ovf_UV called '
+./overflows.F90:                           write(stdout,10) n,ovf(ovf_id)%loc_src(m)%i_u, &
+./overflows.F90:                           write(stdout,20) n,ovf(ovf_id)%loc_ent(m)%i_u, &
+./overflows.F90:                           write(stdout,30) n,ovf(ovf_id)%loc_prd(m,mp)%i_u, & 
+./overflows.F90:      write(stdout,*) 'ovf_rhs_brtrpc_momentum called '
+./overflows.F90:                           write(stdout,10) n,ovf(ovf_id)%loc_src(m)%i_u,ovf(ovf_id)%loc_src(m)%j_u
+./overflows.F90:                           write(stdout,20) n,ovf(ovf_id)%loc_ent(m)%i_u,ovf(ovf_id)%loc_ent(m)%j_u
+./overflows.F90:                           write(stdout,30) n,ovf(ovf_id)%loc_prd(m,mp)%i_u, &
+./overflows.F90:      write(stdout,*) 'ovf_brtrpc_renorm called '
+./overflows.F90:                        write(stdout,10) n,ovf(ovf_id)%loc_src(m)%i_u, &
+./overflows.F90:                        write(stdout,20) n,ovf(ovf_id)%loc_ent(m)%i_u, &
+./overflows.F90:                        write(stdout,30) n,ovf(ovf_id)%loc_prd(m,mp)%i_u, &
+./overflows.F90:      write(stdout,*) 'ovf_rhs_brtrpc_continuity called '
+./overflows.F90:                        write(stdout,10) n,ovf(ovf_id)%loc_src(m)%i,ovf(ovf_id)%loc_src(m)%j, &
+./overflows.F90:                        write(stdout,20) n,ovf(ovf_id)%loc_ent(m)%i,ovf(ovf_id)%loc_ent(m)%j, &
+./overflows.F90:                        write(stdout,30) n,ovf(ovf_id)%loc_prd(m,mp)%i,ovf(ovf_id)%loc_prd(m,mp)%j, &
+./overflows.F90:      write(stdout,*) 'ovf_HU called '
+./overflows.F90:                           write(stdout,10) n, &
+./overflows.F90:                           write(stdout,20) n, &
+./overflows.F90:                           write(stdout,30) n,ovf(ovf_id)%loc_prd(m,mp)%i_u, &
+./overflows.F90:      write(stdout,*) 'ovf_UV_solution called '
+./overflows.F90:                           write(stdout,10) n,ovf(ovf_id)%loc_src(m)%i_u, &
+./overflows.F90:                           write(stdout,20) n,ovf(ovf_id)%loc_ent(m)%i_u, &
+./overflows.F90:                           write(stdout,30) n,ovf(ovf_id)%loc_prd(m,mp)%i_u, &
+./overflows.F90:     write(stdout,*) 'ovf_U_column called '
+./overflows.F90:      write(stdout,*) 'ovf_U_column '
+./overflows.F90:      write(stdout,5) KMU(i,j,iblock),kovf,Uovf,ubar,utlda_bar,Uovf_nm1, &
+./overflows.F90:          write(stdout,10) k,dz(k),utlda(k)-utlda_bar
+./overflows.F90:          write(stdout,15) k,dz(k),-ubar
+./overflows.F90:          write(stdout,20) k,dz(k),Uovf-ubar
+./overflows.F90:     write(stdout,*) 'ovf_V_column called '
+./overflows.F90:      write(stdout,*) 'ovf_V_column '
+./overflows.F90:      write(stdout,5) KMU(i,j,iblock),kovf,Uovf,ubar,utlda_bar,Uovf_nm1, &
+./overflows.F90:          write(stdout,10) k,dz(k),utlda(k)-utlda_bar
+./overflows.F90:          write(stdout,15) k,dz(k),-ubar
+./overflows.F90:          write(stdout,20) k,dz(k),Uovf-ubar
+./passive_tracers.F90:       ecosys_write_restart
+./passive_tracers.F90:       moby_write_restart,         &
+./passive_tracers.F90:      write_restart_passive_tracers,         &
+./passive_tracers.F90:      write(stdout,*) ' '
+./passive_tracers.F90:      write(stdout,*) ' Document Namelist Parameters:'
+./passive_tracers.F90:      write(stdout,*) ' ============================ '
+./passive_tracers.F90:      write(stdout,*) ' '
+./passive_tracers.F90:      write(stdout, passive_tracers_on_nml)
+./passive_tracers.F90:      write(stdout,*) ' '
+./passive_tracers.F90:      write(stdout,delim_fmt)
+./passive_tracers.F90:      write(stdout,*) 'TRACER INDEX    TRACER NAME'
+./passive_tracers.F90:      write(stdout,1010) 1, 'TEMP'
+./passive_tracers.F90:      write(stdout,1010) 2, 'SALT'
+./passive_tracers.F90:         write(stdout,1010) n, TRIM(tracer_d(n)%long_name)
+./passive_tracers.F90:      write(stdout,delim_fmt)
+./passive_tracers.F90:! !IROUTINE: write_restart_passive_tracers
+./passive_tracers.F90: subroutine write_restart_passive_tracers(restart_file, action)
+./passive_tracers.F90:!  write fields besides the tracers themselves
+./passive_tracers.F90:      call ecosys_write_restart(restart_file, action)
+./passive_tracers.F90:!  CFC does not write additional restart fields
+./passive_tracers.F90:!  IAGE does not write additional restart fields
+./passive_tracers.F90:      call moby_write_restart(restart_file, action)
+./passive_tracers.F90: end subroutine write_restart_passive_tracers
+./passive_tracers.F90:      write(stdout,delim_fmt)
+./passive_tracers.F90:      write(stdout,*) module_string /&
+./passive_tracers.F90:      write(stdout,*) module_string /&
+./passive_tracers.F90:      write(stdout,delim_fmt)
+./passive_tracer_tools.F90:            write(stdout,blank_fmt)
+./passive_tracer_tools.F90:            write(stdout,'(a12,a)') ' file read: ', &
+./POP_ConfigMod.F90:         write(POP_stdout, '(a37,a)') &
+./POP_ConfigMod.F90:         write(tmpString,'(a,a3)') variableName,' = '
+./POP_ConfigMod.F90:         write(POP_stdout,'(a,a1,i10,a)') trim(tmpString), ' ', &
+./POP_ConfigMod.F90:         write(POP_stdout,'(a,a1,i10)'  ) trim(tmpString), ' ', &
+./POP_ConfigMod.F90:         write(POP_stdout, '(a37,a)') &
+./POP_ConfigMod.F90:         write(tmpString,'(a,a3)') variableName,' = '
+./POP_ConfigMod.F90:         write(POP_stdout,'(a,a1,1pe12.5,a)') trim(tmpString), ' ', &
+./POP_ConfigMod.F90:         write(POP_stdout,'(a,a1,1pe12.5)'  ) trim(tmpString), ' ', &
+./POP_ConfigMod.F90:         write(POP_stdout, '(a37,a)') &
+./POP_ConfigMod.F90:         write(tmpString,'(a,a3)') variableName,' = '
+./POP_ConfigMod.F90:         write(POP_stdout,'(a,a1,1pe22.15,a)') trim(tmpString), ' ', &
+./POP_ConfigMod.F90:         write(POP_stdout,'(a,a1,1pe22.15)'  ) trim(tmpString), ' ', &
+./POP_ConfigMod.F90:         write(POP_stdout, '(a37,a)') &
+./POP_ConfigMod.F90:         write(tmpString,'(a,a3)') variableName,' = '
+./POP_ConfigMod.F90:            write(POP_stdout,'(a,a5,a)') trim(tmpString), ' true', &
+./POP_ConfigMod.F90:            write(POP_stdout,'(a,a6,a)') trim(tmpString), ' false', &
+./POP_ConfigMod.F90:            write(POP_stdout,'(a,a5)') trim(tmpString), ' true'
+./POP_ConfigMod.F90:            write(POP_stdout,'(a,a6)') trim(tmpString), ' false'
+./POP_ConfigMod.F90:         write(POP_stdout, '(a37,a)') &
+./POP_ConfigMod.F90:         write(tmpString,'(a,a3)') variableName,' = '
+./POP_ConfigMod.F90:         write(POP_stdout,'(a,a1,a,a1,a)') trim(tmpString), ' ', &
+./POP_ConfigMod.F90:         write(POP_stdout,'(a,a1,a)'  ) trim(tmpString), ' ', &
+./POP_ConstantsMod.F90:      write(POP_stdout,POP_blankFormat)
+./POP_ConstantsMod.F90:      write(POP_stdout,POP_delimFormat)
+./POP_ConstantsMod.F90:      write(POP_stdout,'(a30)') 'Physical constant values used:'
+./POP_ConstantsMod.F90:      write(POP_stdout,POP_delimFormat)
+./POP_ConstantsMod.F90:      write(POP_stdout,POP_blankFormat)
+./POP_ConstantsMod.F90:      write(POP_stdout,outFormat) ' Pi                             = ', &
+./POP_ConstantsMod.F90:      write(POP_stdout,outFormat) ' Gravity                        = ', &
+./POP_ConstantsMod.F90:      write(POP_stdout,outFormat) ' Omega                          = ', &
+./POP_ConstantsMod.F90:      write(POP_stdout,outFormat) ' Gravity                        = ', &
+./POP_ConstantsMod.F90:      write(POP_stdout,outFormat) ' Omega                          = ', &
+./POP_ConstantsMod.F90:      write(POP_stdout,outFormat) ' Earth radius                   = ', &
+./POP_ConstantsMod.F90:      write(POP_stdout,outFormat) ' Density air                    = ', &
+./POP_ConstantsMod.F90:      write(POP_stdout,outFormat) ' Density fresh water            = ', &
+./POP_ConstantsMod.F90:      write(POP_stdout,outFormat) ' Density salt  water            = ', &
+./POP_ConstantsMod.F90:      write(POP_stdout,outFormat) ' Spec. heat salt water          = ', &
+./POP_ConstantsMod.F90:      write(POP_stdout,outFormat) ' Spec. heat air                 = ', &
+./POP_ConstantsMod.F90:      write(POP_stdout,outFormat) ' Sound speed                    = ', &
+./POP_ConstantsMod.F90:      write(POP_stdout,outFormat) ' von Karman constant            = ', &
+./POP_ConstantsMod.F90:      write(POP_stdout,outFormat) ' Emissivity                     = ', &
+./POP_ConstantsMod.F90:      write(POP_stdout,outFormat) ' Stefan Boltzmann               = ', &
+./POP_ConstantsMod.F90:      write(POP_stdout,outFormat) ' Latent heat vaporization (MKS) = ', &
+./POP_ConstantsMod.F90:      write(POP_stdout,outFormat) ' Latent heat fusion             = ', &
+./POP_ConstantsMod.F90:      write(POP_stdout,outFormat) ' Latent heat fusion (MKS)       = ', &
+./POP_ConstantsMod.F90:      write(POP_stdout,outFormat) ' Sea ice salinity               = ', &
+./POP_ConstantsMod.F90:      write(POP_stdout,outFormat) ' Ocean ref. salinity            = ', &
+./POP_DistributionMod.F90:   if(Debug) write(*,*) 'numProcs,extra,nblocks,nblocksL,s1: ', &
+./POP_DistributionMod.F90:        !DBG if(POP_myTask ==0) write(*,*) 'i,j,ii:= ',i,j,ii
+./POP_DistributionMod.F90:      if(POP_myTask==0) write(*,*) 'newDistrb%proc:= ',newDistrb%blockLocation
+./POP_DistributionMod.F90:      write(*,*) 'IAM: ',POP_myTask,' SpaceCurve: Number of blocks {total,local} :=', &
+./POP_ErrorMod.F90:         write(local_unit,POP_blankFormat)
+./POP_ErrorMod.F90:         write(local_unit,POP_delimFormat)
+./POP_ErrorMod.F90:         write(local_unit,POP_blankFormat)
+./POP_ErrorMod.F90:            write(local_unit,'(a34)') &
+./POP_ErrorMod.F90:            write(local_unit,'(a14)') 'POP Exiting...'
+./POP_ErrorMod.F90:               write(POP_stderr,'(a)') trim(POP_errorLog(n))
+./POP_ErrorMod.F90:                  write(local_unit,'(a)') trim(POP_errorLog(n))
+./POP_ErrorMod.F90:               write(POP_stderr,'(a23)') 'Too many error messages'
+./POP_ErrorMod.F90:                  write(local_unit,'(a23)') 'Too many error messages'
+./POP_ErrorMod.F90:         write(local_unit,POP_blankFormat)
+./POP_ErrorMod.F90:         write(local_unit,POP_delimFormat)
+./POP_ErrorMod.F90:         write(local_unit,POP_blankFormat)
+./POP_ErrorMod.F90:      write(local_unit,POP_blankFormat)
+./POP_ErrorMod.F90:      write(local_unit,POP_delimFormat)
+./POP_ErrorMod.F90:      write(local_unit,POP_blankFormat)
+./POP_ErrorMod.F90:         write(local_unit,'(a34)') 'Successful completion of POP model'
+./POP_ErrorMod.F90:         write(local_unit,'(a14)') 'POP Exiting...'
+./POP_ErrorMod.F90:            write(POP_stderr,'(a)') trim(POP_errorLog(n))
+./POP_ErrorMod.F90:               write(local_unit,'(a)') trim(POP_errorLog(n))
+./POP_ErrorMod.F90:            write(POP_stderr,'(a23)') 'Too many error messages'
+./POP_ErrorMod.F90:               write(local_unit,'(a23)') 'Too many error messages'
+./POP_ErrorMod.F90:      write(local_unit,POP_blankFormat)
+./POP_ErrorMod.F90:      write(local_unit,POP_delimFormat)
+./POP_ErrorMod.F90:      write(local_unit,POP_blankFormat)
+./POP_FieldMod.F90:!   exists and overwrite value
+./POP_FieldMod.F90:!   exists and overwrite value
+./POP_FieldMod.F90:!   exists and overwrite value
+./POP_FieldMod.F90:!   exists and overwrite value
+./POP_FieldMod.F90:!   exists and overwrite value
+./POP_SolversMod.F90:      write(POP_stdout,POP_blankFormat)
+./POP_SolversMod.F90:      write(POP_stdout,POP_delimFormat)
+./POP_SolversMod.F90:      write(POP_stdout,'(a35)') ' Solver options (barotropic solver)'
+./POP_SolversMod.F90:      write(POP_stdout,POP_delimFormat)
+./POP_SolversMod.F90:      write(POP_stdout,POP_blankFormat)
+./POP_SolversMod.F90:!       write(stdout,*) ' Preconditioner read from file: ', &
+./POP_SolversMod.F90:!       write(stdout,blank_fmt)
+./POP_SolversMod.F90:!       write(stdout,*) ' file read: ', trim(precond_file)
+./POP_SpaceCurveMod.F90:        if(debug) write(*,21) ll-1,pos(0),pos(1),lma,lmd,lja,ljd
+./POP_SpaceCurveMod.F90:        if(debug) write(*,*) 'Cinco: After Position [0,0] ',pos
+./POP_SpaceCurveMod.F90:        if(debug) write(*,22) ll-1,pos(0),pos(1),lma,lmd,lja,ljd
+./POP_SpaceCurveMod.F90:        if(debug) write(*,*) 'After Position [1,0] ',pos
+./POP_SpaceCurveMod.F90:        if(debug) write(*,23) ll-1,pos(0),pos(1),lma,lmd,lja,ljd
+./POP_SpaceCurveMod.F90:        if(debug) write(*,*) 'After Position [2,0] ',pos
+./POP_SpaceCurveMod.F90:        if(debug) write(*,24) ll-1,pos(0),pos(1),lma,lmd,lja,ljd
+./POP_SpaceCurveMod.F90:        if(debug) write(*,*) 'After Position [2,1] ',pos
+./POP_SpaceCurveMod.F90:        if(debug) write(*,25) ll-1,pos(0),pos(1),lma,lmd,lja,ljd
+./POP_SpaceCurveMod.F90:        if(debug) write(*,*) 'After Position [2,2] ',pos
+./POP_SpaceCurveMod.F90:        if(debug) write(*,26) ll-1,pos(0),pos(1),lma,lmd,lja,ljd
+./POP_SpaceCurveMod.F90:        if(debug) write(*,*) 'After Position [1,2] ',pos
+./POP_SpaceCurveMod.F90:        if(debug) write(*,27) ll-1,pos(0),pos(1),lma,lmd,lja,ljd
+./POP_SpaceCurveMod.F90:        if(debug) write(*,*) 'After Position [1,1] ',pos
+./POP_SpaceCurveMod.F90:        if(debug) write(*,28) ll-1,pos(0),pos(1),lma,lmd,lja,ljd
+./POP_SpaceCurveMod.F90:        if(debug) write(*,*) 'After Position [0,1] ',pos
+./POP_SpaceCurveMod.F90:        if(debug) write(*,29) ll-1,pos(0),pos(1),lma,lmd,lja,ljd
+./POP_SpaceCurveMod.F90:        if(debug) write(*,*) 'After Position [0,2] ',pos
+./POP_SpaceCurveMod.F90:        if(debug) write(*,30) ll-1,pos(0),pos(1),lma,lmd,lja,ljd
+./POP_SpaceCurveMod.F90:        if(debug) write(*,*) 'After Position [0,3] ',pos
+./POP_SpaceCurveMod.F90:        if(debug) write(*,31) ll-1,pos(0),pos(1),lma,lmd,lja,ljd
+./POP_SpaceCurveMod.F90:        if(debug) write(*,*) 'After Position [0,4] ',pos
+./POP_SpaceCurveMod.F90:        if(debug) write(*,32) ll-1,pos(0),pos(1),lma,lmd,lja,ljd
+./POP_SpaceCurveMod.F90:        if(debug) write(*,*) 'After Position [1,4] ',pos
+./POP_SpaceCurveMod.F90:        if(debug) write(*,33) ll-1,pos(0),pos(1),lma,lmd,lja,ljd
+./POP_SpaceCurveMod.F90:        if(debug) write(*,*) 'After Position [1,3] ',pos
+./POP_SpaceCurveMod.F90:        if(debug) write(*,34) ll-1,pos(0),pos(1),lma,lmd,lja,ljd
+./POP_SpaceCurveMod.F90:        if(debug) write(*,*) 'After Position [2,3] ',pos
+./POP_SpaceCurveMod.F90:        if(debug) write(*,35) ll-1,pos(0),pos(1),lma,lmd,lja,ljd
+./POP_SpaceCurveMod.F90:        if(debug) write(*,*) 'After Position [2,4] ',pos
+./POP_SpaceCurveMod.F90:        if(debug) write(*,36) ll-1,pos(0),pos(1),lma,lmd,lja,ljd
+./POP_SpaceCurveMod.F90:        if(debug) write(*,*) 'After Position [3,4] ',pos
+./POP_SpaceCurveMod.F90:        if(debug) write(*,37) ll-1,pos(0),pos(1),lma,lmd,lja,ljd
+./POP_SpaceCurveMod.F90:        if(debug) write(*,*) 'After Position [4,4] ',pos
+./POP_SpaceCurveMod.F90:        if(debug) write(*,38) ll-1,pos(0),pos(1),lma,lmd,lja,ljd
+./POP_SpaceCurveMod.F90:        if(debug) write(*,*) 'After Position [4,3] ',pos
+./POP_SpaceCurveMod.F90:        if(debug) write(*,39) ll-1,pos(0),pos(1),lma,lmd,lja,ljd
+./POP_SpaceCurveMod.F90:        if(debug) write(*,*) 'After Position [3,3] ',pos
+./POP_SpaceCurveMod.F90:        if(debug) write(*,40) ll-1,pos(0),pos(1),lma,lmd,lja,ljd
+./POP_SpaceCurveMod.F90:        if(debug) write(*,*) 'After Position [3,2] ',pos
+./POP_SpaceCurveMod.F90:        if(debug) write(*,41) ll-1,pos(0),pos(1),lma,lmd,lja,ljd
+./POP_SpaceCurveMod.F90:        if(debug) write(*,*) 'After Position [4,2] ',pos
+./POP_SpaceCurveMod.F90:        if(debug) write(*,42) ll-1,pos(0),pos(1),lma,lmd,lja,ljd
+./POP_SpaceCurveMod.F90:        if(debug) write(*,*) 'After Position [4,1] ',pos
+./POP_SpaceCurveMod.F90:        if(debug) write(*,43) ll-1,pos(0),pos(1),lma,lmd,lja,ljd
+./POP_SpaceCurveMod.F90:        if(debug) write(*,*) 'After Position [3,1] ',pos
+./POP_SpaceCurveMod.F90:        if(debug) write(*,44) ll-1,pos(0),pos(1),lma,lmd,lja,ljd
+./POP_SpaceCurveMod.F90:        if(debug) write(*,*) 'After Position [3,0] ',pos
+./POP_SpaceCurveMod.F90:        if(debug) write(*,45) ll-1,pos(0),pos(1),lma,lmd,lja,ljd
+./POP_SpaceCurveMod.F90:        if(debug) write(*,*) 'After Position [4,0] ',pos
+./POP_SpaceCurveMod.F90:        if(debug) write(*,21) ll-1,pos(0),pos(1),lma,lmd,lja,ljd
+./POP_SpaceCurveMod.F90:        if(debug) write(*,*) 'PeanoM: After Position [0,0] ',pos
+./POP_SpaceCurveMod.F90:        if(debug) write(*,22) ll-1,pos(0),pos(1),lma,lmd,lja,ljd
+./POP_SpaceCurveMod.F90:        if(debug) write(*,*) 'PeanoM: After Position [0,1] ',pos
+./POP_SpaceCurveMod.F90:        if(debug) write(*,23) ll-1,pos(0),pos(1),lma,lmd,lja,ljd
+./POP_SpaceCurveMod.F90:        if(debug) write(*,*) 'PeanoM: After Position [0,2] ',pos
+./POP_SpaceCurveMod.F90:        if(debug) write(*,24) ll-1,pos(0),pos(1),lma,lmd,lja,ljd
+./POP_SpaceCurveMod.F90:        if(debug) write(*,*) 'PeanoM: After Position [1,2] ',pos
+./POP_SpaceCurveMod.F90:        if(debug) write(*,25) ll-1,pos(0),pos(1),lma,lmd,lja,ljd
+./POP_SpaceCurveMod.F90:        if(debug) write(*,*) 'PeanoM: After Position [2,2] ',pos
+./POP_SpaceCurveMod.F90:        if(debug) write(*,26) ll-1,pos(0),pos(1),lma,lmd,lja,ljd
+./POP_SpaceCurveMod.F90:        if(debug) write(*,*) 'PeanoM: After Position [2,1] ',pos
+./POP_SpaceCurveMod.F90:        if(debug) write(*,27) ll-1,pos(0),pos(1),lma,lmd,lja,ljd
+./POP_SpaceCurveMod.F90:        if(debug) write(*,*) 'PeanoM: After Position [1,1] ',pos
+./POP_SpaceCurveMod.F90:        if(debug) write(*,28) ll-1,pos(0),pos(1),lma,lmd,lja,ljd
+./POP_SpaceCurveMod.F90:        if(debug) write(*,*) 'PeanoM: After Position [1,0] ',pos
+./POP_SpaceCurveMod.F90:        if(debug) write(*,29) ll-1,pos(0),pos(1),lma,lmd,lja,ljd
+./POP_SpaceCurveMod.F90:        if(debug) write(*,*) 'PeanoM: After Position [2,0] ',pos
+./POP_SpaceCurveMod.F90:        if(debug) write(*,21) ll-1,pos(0),pos(1),lma,lmd,lja,ljd
+./POP_SpaceCurveMod.F90:        if(debug) write(*,*) 'Hilbert: After Position [0,0] ',pos
+./POP_SpaceCurveMod.F90:        if(debug) write(*,22) ll-1,pos(0),pos(1),lma,lmd,lja,ljd
+./POP_SpaceCurveMod.F90:        if(debug) write(*,*) 'Hilbert: After Position [0,1] ',pos
+./POP_SpaceCurveMod.F90:        if(debug) write(*,23) ll-1,pos(0),pos(1),lma,lmd,lja,ljd
+./POP_SpaceCurveMod.F90:        if(debug) write(*,*) 'Hilbert: After Position [1,1] ',pos
+./POP_SpaceCurveMod.F90:        if(debug) write(*,24) ll-1,pos(0),pos(1),lma,lmd,lja,ljd
+./POP_SpaceCurveMod.F90:        if(debug) write(*,*) 'Hilbert: After Position [1,0] ',pos
+./POP_SpaceCurveMod.F90:      write(*,*) ' '
+./POP_SpaceCurveMod.F90:      write(*,*) 'PrintFactor: ',msg
+./POP_SpaceCurveMod.F90:      write(*,*) (fac%factors(i),i=1,fac%numfact)
+./POP_SpaceCurveMod.F90:      write(*,*) (fac%used(i),i=1,fac%numfact)
+./POP_SpaceCurveMod.F90:        write (*,*) "A Level 1 Hilbert Curve:"
+./POP_SpaceCurveMod.F90:        write (*,*) "------------------------"
+./POP_SpaceCurveMod.F90:           write(*,2) Mesh(1,i),Mesh(2,i)
+./POP_SpaceCurveMod.F90:        write (*,*) "A Level 1 Peano Meandering Curve:"
+./POP_SpaceCurveMod.F90:        write (*,*) "---------------------------------"
+./POP_SpaceCurveMod.F90:           write(*,3) Mesh(1,i),Mesh(2,i),Mesh(3,i)
+./POP_SpaceCurveMod.F90:        write (*,*) "A Level 2 Hilbert Curve:"
+./POP_SpaceCurveMod.F90:        write (*,*) "------------------------"
+./POP_SpaceCurveMod.F90:           write(*,4) Mesh(1,i),Mesh(2,i),Mesh(3,i),Mesh(4,i)
+./POP_SpaceCurveMod.F90:        write (*,*) "A Level 1 Cinco Curve:"
+./POP_SpaceCurveMod.F90:        write (*,*) "------------------------"
+./POP_SpaceCurveMod.F90:           write(*,5) Mesh(1,i),Mesh(2,i),Mesh(3,i),Mesh(4,i),Mesh(5,i)
+./POP_SpaceCurveMod.F90:        write (*,*) "A Level 1 Hilbert and Level 1 Peano Curve:"
+./POP_SpaceCurveMod.F90:        write (*,*) "------------------------------------------"
+./POP_SpaceCurveMod.F90:           write(*,6) Mesh(1,i),Mesh(2,i),Mesh(3,i), &
+./POP_SpaceCurveMod.F90:        write (*,*) "A Level 3 Hilbert Curve:"
+./POP_SpaceCurveMod.F90:        write (*,*) "------------------------"
+./POP_SpaceCurveMod.F90:           write(*,8) Mesh(1,i),Mesh(2,i),Mesh(3,i),Mesh(4,i), &
+./POP_SpaceCurveMod.F90:        write (*,*) "A Level 2 Peano Meandering Curve:"
+./POP_SpaceCurveMod.F90:        write (*,*) "---------------------------------"
+./POP_SpaceCurveMod.F90:           write(*,9) Mesh(1,i),Mesh(2,i),Mesh(3,i),Mesh(4,i), &
+./POP_SpaceCurveMod.F90:        write (*,*) "A Level 1 Hilbert and Level 1 Cinco Curve:"
+./POP_SpaceCurveMod.F90:        write (*,*) "---------------------------------"
+./POP_SpaceCurveMod.F90:           write(*,10) Mesh(1,i),Mesh(2,i),Mesh(3,i),Mesh(4,i), &
+./POP_SpaceCurveMod.F90:        write (*,*) "A Level 2 Hilbert and Level 1 Peano Curve:"
+./POP_SpaceCurveMod.F90:        write (*,*) "------------------------------------------"
+./POP_SpaceCurveMod.F90:           write(*,12) Mesh(1,i),Mesh(2,i), Mesh(3,i), Mesh(4,i), &
+./POP_SpaceCurveMod.F90:        write (*,*) "A Level 1 Peano and Level 1 Cinco Curve:"
+./POP_SpaceCurveMod.F90:        write (*,*) "------------------------"
+./POP_SpaceCurveMod.F90:           write(*,15) Mesh(1,i),Mesh(2,i),Mesh(3,i),Mesh(4,i), &
+./POP_SpaceCurveMod.F90:        write (*,*) "A Level 4 Hilbert Curve:"
+./POP_SpaceCurveMod.F90:        write (*,*) "------------------------"
+./POP_SpaceCurveMod.F90:           write(*,16) Mesh(1,i),Mesh(2,i),Mesh(3,i),Mesh(4,i), &
+./POP_SpaceCurveMod.F90:        write (*,*) "A Level 1 Hilbert and Level 2 Peano Curve:"
+./POP_SpaceCurveMod.F90:        write (*,*) "------------------------------------------"
+./POP_SpaceCurveMod.F90:           write(*,18) Mesh(1,i), Mesh(2,i), Mesh(3,i), Mesh(4,i), &
+./POP_SpaceCurveMod.F90:        write (*,*) "A Level 2 Hilbert and Level 1 Cinco Curve:"
+./POP_SpaceCurveMod.F90:        write (*,*) "------------------------------------------"
+./POP_SpaceCurveMod.F90:           write(*,20) Mesh(1,i), Mesh(2,i), Mesh(3,i), Mesh(4,i), &
+./POP_SpaceCurveMod.F90:        write (*,*) "A Level 3 Hilbert and Level 1 Peano Curve:"
+./POP_SpaceCurveMod.F90:        write (*,*) "------------------------------------------"
+./POP_SpaceCurveMod.F90:           write(*,24) Mesh(1,i), Mesh(2,i), Mesh(3,i), Mesh(4,i), &
+./POP_SpaceCurveMod.F90:        write (*,*) "A Level 2 Cinco Curve:"
+./POP_SpaceCurveMod.F90:        write (*,*) "------------------------------------------"
+./POP_SpaceCurveMod.F90:           write(*,25) Mesh(1,i), Mesh(2,i), Mesh(3,i), Mesh(4,i), &
+./POP_SpaceCurveMod.F90:        write (*,*) "A Level 3 Peano Meandering Curve:"
+./POP_SpaceCurveMod.F90:        write (*,*) "---------------------------------"
+./POP_SpaceCurveMod.F90:           write(*,27) Mesh(1,i), Mesh(2,i), Mesh(3,i), Mesh(4,i), &
+./POP_SpaceCurveMod.F90:        write (*,*) "A Level 5 Hilbert Curve:"
+./POP_SpaceCurveMod.F90:        write (*,*) "------------------------"
+./POP_SpaceCurveMod.F90:           write(*,32) Mesh(1,i), Mesh(2,i), Mesh(3,i), Mesh(4,i),  &
+./POP_SpaceCurveMod.F90:   if(verbose) write(*,*) 'GenSpacecurve: level is ',level
+./pressure_grad.F90:      write(stdout,blank_fmt)
+./pressure_grad.F90:      write(stdout,ndelim_fmt)
+./pressure_grad.F90:      write(stdout,blank_fmt)
+./pressure_grad.F90:      write(stdout,'(a26)') ' Pressure gradient options'
+./pressure_grad.F90:      write(stdout,blank_fmt)
+./pressure_grad.F90:      write(stdout,delim_fmt)
+./pressure_grad.F90:         write(stdout,'(a28)') ' Pressure averaging enabled '
+./pressure_grad.F90:         write(stdout,'(a28)') ' Pressure averaging disabled'
+./pressure_grad.F90:         write(stdout,'(a28)') ' Density correction enabled '
+./pressure_grad.F90:         write(stdout,'(a28)') ' Density correction disabled'
+./pressure_grad.F90:!  overwrite level k-1 with level k density gradients for next pass
+./registry.F90:        write(message,1100) 'registry_error:', trim(string), &
+./registry.F90:        write(message,1100) 'registry_error:', trim(string), &
+./restart.F90:   use passive_tracers, only: write_restart_passive_tracers
+./restart.F90:             write_restart, &
+./restart.F90:             lrestart_write
+./restart.F90:      lrestart_write        ! flag to determine whether restart is written
+./restart.F90:      restart_start        ! start regular restart writes after restart_start
+./restart.F90:         cpl_write_restart     ! flag id for restart-file signal from cpl
+./restart.F90:         write(stdout,*) 'Reading pointer file: ', &
+./restart.F90:      write(short_name,'(a11,i3.3)') 'sal_initial',k
+./restart.F90:         write(short_name,'(a11,i3.3)') 'sal_initial',k
+./restart.F90:     write(stdout,blank_fmt)
+./restart.F90:     write(stdout,*) ' file read: ', trim(read_restart_filename)
+./restart.F90:! !IROUTINE: write_restart
+./restart.F90: subroutine write_restart(restart_type)
+./restart.F90:!  This routine writes all the data necessary for restarting a POP
+./restart.F90:!  simulation if it is determined that the time has come to write
+./restart.F90:!  so that the tavg module can determine whether it need to write
+./restart.F90:      nu                  ! i/o unit for pointer file writes
+./restart.F90:      write_restart_filename, &! modified file name for restart file
+./restart.F90:!  always set restart_type, because it is used in write_tavg
+./restart.F90:!  check to see whether it is time to write files
+./restart.F90:   lrestart_write = .false.
+./restart.F90:   !*** write restart files if code is stopping for any reason
+./restart.F90:      lrestart_write = .true.
+./restart.F90:   if (.not. lrestart_write .and. check_time_flag(evenodd_flag)  &
+./restart.F90:      lrestart_write = .true.
+./restart.F90:       (check_time_flag(cpl_write_restart) .and. &
+./restart.F90:      lrestart_write = .true.
+./restart.F90:   !*** turn off cpl_write_restart if necessary
+./restart.F90:   if (check_time_flag(cpl_write_restart) .and. & 
+./restart.F90:     call override_time_flag(cpl_write_restart, value=.false.)
+./restart.F90:!  the rest of this routine is only executed if it is time to write a
+./restart.F90:   if (lrestart_write) then
+./restart.F90:   write_restart_filename = char_blank
+./restart.F90:   write_restart_filename = trim(restart_outfile)/&
+./restart.F90:                                  full_name=trim(write_restart_filename), &
+./restart.F90:      write(short_name,'(a11,i3.3)') 'sal_initial',k
+./restart.F90:   if (nt > 2) call write_restart_passive_tracers(restart_file,'add_attrib_file')
+./restart.F90:!  open a file (also writes scalars as attributes to file)
+./restart.F90:   if (nt > 2) call write_restart_passive_tracers(restart_file,'define')
+./restart.F90:!  now we actually write each field
+./restart.F90:   call data_set (restart_file, 'write', UBTROP_CUR)
+./restart.F90:   call data_set (restart_file, 'write', UBTROP_OLD)
+./restart.F90:   call data_set (restart_file, 'write', VBTROP_CUR)
+./restart.F90:   call data_set (restart_file, 'write', VBTROP_OLD)
+./restart.F90:   call data_set (restart_file, 'write', PSURF_CUR)
+./restart.F90:   call data_set (restart_file, 'write', PSURF_OLD)
+./restart.F90:   call data_set (restart_file, 'write', GRADPX_CUR)
+./restart.F90:   call data_set (restart_file, 'write', GRADPX_OLD)
+./restart.F90:   call data_set (restart_file, 'write', GRADPY_CUR)
+./restart.F90:   call data_set (restart_file, 'write', GRADPY_OLD)
+./restart.F90:   call data_set (restart_file, 'write', PGUESSd)
+./restart.F90:      call data_set (restart_file, 'write', FW_OLDd)
+./restart.F90:      call data_set (restart_file, 'write', FW_FREEZEd)
+./restart.F90:        call data_set (restart_file, 'write', QFLUXd)
+./restart.F90:        call data_set (restart_file, 'write', AQICEd)
+./restart.F90:   call data_set (restart_file, 'write', UVEL_CUR)
+./restart.F90:   call data_set (restart_file, 'write', UVEL_OLD)
+./restart.F90:   call data_set (restart_file, 'write', VVEL_CUR)
+./restart.F90:   call data_set (restart_file, 'write', VVEL_OLD)
+./restart.F90:      call data_set (restart_file, 'write', TRACER_CUR(n))
+./restart.F90:      call data_set (restart_file, 'write', TRACER_OLD(n))
+./restart.F90:   if (nt > 2) call write_restart_passive_tracers(restart_file,'write')
+./restart.F90:     write(stdout,blank_fmt)
+./restart.F90:     write(stdout,*) ' restart file written: ', trim(write_restart_filename)
+./restart.F90:!  if pointer files are used, write filename to pointer file
+./restart.F90:       write(nu,'(a)') trim(write_restart_filename)
+./restart.F90:       write(nu,'(a,a)') 'RESTART_FMT=',trim(restart_fmt)
+./restart.F90:       write(stdout,blank_fmt)
+./restart.F90:       write(stdout,*) ' restart pointer file written: ',trim(restart_pointer_file)
+./restart.F90:   endif ! lrestart_write
+./restart.F90: end subroutine write_restart
+./restart.F90:      restart_start_opt     ! choice for starting regular restart writes 
+./restart.F90:      start_fmt = "('regular restart writes will start at ',a,i8)"
+./restart.F90:            write(stdout,start_fmt) 'step ', restart_start
+./restart.F90:            write(stdout,start_fmt) 'day  ', restart_start
+./restart.F90:            write(stdout,start_fmt) 'year ', restart_start
+./restart.F90:            write(stdout,start_fmt) '     ', restart_start
+./restart.F90:   call access_time_flag('cpl_write_restart',cpl_write_restart)
+./restart.F90:         write(file_suffix,'(i2)') ihour
+./restart.F90:         write (file_suffix,'(i6)') isecond
+./restart.F90:         write (file_suffix,'(i10)') nsteps_total
+./state_mod.F90:            write(stdout,'(a9,i6,a44,i3)') 'WARNING: ',out_of_range, &
+./state_mod.F90:            write(stdout,'(a9,i6,a44,i3)') 'WARNING: ',out_of_range, &
+./state_mod.F90:      write(stdout,1234) TEMPK,SALTK*c1000,DEPTHM
+./state_mod.F90:      write(stdout,2345) RHOFULL
+./state_mod.F90:      write(stdout,blank_fmt)
+./state_mod.F90:      write(stdout,ndelim_fmt)
+./state_mod.F90:      write(stdout,blank_fmt)
+./state_mod.F90:      write(stdout,'(a25)') 'Equation of state options'
+./state_mod.F90:      write(stdout,blank_fmt)
+./state_mod.F90:      write(stdout,delim_fmt)
+./state_mod.F90:         write(stdout,'(a29)') 'Using Jackett & McDougall EOS'
+./state_mod.F90:         write(stdout,'(a48)') &
+./state_mod.F90:         write(stdout,'(a20)') 'Using polynomial EOS'
+./state_mod.F90:         write(stdout,'(a16)') 'Using linear EOS'
+./state_mod.F90:!  write eos options to stdout
+./state_mod.F90:         write(stdout,'(a30)') 'No checking of valid T,S range'
+./state_mod.F90:         write(stdout,'(a30,i6,a7)') 'Valid T,S range checked every ', &
+./state_mod.F90:         write(stdout,'(a37)') 'EOS computed as if in valid T,S range'
+./state_mod.F90:            write(stdout,'(a39)') & 
+./state_mod.F90:            write(stdout,*) &
+./surface_hgt.F90:!        write(stdout,*) ' div error: ', div_error, div_mag
+./surface_hgt.F90:!        write(stdout,*) ' '
+./surface_hgt.F90:!        write(stdout,*) 'mean surface height           ', dhtot
+./surface_hgt.F90:!        write(stdout,*) 'mean change in surface height ', dh_dt
+./surface_hgt.F90:!        write(stdout,*) 'mean change from freshwater   ', dfw
+./sw_absorption.F90:       write(stdout,blank_fmt)
+./sw_absorption.F90:       write(stdout,ndelim_fmt)
+./sw_absorption.F90:       write(stdout,blank_fmt)
+./sw_absorption.F90:       write(stdout,*) ' Short-wave absorption:'
+./sw_absorption.F90:       write(stdout,blank_fmt)
+./sw_absorption.F90:       write(stdout,*) ' sw_absorption namelist  '
+./sw_absorption.F90:       write(stdout,blank_fmt)
+./sw_absorption.F90:       write(stdout, sw_absorption_nml)
+./sw_absorption.F90:       write(stdout,blank_fmt)
+./sw_absorption.F90:       write(stdout,blank_fmt)
+./sw_absorption.F90:       write(stdout,*) ' CHL monthly file read: ',chl_filename
+./sw_absorption.F90:    write(stdout,5)
+./sw_absorption.F90:     write(stdout,8) chlcnc(n) 
+./sw_absorption.F90:             write(stdout,10) kint,zprnt,Trprnt,Trjrlv
+./sw_absorption.F90:             write(stdout,11) kint,zw(kint)*mpercm,Trprnt,Trjrlv
+./sw_absorption.F90:             write(stdout,15) kmid,zt(kmid)*mpercm,Trprnt,Trjrlv
+./sw_absorption.F90:       write(stdout,20) chlmin,chlmax,nsub,dlogchl
+./sw_absorption.F90:       write(stdout,25) chlamnt
+./sw_absorption.F90:      write(stdout,35) n,chlamnt,A1,A2,B1,B2
+./sw_absorption.F90:            write(stdout,40) k,ztr(k)*mpercm,Tr(k,n)
+./sw_absorption.F90:     write(stdout,blank_fmt)
+./sw_absorption.F90:     write(stdout,*) ' Chlorophyll transmission table computed'
+./tavg.F90:             write_tavg,             &
+./tavg.F90:         TAVG_TEMP          ! work array in write_restart
+./tavg.F90:      timer_write_std,   &
+./tavg.F90:      timer_write_nstd,  &
+./tavg.F90:      write(stdout,blank_fmt)
+./tavg.F90:      write(stdout,ndelim_fmt)
+./tavg.F90:      write(stdout,blank_fmt)
+./tavg.F90:      write(stdout,'(a12)') ' Tavg:'
+./tavg.F90:      write(stdout,blank_fmt)
+./tavg.F90:      write(stdout,delim_fmt)
+./tavg.F90:      write(stdout,blank_fmt)
+./tavg.F90:      write(stdout,'(a28)') ' tavg_nml namelist settings:'
+./tavg.F90:      write(stdout,blank_fmt)
+./tavg.F90:      write(stdout,tavg_nml)
+./tavg.F90:      write(stdout,blank_fmt)
+./tavg.F90:      write(stdout,*) ' There will be ', nstreams, ' tavg output streams created during this run'
+./tavg.F90:      write(stdout,blank_fmt)
+./tavg.F90:      write(stdout,delim_fmt)
+./tavg.F90:         write(stdout,'(a,i3)') 'tavg diagnostics disabled for stream ', ns
+./tavg.F90:         write(stdout,'(a,i3,a)') 'stream #', ns, 'tavg fields written once (time-invariant fields)'
+./tavg.F90:         write(stdout,freq_fmt) ns, tavg_freq(ns),' years  '
+./tavg.F90:         write(stdout,freq_fmt) ns, tavg_freq(ns),' months '
+./tavg.F90:         write(stdout,freq_fmt) ns, tavg_freq(ns),' days   '
+./tavg.F90:         write(stdout,freq_fmt) ns, tavg_freq(ns),' hours  '
+./tavg.F90:         write(stdout,freq_fmt) ns, tavg_freq(ns),' seconds'
+./tavg.F90:         write(stdout,freq_fmt) ns, tavg_freq(ns),' steps  '
+./tavg.F90:            write(stdout,start_fmt) ns, 'step ', tavg_start(ns)
+./tavg.F90:            write(stdout,start_fmt) ns, 'day  ', tavg_start(ns)
+./tavg.F90:            write(stdout,start_fmt) ns, 'year ', tavg_start(ns)
+./tavg.F90:            write(stdout,start_fmt) ns, '     ', tavg_start(ns)
+./tavg.F90:           write(stdout,'(a,i3)') 'tavg diagnostics disabled for stream ', ns
+./tavg.F90:           write(stdout,'(a,i3,a)') 'stream #', ns, 'tavg file written once (time-invariant fields)'
+./tavg.F90:           write(stdout,freq_fmt) ns, tavg_file_freq(ns),' years  '
+./tavg.F90:           write(stdout,freq_fmt) ns, tavg_file_freq(ns),' months '
+./tavg.F90:           write(stdout,freq_fmt) ns, tavg_file_freq(ns),' days   '
+./tavg.F90:           write(stdout,freq_fmt) ns, tavg_file_freq(ns),' hours  '
+./tavg.F90:           write(stdout,freq_fmt) ns, tavg_file_freq(ns),' seconds'
+./tavg.F90:           write(stdout,freq_fmt) ns, tavg_file_freq(ns),' steps  '
+./tavg.F90:          write(tavg_streams(ns)%infile, *)trim(tavg_infile),'.',ns
+./tavg.F90:          write(tavg_streams(ns)%outfile,'(a,i1)')trim(tavg_outfile),ns
+./tavg.F90:          write(tavg_streams(ns)%infile, '(a,a,a)')trim(tavg_infile), '.',trim(char_temp)
+./tavg.F90:          write(tavg_streams(ns)%outfile,'(a,a,a)')trim(tavg_outfile),'.',trim(char_temp)
+./tavg.F90:      write(char_temp,1100) 'tavg',ns ;  1100 format (a,i1)
+./tavg.F90:      write(char_temp,1100) 'tavg_file',ns 
+./tavg.F90:      write(stdout,*) '(init_tavg) total number of lines in tavg_contents file = ', tavg_num_contents_lines
+./tavg.F90:      write(stdout,'(a38)') 'tavg diagnostics requested for fields:'
+./tavg.F90:           write(exit_string,'(a,i2,2x,a,2x,a)') ' stream requested = ', ns, 'field requested = ', char_temp
+./tavg.F90:                write(stdout,*)  ns, '  ',trim(char_temp)
+./tavg.F90:          write(beg_date,'(i10)') nsteps_total
+./tavg.F90:         write(stdout,*) '(init_tavg)  tavg_streams(',ns,  &
+./tavg.F90:      write(stdout,blank_fmt)
+./tavg.F90:      write(stdout,'(a)') ' Internal tavg Diagnostics Control Variables:'
+./tavg.F90:      write(stdout,blank_fmt)
+./tavg.F90:      write(stdout,*) '   (init_tavg) ldiag_bsf      = ', ldiag_bsf
+./tavg.F90:      write(stdout,*) '   (init_tavg) ldiag_gm_bolus = ', ldiag_gm_bolus
+./tavg.F90:      write(stdout,*) '   (init_tavg) lsubmeso       = ', lsubmeso
+./tavg.F90:      write(stdout,blank_fmt)
+./tavg.F90:      write(stdout,delim_fmt)
+./tavg.F90:        !*** do not read restart if last restart was at a regular tavg write
+./tavg.F90:   call get_timer(timer_write_std,'TAVG_WRITE_STD', nblocks_clinic, distrb_clinic%nprocs)
+./tavg.F90:   call get_timer(timer_write_nstd,'TAVG_WRITE_NONSTD', nblocks_clinic, distrb_clinic%nprocs)
+./tavg.F90:      if (tavg_freq_iopt(ns) == freq_opt_nstep) write(beg_date,'(i10)') nsteps_total
+./tavg.F90:! !IROUTINE: write_tavg
+./tavg.F90: subroutine write_tavg(restart_type)
+./tavg.F90:!  This routine writes requested tavg fields to a file.  The fields are
+./tavg.F90:      restart_type           ! tells tavg whether to write restart
+./tavg.F90:      io_phase,     &!'define' or 'write'
+./tavg.F90:      ltavg_write_reg,       &! time to write regular tavg file
+./tavg.F90:      ltavg_write_rest,      &! time to write restart tavg file
+./tavg.F90:!  is it time to write a file? (regular or restart)
+./tavg.F90:!    The variable restart_type is set every timestep in write_restart.
+./tavg.F90:!    If it is time to write a *restart* file, the restart_type
+./tavg.F90:   ltavg_write_reg  = .false.
+./tavg.F90:   ltavg_write_rest = .false.
+./tavg.F90:     !*** time to write a regular tavg file?
+./tavg.F90:     ltavg_write_reg = check_time_flag(tavg_streams(ns)%field_flag)
+./tavg.F90:     !*** time to write a restart tavg file?
+./tavg.F90:     !    if it is time to write a restart file, but not time to write a
+./tavg.F90:     !      *regular* tavg file, then write a *restart* tavg file
+./tavg.F90:     if (trim(restart_type) /= 'none' .and. .not. ltavg_write_reg) then
+./tavg.F90:       ltavg_write_rest = .true.
+./tavg.F90:       ! do not write to previously open file -- write to restart instead
+./tavg.F90:     !*** do not write a restart tavg file for a one-time stream
+./tavg.F90:       ltavg_write_rest = .false.
+./tavg.F90:   if (ltavg_write_reg .and. ltavg_write_rest) then
+./tavg.F90:     exit_string = 'FATAL ERROR: cannot have both regular and restart write'
+./tavg.F90:     call document ('write_tavg', exit_string)
+./tavg.F90:!  do the rest only if it is time to write a regular,restart, or one-time tavg file
+./tavg.F90:   if (ltavg_write_reg .or. ltavg_write_rest) then
+./tavg.F90:!     yes if ltavg_write_reg, netCDF, and using ccsm conventions
+./tavg.F90:!     no if ltavg_write_rest
+./tavg.F90:   if (lccsm .and. ltavg_fmt_out_nc .and. ltavg_write_reg) then
+./tavg.F90:      if (ltavg_write_reg) then
+./tavg.F90:            call document ('write_tavg', exit_string)
+./tavg.F90:            if (ltavg_fmt_out_nc .and. ltavg_write_reg) then
+./tavg.F90:            if (ltavg_fmt_out_nc .and. ltavg_write_reg) then
+./tavg.F90:          if (lccsm .and. ltavg_write_reg) &
+./tavg.F90:    if (ltavg_write_reg) then
+./tavg.F90:    if (ltavg_write_rest) then
+./tavg.F90:    endif ! ltavg_write_rest
+./tavg.F90:    write(hist_string,'(a23,a8,1x,a10)') & 
+./tavg.F90:    if (ltavg_fmt_out_nc .and. ltavg_write_reg) then
+./tavg.F90:    if (ltavg_fmt_out_nc .and. ltavg_write_reg) then
+./tavg.F90:    endif  !ltavg_fmt_out_nc .and. ltavg_write_reg
+./tavg.F90:!   write nonstandard fields
+./tavg.F90:    if (ltavg_fmt_out_nc .and. ltavg_write_reg) then
+./tavg.F90:        call timer_start(timer_write_nstd)
+./tavg.F90:        call tavg_write_vars_ccsm (tavg_file_desc(ns),num_ccsm_coordinates,   ccsm_coordinates(:,ns))
+./tavg.F90:        call tavg_write_vars_ccsm (tavg_file_desc(ns),num_ccsm_time_invar(ns),ccsm_time_invar(:,ns))
+./tavg.F90:        call tavg_write_vars_ccsm (tavg_file_desc(ns),num_ccsm_scalars(ns),   ccsm_scalars(:,ns))
+./tavg.F90:        call timer_stop(timer_write_nstd)
+./tavg.F90:    endif !ltavg_fmt_out_nc .and. ltavg_write_reg
+./tavg.F90:!   write fields to file
+./tavg.F90:!   in this second phase, we actually write the data for all the fields.
+./tavg.F90:   if (ltavg_write_reg) then
+./tavg.F90:   if (ltavg_fmt_out_nc .and. ltavg_write_reg) then
+./tavg.F90:       call tavg_write_vars_ccsm (tavg_file_desc(ns),1,time_coordinate(1,ns))
+./tavg.F90:       call tavg_write_time_bounds(tavg_file_desc(ns), ns)
+./tavg.F90:!  use data_set_nstd_ccsm to write labels and transport diags
+./tavg.F90:     call timer_start(timer_write_nstd)
+./tavg.F90:     call tavg_write_vars_nstd_ccsm (tavg_file_desc(ns),ns) 
+./tavg.F90:     call timer_stop(timer_write_nstd)
+./tavg.F90:    endif !ltavg_fmt_out_nc .and. ltavg_write_reg
+./tavg.F90:   call timer_start(timer_write_std)
+./tavg.F90:      !*** write only if field is requested, in buffer, and in this stream
+./tavg.F90:         call data_set (tavg_file_desc(ns), 'write', tavg_streams(ns)%tavg_fields(field_counter))
+./tavg.F90:   call timer_stop(timer_write_std)
+./tavg.F90:       write(stdout,blank_fmt)
+./tavg.F90:       write(stdout,*) 'tavg file written: ', trim(tavg_file_desc(ns)%full_name)
+./tavg.F90:       write(stdout,blank_fmt)
+./tavg.F90:       write(stdout,*) 'data appended to tavg file: ', trim(tavg_file_desc(ns)%full_name)
+./tavg.F90:!  if pointer files are used, write tavg filenames to pointer file
+./tavg.F90:   if (luse_pointer_files .and. .not. ltavg_write_reg) then
+./tavg.F90:     write(ns_temp,'(i1)') ns
+./tavg.F90:       write(nu,'(a)') trim(tavg_file_desc(ns)%full_name)
+./tavg.F90:!  if this is a regular tavg write, reset time averages
+./tavg.F90:!  if this is a restart tavg write, denormalize
+./tavg.F90:   if (ltavg_write_reg) then
+./tavg.F90:     if (tavg_freq_iopt(ns) == freq_opt_nstep) write(beg_date,'(i10)') nsteps_total
+./tavg.F90:   endif !ltavg_write_reg
+./tavg.F90:  endif !ltavg_write_reg .or. ltavg_write_rest
+./tavg.F90: end subroutine write_tavg
+./tavg.F90:         write(ns_temp,'(i1)') ns
+./tavg.F90:         write(stdout,*) 'Reading pointer file: ', trim(tavg_pointer_file)
+./tavg.F90:      write(stdout,'(i6,a29,i6,a35)') &
+./tavg.F90:      write(stdout,*) ' tavg_sum = ', tavg_sum(ns), ' in tavg restart'
+./tavg.F90:      write(stdout,'(a,i6,a29,i6,a35)') 'ERROR: ', &
+./tavg.F90:     write(stdout,blank_fmt)
+./tavg.F90:     write(stdout,*) ' file read: ', tavg_infile
+./tavg.F90:     write (stdout,blank_fmt)
+./tavg.F90:     write (stdout,*) 'Global Time Averages: ' // trim(date_string) // ' ' // trim(time_string)
+./tavg.F90:              write(stdout,*) 'Cannot compute global integral of ', &
+./tavg.F90:            write (stdout,*) trim(avail_tavg_fields(nfield)%short_name), &
+./tavg.F90:      write(exit_string,*)  'FATAL ERROR -- invalid loc; loc = ', loc
+./tavg.F90:   case (tavg_method_constant)  ! overwrite with current value; intended for time-invariant fields
+./tavg.F90:     write(stdout,*) 'define_tavg_field: id = ', id, ' ', short_name
+./tavg.F90:      write(stdout,*) 'Requested ', trim(short_name)
+./tavg.F90:      write(stdout,*) '(tavg_requested) id = ', id; call POP_IOUnitsFlush(stdout)
+./tavg.F90:     write(stdout,*) '(tavg_in_which_stream) stream_number = ', stream_number
+./tavg.F90:          write(stdout,*) 'Field ', trim(short_name), ' has not been defined.'
+./tavg.F90:   write(cstep_end,'(i10)') nsteps_total - 1
+./tavg.F90:     write(stdout,*) 'There are ',num_fields,  &
+./tavg.F90:    write(calendar,'(a,i5,a,i5,a)') &
+./tavg.F90:    write(calendar,'(a,i5,a)')'All years have exactly', days_in_norm_year, ' days.'
+./tavg.F90: write(start_time,1000) current_date(1:4), current_date(5:6),  &
+./tavg.F90:        write(exit_string,'(a,1x,i4)') 'FATAL ERROR:  unknown method = ', method_integer
+./tavg.F90:!  only write the following time-invariant fields if requested
+./tavg.F90:!  only write the following scalar fields if requested
+./tavg.F90:      write (stdout,*) 'ii = ', ii
+./tavg.F90:      write (stdout,*) 'num_avail_tavg_labels = ', num_avail_tavg_labels
+./tavg.F90:! !IROUTINE: tavg_write_vars_ccsm
+./tavg.F90: subroutine tavg_write_vars_ccsm (tavg_file_desc, nvars, ccsm_vars) 
+./tavg.F90:!  This routine writes the ccsm variables (coordinates, scalars, and 
+./tavg.F90:      call data_set (tavg_file_desc, 'write', ccsm_vars(n))
+./tavg.F90: end subroutine tavg_write_vars_ccsm
+./tavg.F90:! !IROUTINE: tavg_write_vars_nstd_ccsm
+./tavg.F90: subroutine tavg_write_vars_nstd_ccsm(tavg_file_desc,ns) 
+./tavg.F90:!  This routine writes the nonstandard ccsm variables to the
+./tavg.F90:      max_writes = 1
+./tavg.F90:   real (r8), dimension(2,max_writes) ::  &
+./tavg.F90:      call data_set_nstd_ccsm (tavg_file_desc, 'write',    &
+./tavg.F90:         call data_set_nstd_ccsm (tavg_file_desc, 'write',    &
+./tavg.F90:       call write_nstd_netcdf(tavg_file_desc,moc_id,5,  &
+./tavg.F90:      call data_set_nstd_ccsm (tavg_file_desc, 'write',    &
+./tavg.F90:       call write_nstd_netcdf(                              &
+./tavg.F90:       call write_nstd_netcdf(                             &
+./tavg.F90: end subroutine tavg_write_vars_nstd_ccsm
+./tavg.F90:! !IROUTINE: tavg_write_time_bounds
+./tavg.F90: subroutine tavg_write_time_bounds(tavg_file_desc,ns) 
+./tavg.F90:!  This routine writes the ccsm time_bounds values to the
+./tavg.F90:   call write_time_bounds (tavg_file_desc,time_bound_id,time_bound_dims, data_2d_r8 )
+./tavg.F90: end subroutine tavg_write_time_bounds
+./tavg.F90:        write(stdout,*)  &
+./tavg.F90:     !*** do not abort; write warning message and proceed
+./tavg.F90:     call document ('write_tavg', 'WARNING: cannot compute BSF diagnostic')
+./tavg.F90:     !*** write warning message?
+./tavg.F90:     !*** write warning message?
+./tavg.F90:        write(stdout,*)  &
+./tavg.F90:        write(stdout,*)  &
+./tavg.F90:     !*** do not abort; write warning message and proceed
+./tavg.F90:     !*** do not abort; write warning message and proceed
+./tavg.F90:     write (stdout,*) ' '
+./tavg.F90:     write (stdout,*)  &
+./tavg.F90:       write (stdout,*) trim(SAVG_0D_NAME(n_reg)),': ',  &
+./tavg.F90:          write(stdout,*) "tavg file ", trim(tavg_file_desc(ns)%full_name), &
+./tidal_mixing.F90:      write(stdout,blank_fmt)
+./tidal_mixing.F90:      write(stdout,ndelim_fmt)
+./tidal_mixing.F90:      write(stdout,blank_fmt)
+./tidal_mixing.F90:      write(stdout,*) ' Tidal mixing information'
+./tidal_mixing.F90:      write(stdout,blank_fmt)
+./tidal_mixing.F90:      write(stdout,*) ' tidal_nml namelist settings:'
+./tidal_mixing.F90:      write(stdout,blank_fmt)
+./tidal_mixing.F90:      write(stdout,tidal_nml)
+./tidal_mixing.F90:      write(stdout,blank_fmt)
+./tidal_mixing.F90:      write(stdout,1010) ' ltidal_mixing          = ',  ltidal_mixing
+./tidal_mixing.F90:      write(stdout,1020) ' local_mixing_fraction  = ',  local_mixing_fraction
+./tidal_mixing.F90:      write(stdout,1020) ' mixing_efficiency      = ',  mixing_efficiency
+./tidal_mixing.F90:      write(stdout,1020) ' vertical_decay_scale   = ',  vertical_decay_scale
+./tidal_mixing.F90:      write(stdout,1030) ' tidal_energy_file      = ',  tidal_energy_file
+./tidal_mixing.F90:     write (stdout,blank_fmt)
+./tidal_mixing.F90:     write (stdout,*) ' file read: ', trim(tidal_energy_file)
+./time_management.F90:      write(stdout,blank_fmt)
+./time_management.F90:      write(stdout,ndelim_fmt)
+./time_management.F90:      write(stdout,blank_fmt)
+./time_management.F90:      write(stdout,*) ' Time Management:'
+./time_management.F90:      write(stdout,blank_fmt)
+./time_management.F90:      write(stdout,*) ' time_manager_nml namelist settings:'
+./time_management.F90:      write(stdout,blank_fmt)
+./time_management.F90:      write(stdout,time_manager_nml)
+./time_management.F90:      write(stdout,blank_fmt)
+./time_management.F90:      write(exit_string,'(a,1x,i3)') 'FATAL ERROR: unsupported time_mix_freq value: ', time_mix_freq
+./time_management.F90:            write(stdout,'(a36)') 'no acceleration allowed in top layer'
+./time_management.F90:            write(stdout,'(a36)') 'resetting acceleration factor to 1.0'
+./time_management.F90:      write(stdout,blank_fmt)
+./time_management.F90:      write(stdout,'(a39)') '  MOMENTUM TIMESTEP ACCELERATION ACTIVE'
+./time_management.F90:      write(stdout,blank_fmt) 
+./time_management.F90:      write(stdout,*) 'The following information documents the time-step '
+./time_management.F90:      write(stdout,*) 'distribution for one full model day. '
+./time_management.F90:      write(stdout,blank_fmt) 
+./time_management.F90:      write(stdout,1100) ' time_mix_freq           ', time_mix_freq
+./time_management.F90:        write(stdout,1100) ' fullsteps_per_day       ', fullsteps_per_day
+./time_management.F90:        write(stdout,1100) ' halfsteps_per_day       ', halfsteps_per_day
+./time_management.F90:        write(stdout,1100) ' nsteps_per_day          ', nsteps_per_day
+./time_management.F90:        write(stdout,1100) ' intervals per day       ', fit_freq
+./time_management.F90:        write(stdout,1100) ' fullsteps_per_interval  ', fullsteps_per_interval
+./time_management.F90:        write(stdout,1100) ' halfsteps_per_interval  ', halfsteps_per_interval
+./time_management.F90:        write(stdout,1100) ' nsteps_per_interval     ', nsteps_per_interval
+./time_management.F90:        write(stdout,blank_fmt) 
+./time_management.F90:        write(stdout,1100) ' fullsteps_per_day       ', fullsteps_per_day    
+./time_management.F90:        write(stdout,1100) ' halfsteps_per_day       ', halfsteps_per_day    
+./time_management.F90:        write(stdout,1100) ' nsteps_per_day          ', nsteps_per_day
+./time_management.F90:      write(stdout,1101) ! write column header information
+./time_management.F90:        write(message_string,'(a,i3)')  '<-- LAST STEP in coupling interval ', nfit
+./time_management.F90:        write(stdout,1102) nsteps_total, trim(stepsize_string), seconds_this_day,   &
+./time_management.F90:          write(stdout,*) ' '
+./time_management.F90:         write(stdout,1103) ' hour, min, sec at end of interval = ',         &
+./time_management.F90:         write(stdout,*) 'ihour_start_run   = ', ihour_start_run
+./time_management.F90:         write(stdout,*) 'iminute_start_run = ', iminute_start_run
+./time_management.F90:         write(stdout,*) 'isecond_start_run = ', isecond_start_run
+./time_management.F90:      write(exit_string, '(a,a)') 'FATAL ERROR: Invalid stop_option: ', stop_option
+./time_management.F90:         write(stdout,'(a50)') &
+./time_management.F90:         write(stdout,date_fmt) '  Starting date: ', cyear,cmonth,cday
+./time_management.F90:            write(stdout,date_fmt) '  Ending   date: ',           &
+./time_management.F90:            write(stdout,'(a17)') '  No ending date.'
+./time_management.F90:            write(stdout,'(a47)') &
+./time_management.F90:   call write_time_manager_options
+./time_management.F90:      write(stdout,1000) iyear, cmonth3, iday, seconds_this_day
+./time_management.F90:      write(stdout,1001) iyear, cmonth3, iday, seconds_this_day
+./time_management.F90:      write(exit_string,'(a,a)')  '  time_file name  = ', trim(time_flags(flag_id)%name)
+./time_management.F90:      write(stdout,blank_fmt)
+./time_management.F90:      write(stdout,ndelim_fmt)
+./time_management.F90:      write(stdout,blank_fmt)
+./time_management.F90:      write(stdout,*) ' Time Flags '
+./time_management.F90:      write(stdout,blank_fmt)
+./time_management.F90:      write(stdout,blank_fmt)
+./time_management.F90:      write(stdout,ndelim_fmt)
+./time_management.F90:      write(stdout,blank_fmt)
+./time_management.F90:      write(stdout,blank_fmt)
+./time_management.F90:        write(stdout,*) 'time_flag id = ', n
+./time_management.F90:        write(stdout,*) '   name               = ', trim(time_flags(n)%name)
+./time_management.F90:        write(stdout,*) '   owner              = ', trim(time_flags(n)%owner)
+./time_management.F90:        write(stdout,*) '   has_default        = ', time_flags(n)%has_default
+./time_management.F90:        write(stdout,*) '   default            = ', time_flags(n)%default
+./time_management.F90:        write(stdout,*) '   freq_opt           = ', time_flags(n)%freq_opt, trim(string)
+./time_management.F90:        write(stdout,*) '   freq               = ', time_flags(n)%freq
+./time_management.F90:        write(stdout,*) '   value              = ', time_flags(n)%value
+./time_management.F90:        write(stdout,*) '   old_value          = ', time_flags(n)%old_value
+./time_management.F90:        write(stdout,*) '   done               = ', time_flags(n)%done
+./time_management.F90:        write(stdout,*) '   has_offset_date    = ', time_flags(n)%has_offset_date 
+./time_management.F90:          write(stdout,1100) '   Reference date: ', time_flags(n)%offset_year,'-',  &
+./time_management.F90:          write(stdout,*) '   eyears           = ', time_flags(n)%eyears 
+./time_management.F90:          write(stdout,*) '   emonths          = ', time_flags(n)%emonths 
+./time_management.F90:          write(stdout,*) '   edays            = ', time_flags(n)%edays  
+./time_management.F90:        write(stdout,*) 'time_flag #', n, ' is NOT initialized'
+./time_management.F90:        write(stdout,*) '   name              = ', trim(time_flags(n)%name)
+./time_management.F90:        write(stdout,*) '   is_reserved       = ', time_flags(n)%is_reserved
+./time_management.F90:       write(stdout,*) '   '
+./time_management.F90:     write(exit_string,'(a,a)') 'FATAL ERROR: ',trim(calling_routine) // ' ' // trim(time_flags(flag_id)%name)//': invalid flag_id'
+./time_management.F90:     write(exit_string,'(a)') 'FATAL ERROR: ' // trim(time_flags(flag_id)%name)//': is not initialized'
+./time_management.F90:     write (exit_string,'(a,i6)')'FATAL ERROR: days undetermined, days = ', days
+./time_management.F90:     write (exit_string,'(a,i6)')'FATAL ERROR: invalid date'
+./time_management.F90:!  Writes character strings containing the date and time stamps
+./time_management.F90:               write (date_string,ymd_date_fmt1) iyear , date_separator, &
+./time_management.F90:               write (date_string,mdy_date_fmt1) imonth , date_separator, &
+./time_management.F90:               write (date_string,ymd_date_fmt2) iyear, imonth, iday
+./time_management.F90:               write (date_string,mdy_date_fmt2) imonth, iday, iyear
+./time_management.F90:         write (time_string,time_fmt) ihour  , time_separator, &
+./time_management.F90:            write (date_string,ymd_date_fmt1) iyear_last ,date_separator, &
+./time_management.F90:            write (date_string,ymd_date_fmt2) iyear, imonth, iday
+./time_management.F90:!        write (time_string,time_fmt) ihour_last, time_separator, &
+./time_management.F90:            write (date_string(date_len:),ymd_date_fmt1)              & 
+./time_management.F90:            write (date_string(date_len:),ymd_date_fmt2) iyear, imonth, iday
+./time_management.F90:!        write (time_string,time_fmt) ihour  , time_separator, &
+./time_management.F90:!     write a character string containing the date stamp
+./time_management.F90:       write (date_string,1000) ccsm_cyear, ccsm_cmonth, ccsm_cday, &
+./time_management.F90:        write (date_string,1000) ccsm_cyear, ccsm_cmonth, ccsm_cday
+./time_management.F90:        write (date_string,1000) ccsm_cyear, ccsm_cmonth
+./time_management.F90:        write (date_string,1000) ccsm_cyear
+./time_management.F90:!  if errors detected, write out message and quit
+./time_management.F90:         write(exit_string,err_fmt) &
+./time_management.F90:         write(exit_string,err_fmt) &
+./time_management.F90:         write(exit_string,err_fmt) &
+./time_management.F90:         write(exit_string,err_fmt) &
+./time_management.F90:         write(exit_string,err_fmt) &
+./time_management.F90:         write(exit_string,err_fmt) &
+./time_management.F90:         write(exit_string,err_fmt) &
+./time_management.F90:         write(exit_string,err_fmt) &
+./time_management.F90:         write(exit_string,err_fmt) &
+./time_management.F90:         write(exit_string,*) &
+./time_management.F90:! !IROUTINE: write_time_manager_options
+./time_management.F90: subroutine write_time_manager_options
+./time_management.F90:!  Writes all time manager options to stdout.
+./time_management.F90:!  write only from master task
+./time_management.F90:!     write start/current time data
+./time_management.F90:      write (stdout,blank_fmt)
+./time_management.F90:      write (stdout,ndelim_fmt)
+./time_management.F90:      write (stdout,blank_fmt)
+./time_management.F90:      write (stdout,'(a23)') 'Time Information'
+./time_management.F90:      write (stdout,blank_fmt)
+./time_management.F90:      write (stdout,delim_fmt)
+./time_management.F90:      write (stdout,blank_fmt)
+./time_management.F90:      write (stdout,'(a8,a)') 'Run id: ',trim(runid)
+./time_management.F90:      write (stdout,blank_fmt)
+./time_management.F90:      write (stdout,'(a28)') 'This simulation started from'
+./time_management.F90:      write (stdout,out_fmt1) cmonth0, cday0, cyear0
+./time_management.F90:      write (stdout,out_fmt2) '  hour:', ihour0
+./time_management.F90:      write (stdout,out_fmt2) 'minute:', iminute0
+./time_management.F90:      write (stdout,out_fmt2) 'second:', isecond0
+./time_management.F90:      write (stdout,blank_fmt)
+./time_management.F90:      write (stdout,'(a28)') 'This run        started from'
+./time_management.F90:      write (stdout,out_fmt1) cmonth, cday, cyear
+./time_management.F90:      write (stdout,out_fmt2) '  hour:', ihour
+./time_management.F90:      write (stdout,out_fmt2) 'minute:', iminute
+./time_management.F90:      write (stdout,out_fmt2) 'second:', isecond
+./time_management.F90:         write (stdout,out_fmt2) '  step:', nsteps_total
+./time_management.F90:      write (stdout,blank_fmt)
+./time_management.F90:         write (stdout,out_fmt3)  'at 00:00:00 on'
+./time_management.F90:         write (stdout,out_fmt3)  'at the end of the day on or after'
+./time_management.F90:         write (stdout,out_fmt3)  'at the end of the day on'
+./time_management.F90:      write (stdout,out_fmt1) cmonth_end_run,cday_end_run,cyear_end_run
+./time_management.F90:         write (stdout,out_fmt4) 'upon receipt of stop signal' /&
+./time_management.F90:         write(stdout,out_fmt4) 'after running for ',stop_count, &
+./time_management.F90:         write(stdout,out_fmt4) 'after running for ',stop_count, &
+./time_management.F90:         write(stdout,out_fmt4) 'after running for ',stop_count, &
+./time_management.F90:         write(stdout,out_fmt4) 'at the end of the year after ', &
+./time_management.F90:         write(stdout,out_fmt4) 'at the end of the month after', &
+./time_management.F90:         write (stdout,out_fmt4) 'at the end of the day'
+./time_management.F90:         write (stdout,out_fmt4) 'after ', stop_count,' timestep', &
+./time_management.F90:         write (stdout,out_fmt4) 'after reaching the specified date'
+./time_management.F90:      write (stdout,'(a63)') 'unless a stop signal is received'/&
+./time_management.F90:      write (stdout,blank_fmt)
+./time_management.F90:      write (stdout,'(a28)') 'Starting elapsed time in    '
+./time_management.F90:      write (stdout,out_fmt5) '  years:', tyear
+./time_management.F90:      write (stdout,out_fmt5) ' months:', tmonth
+./time_management.F90:      write (stdout,out_fmt5) '   days:', tday
+./time_management.F90:      write (stdout,out_fmt5) '  hours:', thour
+./time_management.F90:      write (stdout,out_fmt5) 'seconds:', tsecond
+./time_management.F90:      write (stdout,blank_fmt)
+./time_management.F90:         write (stdout,'(a45)') &
+./time_management.F90:         write (stdout,'(a45)') &
+./time_management.F90:      write (stdout,blank_fmt)
+./time_management.F90:      write (stdout,'(a11,1pe12.6)') 'dt_count = ',dt_count
+./time_management.F90:         write(stdout,out_fmt9) fullsteps_per_day,' full '
+./time_management.F90:         write(stdout,out_fmt9) halfsteps_per_day,' half '
+./time_management.F90:         write(stdout,out_fmt9) nsteps_per_day,   ' total'
+./time_management.F90:      write (stdout,blank_fmt)
+./time_management.F90:      write (stdout,'(a16,i6)') 'time_mix_freq = ', time_mix_freq
+./time_management.F90:      write (stdout,'(a19)') 'Time mixing option:'
+./time_management.F90:         write (stdout,'(a23)') '  avg -- time averaging'
+./time_management.F90:         write (stdout,'(a59)') '  avgbb -- time averaging'/&
+./time_management.F90:         write (stdout,'(a26)') '  avgfit -- time averaging'
+./time_management.F90:         write (stdout,'(a71)') '  with timestep chosen to fit'/&
+./time_management.F90:         write (stdout,'(a25,i6,a6)') &
+./time_management.F90:      write (stdout,blank_fmt)
+./time_management.F90:         write (stdout,out_fmt6) time_mix_freq, ' '
+./time_management.F90:         write (stdout,out_fmt6) time_mix_freq, &
+./time_management.F90:            write (stdout,out_fmt7) time_mix_freq, 'st'
+./time_management.F90:            write (stdout,out_fmt7) time_mix_freq, 'nd'
+./time_management.F90:            write (stdout,out_fmt7) time_mix_freq, 'rd'
+./time_management.F90:            write (stdout,out_fmt7) time_mix_freq, 'th'
+./time_management.F90:         write (stdout,'(a25,i6,a6)') &
+./time_management.F90:      write (stdout,blank_fmt)
+./time_management.F90:      write (stdout,out_fmt8) 'tracer    ',dtt
+./time_management.F90:      write (stdout,out_fmt8) 'momentum  ',dtu
+./time_management.F90:      write (stdout,out_fmt8) 'barotropic',dtp
+./time_management.F90:      write (stdout,blank_fmt)
+./time_management.F90:         write (stdout,'(a28)') 'Tracer acceleration  enabled'
+./time_management.F90:         write (stdout,'(a22)') '   k      accel factor'
+./time_management.F90:         write (stdout,'(a22)') '  ---     ------------'
+./time_management.F90:            write (stdout,'(2x,i3,7x,f8.3)') k, dttxcel(k)
+./time_management.F90:         write (stdout,'(a28)') 'Tracer acceleration disabled'
+./time_management.F90:      write (stdout,blank_fmt)
+./time_management.F90:         write (stdout,'(a22)') 'Leap years     allowed'
+./time_management.F90:         write (stdout,'(a22)') 'Leap years not allowed'
+./time_management.F90:      write (stdout,blank_fmt)
+./time_management.F90:         write (stdout,'(a50)') &
+./time_management.F90:         write (stdout,'(a50)') &
+./time_management.F90:!  end of writes
+./time_management.F90: end subroutine write_time_manager_options
+./time_management.F90:      write(char_out(n:n),'(i1)') iquot    ! write digit to string
+./timers.F90:      write(stdout,delim_fmt)
+./timers.F90:      write(stdout,blank_fmt)
+./timers.F90:      write(stdout,'(a33)') '--- No system clock available ---'
+./timers.F90:      write(stdout,blank_fmt)
+./timers.F90:      write(stdout,delim_fmt)
+./timers.F90:        write (stdout,timer_format) timer_id,max_time, &
+./timers.F90:            write (stdout,stats_fmt1) min_time
+./timers.F90:            write (stdout,stats_fmt2) max_time
+./timers.F90:            write (stdout,stats_fmt3) mean_time
+./timers.F90:            write (stdout,stats_fmt4) min_time
+./timers.F90:            write (stdout,stats_fmt2) max_time
+./timers.F90:            write (stdout,stats_fmt3) mean_time
+./timers.F90:      write(stdout,blank_fmt)
+./timers.F90:      write(stdout,'(a19)') 'Timing information:'
+./timers.F90:      write(stdout,blank_fmt)
+./timers.F90:      write(stdout,blank_fmt)
+./timers.F90:      write(stdout,delim_fmt)
+./topostress.F90:      write(stdout,blank_fmt)
+./topostress.F90:      write(stdout,ndelim_fmt)
+./topostress.F90:      write(stdout,blank_fmt)
+./topostress.F90:      write(stdout,'(a27)') ' Topographic stress options'
+./topostress.F90:      write(stdout,blank_fmt)
+./topostress.F90:      write(stdout,delim_fmt)
+./topostress.F90:         write(stdout,'(a27)') ' Topographic stress enabled'
+./topostress.F90:            write(stdout,'(a26,i2,a8)') ' Topography smoothed with ', &
+./topostress.F90:            write(stdout,'(a25)') ' Topography not smoothed.'
+./topostress.F90:         write(stdout,'(a28)') ' Topographic stress disabled'
+./vertical_mix.F90:      write(stdout,blank_fmt)
+./vertical_mix.F90:      write(stdout,ndelim_fmt)
+./vertical_mix.F90:      write(stdout,blank_fmt)
+./vertical_mix.F90:      write(stdout,'(a27)') 'Vertical mixing options'
+./vertical_mix.F90:      write(stdout,blank_fmt)
+./vertical_mix.F90:      write(stdout,delim_fmt)
+./vertical_mix.F90:         write(stdout,'(a33)') ' Implicit vertical mixing enabled'
+./vertical_mix.F90:         write(stdout,'(a34)') ' Implicit vertical mixing disabled'
+./vertical_mix.F90:         write(stdout,'(a32)') '  Using constant vertical mixing'
+./vertical_mix.F90:         write(stdout,'(a32)') '  Using Richardson number mixing'
+./vertical_mix.F90:         write(stdout,'(a32)') '  Using KPP vertical mixing     '
+./vertical_mix.F90:      write(stdout,'(a17,2x,1pe12.5)') '  aidif         =',aidif
+./vertical_mix.F90:      write(stdout,'(a17,2x,1pe12.5)') '  bottom_drag   =',bottom_drag
+./vertical_mix.F90:         write(stdout,'(a30)') ' Convective adjustment enabled'
+./vertical_mix.F90:         write(stdout,'(a7,i4,a7)') ' Using ',nconvad,' passes'
+./vertical_mix.F90:         write(stdout,'(a41)') ' Convection simulated by strong diffusion'
+./vertical_mix.F90:         write(stdout,'(a18,1pe10.3)') '   convect_diff = ',convect_diff
+./vertical_mix.F90:         write(stdout,'(a18,1pe10.3)') '   convect_visc = ',convect_visc
+./vertical_mix.F90:         write(stdout,'(a36)') ' Bottom geothermal heat flux enabled'
+./vertical_mix.F90:         write(stdout,'(a17,1pe10.3)') '   Flux (W/m2) = ', &
+./vertical_mix.F90:         write(stdout,'(a17,1pe10.3)') '   Depth (cm)  = ', &
+./vertical_mix.F90:         write(stdout,'(a37)') ' Bottom geothermal heat flux disabled'
+./vmix_const.F90:      write(stdout,'(a17,2x,1pe12.5)') '  const_vdc     =',const_vdc
+./vmix_const.F90:      write(stdout,'(a17,2x,1pe12.5)') '  const_vvc     =',const_vvc
+./vmix_kpp.F90:      write(stdout,delim_fmt)
+./vmix_kpp.F90:      write(stdout,blank_fmt)
+./vmix_kpp.F90:      write(stdout,*) ' vmix_kpp_nml namelist settings:'
+./vmix_kpp.F90:      write(stdout,blank_fmt)
+./vmix_kpp.F90:      write(stdout,vmix_kpp_nml)
+./vmix_kpp.F90:      write(stdout,blank_fmt)
+./vmix_kpp.F90:      write(stdout,fmt_real) '  bckgrnd_vdc1              =', bckgrnd_vdc1
+./vmix_kpp.F90:      write(stdout,fmt_real) '  bckgrnd_vdc2              =', bckgrnd_vdc2
+./vmix_kpp.F90:      write(stdout,fmt_real) '  bckgrnd_vdc_dpth          =', bckgrnd_vdc_dpth
+./vmix_kpp.F90:      write(stdout,fmt_real) '  bckgrnd_vdc_linv          =', bckgrnd_vdc_linv
+./vmix_kpp.F90:      write(stdout,fmt_real) '  bckgrnd_vdc_eq            =', bckgrnd_vdc_eq
+./vmix_kpp.F90:      write(stdout,fmt_real) '  bckgrnd_vdc_psim          =', bckgrnd_vdc_psim
+./vmix_kpp.F90:      write(stdout,fmt_real) '  bckgrnd_vdc_ban           =', bckgrnd_vdc_ban
+./vmix_kpp.F90:      write(stdout,fmt_real) '  Prandtl                   =', Prandtl
+./vmix_kpp.F90:      write(stdout,fmt_real) '  rich_mix                  =', rich_mix
+./vmix_kpp.F90:      write(stdout,fmt_log ) '  Ri mixing                 =', lrich
+./vmix_kpp.F90:      write(stdout,fmt_log ) '  double-diff               =', ldbl_diff
+./vmix_kpp.F90:      write(stdout,fmt_log ) '  short_wave                =', lshort_wave
+./vmix_kpp.F90:      write(stdout,fmt_log ) '  lcheckekmo                =', lcheckekmo
+./vmix_kpp.F90:      write(stdout,fmt_int ) '  num_smooth_Ri             =', num_v_smooth_Ri
+./vmix_kpp.F90:      write(stdout,fmt_log ) '  lhoriz_varying_bckgrnd    =', lhoriz_varying_bckgrnd
+./vmix_kpp.F90:      write(stdout,fmt_log ) '  langmuir parameterization =', llangmuir
+./vmix_kpp.F90:      write(stdout,fmt_log ) '  inertial mixing param.    =', linertial
+./vmix_kpp.F90:      write (stdout,blank_fmt)
+./vmix_kpp.F90:      write (stdout,'(a43)') &
+./vmix_kpp.F90:        write (stdout,'(2x,e12.6)') bckgrnd_vdc(1,1,k,1)
+./vmix_kpp.F90: write(stdout,100) this_block%i_glob(i),this_block%j_glob(j),k, &
+./vmix_kpp.F90:  write(stdout,200) this_block%i_glob(i),this_block%j_glob(j),k, &
+./vmix_kpp.F90: subroutine smooth_hblt (overwrite_hblt, use_hmxl, &
+./vmix_kpp.F90:      overwrite_hblt,   &    ! if .true.,  HBLT is overwritten
+./vmix_kpp.F90:                              !  smoothened field if overwrite_hblt is false
+./vmix_kpp.F90:   if ( overwrite_hblt  .and.  ( .not.present(KBL)  .or.        &
+./vmix_kpp.F90:   if ( .not.overwrite_hblt  .and.  .not.present(SMOOTH_OUT) ) then 
+./vmix_kpp.F90:   if ( overwrite_hblt  .and.  use_hmxl ) then                  
+./vmix_kpp.F90:   if ( overwrite_hblt  .and.  .not.use_hmxl ) then
+./vmix_kpp.F90:!  write En for boundary layer KE to history file, converting 
+./vmix_kpp.F90:!  write En for boundary layer KE to history file,
+./vmix_kpp.F90:!  write mix time KE to history file
+./vmix_rich.F90:      write(stdout,'(a17,2x,1pe12.5)') '  bckgrnd_vvc   =',bckgrnd_vvc
+./vmix_rich.F90:      write(stdout,'(a17,2x,1pe12.5)') '  bckgrnd_vdc   =',bckgrnd_vdc
+./vmix_rich.F90:      write(stdout,'(a17,2x,1pe12.5)') '  rich_mix      =',rich_mix

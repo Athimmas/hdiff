@@ -431,7 +431,7 @@
 !
 !-----------------------------------------------------------------------
 
-   start_time = omp_get_wtime()
+   !start_time = omp_get_wtime()
    do k=1,km
    
      zw_top = c0
@@ -473,40 +473,48 @@
      !$OMP END PARALLEL DO
    enddo
 
-   end_time = omp_get_wtime()
+   !end_time = omp_get_wtime()
 
-   print *,"1st part time is",end_time - start_time,my_task
+   !print *,"1st part time is",end_time - start_time,my_task
 
-#ifdef CCSMCOUPLED
+   !if(my_task==master_task)then
+
+      !open(unit=10,file="/home/aketh/ocn_correctness_data/changed.txt",status="unknown",position="append",action="write",form="formatted")
+      !write(10,*),WORK3,BY_VERT_AVG,BX_VERT_AVG
+      !close(10)
+
+   !endif
  
      do j=1,ny_block !LOOP 6
           do i=1,nx_block
+
+
+#ifdef CCSMCOUPLED
  
              if ( (CONTINUE_INTEGRAL(i,j)) ) then
              call shr_sys_abort ('Incorrect mixed layer depth in submeso subroutine (I)')
              endif
 
-          enddo
-     enddo
-
-
 #endif
 
-     do j=1,ny_block !LOOP 7
-          do i=1,nx_block
- 
-               if ( KMT(i,j,bid) > 0 )then
+             if ( KMT(i,j,bid) > 0 )then
                     BX_VERT_AVG(i,j,1) = - grav * BX_VERT_AVG(i,j,1)/ML_DEPTH(i,j)
                     BX_VERT_AVG(i,j,2) = - grav * BX_VERT_AVG(i,j,2)/ML_DEPTH(i,j)
                     BY_VERT_AVG(i,j,1) = - grav * BY_VERT_AVG(i,j,1)/ML_DEPTH(i,j)
                     BY_VERT_AVG(i,j,2) = - grav * BY_VERT_AVG(i,j,2)/ML_DEPTH(i,j)
-               endif
+             endif
 
           enddo
      enddo
 
-     !end_time = omp_get_wtime()
+   if(my_task==master_task)then
 
+      open(unit=10,file="/home/aketh/ocn_correctness_data/changed.txt",status="unknown",position="append",action="write",form="formatted")
+      write(10,*),BX_VERT_AVG,BY_VERT_AVG
+      close(10)
+
+   endif
+ 
      !print *,"1st part time is",end_time - start_time
 !-----------------------------------------------------------------------
 !
@@ -514,7 +522,7 @@
 !
 !-----------------------------------------------------------------------
 
-   !start_time = omp_get_wtime()
+   start_time = omp_get_wtime()
 
    if ( luse_const_horiz_len_scale ) then
 
@@ -539,6 +547,7 @@
      where ( KMT(:,:,bid) == 0 ) 
        CONTINUE_INTEGRAL = .false.
      endwhere
+
 
      WORK2 = c0
 
@@ -580,9 +589,9 @@
 
    endif
    
-   !end_time = omp_get_wtime()
+   end_time = omp_get_wtime()
 
-   !print *,"Time at 2nd part is",end_time - start_time
+   print *,"Time at 2nd part is",end_time - start_time
 
 !-----------------------------------------------------------------------
 !
