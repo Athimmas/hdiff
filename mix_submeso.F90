@@ -507,14 +507,6 @@
           enddo
      enddo
 
-   if(my_task==master_task)then
-
-      open(unit=10,file="/home/aketh/ocn_correctness_data/changed.txt",status="unknown",position="append",action="write",form="formatted")
-      write(10,*),BX_VERT_AVG,BY_VERT_AVG
-      close(10)
-
-   endif
- 
      !print *,"1st part time is",end_time - start_time
 !-----------------------------------------------------------------------
 !
