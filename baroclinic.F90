@@ -1702,7 +1702,7 @@
    real (r8), dimension(nx_block,ny_block) :: &
       WORKSW
 
-  real (r8), dimension(nx_block,ny_block,nt,km) :: &
+  real (r8), dimension(nx_block,ny_block,nt,km),save :: &
       WORKN_PHI               
  
 !-----------------------------------------------------------------------

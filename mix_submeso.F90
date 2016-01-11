@@ -34,6 +34,7 @@
    use registry
    use communicate
    use hmix_gm_submeso_share
+   use omp_lib
    
 #ifdef CCSMCOUPLED
    use shr_sys_mod
@@ -373,6 +374,10 @@
 
    real (r8) :: &
       zw_top, factor
+
+   real (r8) :: &
+      start_time, end_time
+
       
 !-----------------------------------------------------------------------
 !
@@ -408,11 +413,14 @@
      ML_DEPTH(:,:) = HMXL(:,:,bid) 
    
 
-   CONTINUE_INTEGRAL = .true.
-   where ( KMT(:,:,bid) == 0 ) 
-     CONTINUE_INTEGRAL = .false.
-   endwhere
-
+   do j=1,ny_block
+      do i=1,nx_block
+          CONTINUE_INTEGRAL(i,j) = .true.
+          if( KMT(i,j,bid) == 0 ) then
+           CONTINUE_INTEGRAL(i,j) = .false.
+          endif
+      enddo
+   enddo
 !-----------------------------------------------------------------------
 !
 !  compute vertical averages of horizontal buoyancy differences 
@@ -420,37 +428,49 @@
 !
 !-----------------------------------------------------------------------
 
+!   start_time = omp_get_wtime()
    do k=1,km
    
      zw_top = c0
      if ( k > 1 )  zw_top = zw(k-1)
 
-     WORK3 = c0
-     where ( CONTINUE_INTEGRAL  .and.  ML_DEPTH > zw(k) )
-        WORK3 = dz(k)
-     endwhere
-     where ( CONTINUE_INTEGRAL  .and.  ML_DEPTH <= zw(k)  &
-             .and.  ML_DEPTH > zw_top )
-       WORK3 = ML_DEPTH - zw_top
-     endwhere
+    !$OMP PARALLEL DO SHARED(CONTINUE_INTEGRAL,BX_VERT_AVG,RX,RY,ML_DEPTH)PRIVATE(i,WORK3)num_threads(16)SCHEDULE(dynamic,16)
+    do j=1,ny_block
+        do i=1,nx_block
 
-     where ( CONTINUE_INTEGRAL )
-       BX_VERT_AVG(:,:,1) = BX_VERT_AVG(:,:,1)        &
-                           + RX(:,:,1,k,bid) * WORK3
-       BX_VERT_AVG(:,:,2) = BX_VERT_AVG(:,:,2)        &
-                           + RX(:,:,2,k,bid) * WORK3
-       BY_VERT_AVG(:,:,1) = BY_VERT_AVG(:,:,1)        &
-                           + RY(:,:,1,k,bid) * WORK3
-       BY_VERT_AVG(:,:,2) = BY_VERT_AVG(:,:,2)        &
-                           + RY(:,:,2,k,bid) * WORK3
-     endwhere
+            WORK3(i,j)=c0
+            if( CONTINUE_INTEGRAL(i,j)  .and.  ML_DEPTH(i,j) > zw(k) )then
+               WORK3(i,j) = dz(k)
+           endif 
 
-     where ( CONTINUE_INTEGRAL .and.  ML_DEPTH <= zw(k)  &
-             .and.  ML_DEPTH > zw_top )
-       CONTINUE_INTEGRAL = .false.
-     endwhere  
+            if( CONTINUE_INTEGRAL(i,j)  .and.  ML_DEPTH(i,j) <= zw(k)  &
+             .and.  ML_DEPTH(i,j) > zw_top ) then
+                    WORK3(i,j) = ML_DEPTH(i,j) - zw_top
+            endif
 
+            if ( CONTINUE_INTEGRAL(i,j) ) then
+                 BX_VERT_AVG(i,j,1) = BX_VERT_AVG(i,j,1)        &
+                                      + RX(i,j,1,k,bid) * WORK3(i,j)
+                 BX_VERT_AVG(i,j,2) = BX_VERT_AVG(i,j,2)        &
+                                      + RX(i,j,2,k,bid) * WORK3(i,j)
+                 BY_VERT_AVG(i,j,1) = BY_VERT_AVG(i,j,1)        &
+                                      + RY(i,j,1,k,bid) * WORK3(i,j)
+                 BY_VERT_AVG(i,j,2) = BY_VERT_AVG(i,j,2)        &
+                           + RY(i,j,2,k,bid) * WORK3(i,j)
+            endif
+
+            if ( CONTINUE_INTEGRAL(i,j) .and.  ML_DEPTH(i,j) <= zw(k)  &
+                  .and.  ML_DEPTH(i,j) > zw_top ) then
+             CONTINUE_INTEGRAL(i,j) = .false.
+            endif
+
+      enddo
    enddo
+ 
+
+  enddo
+
+!  end_time = omp_get_wtime()
 
 #ifdef CCSMCOUPLED
    if ( any(CONTINUE_INTEGRAL) ) then
@@ -458,13 +478,19 @@
    endif
 #endif
 
-   where ( KMT(:,:,bid) > 0 )
-     BX_VERT_AVG(:,:,1) = - grav * BX_VERT_AVG(:,:,1) / ML_DEPTH
-     BX_VERT_AVG(:,:,2) = - grav * BX_VERT_AVG(:,:,2) / ML_DEPTH
-     BY_VERT_AVG(:,:,1) = - grav * BY_VERT_AVG(:,:,1) / ML_DEPTH
-     BY_VERT_AVG(:,:,2) = - grav * BY_VERT_AVG(:,:,2) / ML_DEPTH
-   endwhere
+    do j=1,ny_block
+        do i=1,nx_block
 
+           if ( KMT(i,j,bid) > 0 ) then
+           BX_VERT_AVG(i,j,1) = - grav * BX_VERT_AVG(i,j,1) / ML_DEPTH(i,j)
+           BX_VERT_AVG(i,j,2) = - grav * BX_VERT_AVG(i,j,2) / ML_DEPTH(i,j)
+           BY_VERT_AVG(i,j,1) = - grav * BY_VERT_AVG(i,j,1) / ML_DEPTH(i,j)
+           BY_VERT_AVG(i,j,2) = - grav * BY_VERT_AVG(i,j,2) / ML_DEPTH(i,j)
+           endif
+ 
+        enddo
+     enddo
+    
 !-----------------------------------------------------------------------
 !
 !  compute horizontal length scale if necessary
@@ -473,27 +499,41 @@
 
    if ( luse_const_horiz_len_scale ) then
 
-     where ( KMT(:,:,bid) > 0 ) 
-       HLS = hor_length_scale
-     endwhere
+    do j=1,ny_block
+        do i=1,nx_block
 
-   else
+           if ( KMT(i,j,bid) > 0 ) then
+           HLS(i,j) = hor_length_scale
+           endif
 
-     WORK1 = c0
+        enddo
+     enddo
+     
 
-     where ( KMT(:,:,bid) > 0 )
-       WORK1 = sqrt( p5 * (                                       &
-               ( BX_VERT_AVG(:,:,1)**2 + BX_VERT_AVG(:,:,2)**2 )  &
-                 / DXT(:,:,bid)**2                                &
-             + ( BY_VERT_AVG(:,:,1)**2 + BY_VERT_AVG(:,:,2)**2 )  &
-                 / DYT(:,:,bid)**2 ) )
-       WORK1 = WORK1 * ML_DEPTH * (TIME_SCALE(:,:,bid)**2)
-     endwhere
+   else  
 
-     CONTINUE_INTEGRAL = .true.
-     where ( KMT(:,:,bid) == 0 ) 
-       CONTINUE_INTEGRAL = .false.
-     endwhere
+    do j=1,ny_block
+        do i=1,nx_block
+ 
+           WORK1(i,j)=c0
+ 
+           if( KMT(i,j,bid) > 0 )then
+                 WORK1(i,j) = sqrt( p5 * (                          &
+                              ( BX_VERT_AVG(i,j,1)**2 + BX_VERT_AVG(i,j,2)**2 )  &
+                                / DXT(i,j,bid)**2                                &
+                              + ( BY_VERT_AVG(i,j,1)**2 + BY_VERT_AVG(i,j,2)**2 )  &
+                                / DYT(i,j,bid)**2 ) )
+                  WORK1(i,j) = WORK1(i,j) * ML_DEPTH(i,j) * (TIME_SCALE(i,j,bid)**2)
+            endif
+
+            CONTINUE_INTEGRAL(i,j) = .true.
+            if( KMT(i,j,bid) == 0 ) then
+                        CONTINUE_INTEGRAL(i,j) = .false.
+            endif
+
+        enddo
+     enddo
+
 
      WORK2 = c0
 
