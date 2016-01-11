@@ -34,7 +34,6 @@
    use registry
    use communicate
    use hmix_gm_submeso_share
-   use omp_lib   
    
 #ifdef CCSMCOUPLED
    use shr_sys_mod
@@ -374,10 +373,6 @@
 
    real (r8) :: &
       zw_top, factor
-
-   real (r8) :: &
-      start_time,end_time !Timers
-
       
 !-----------------------------------------------------------------------
 !
@@ -414,15 +409,9 @@
    
 
    CONTINUE_INTEGRAL = .true.
-
-
-   do j=1,ny_block !LOOP 1
-      do i=1,nx_block
-          if( KMT(i,j,bid) == 0 ) then
-            CONTINUE_INTEGRAL(i,j) = .false.
-          endif
-      enddo
-   enddo
+   where ( KMT(:,:,bid) == 0 ) 
+     CONTINUE_INTEGRAL = .false.
+   endwhere
 
 !-----------------------------------------------------------------------
 !
@@ -431,90 +420,56 @@
 !
 !-----------------------------------------------------------------------
 
-   !start_time = omp_get_wtime()
    do k=1,km
    
      zw_top = c0
      if ( k > 1 )  zw_top = zw(k-1)
 
-     !$OMP PARALLEL DO SHARED(CONTINUE_INTEGRAL,BX_VERT_AVG,RX,RY,ML_DEPTH)PRIVATE(i,WORK3)num_threads(16)SCHEDULE(dynamic,16)
-     do j=1,ny_block 
-       do i=1,nx_block
-           WORK3(i,j) = c0
+     WORK3 = c0
+     where ( CONTINUE_INTEGRAL  .and.  ML_DEPTH > zw(k) )
+        WORK3 = dz(k)
+     endwhere
+     where ( CONTINUE_INTEGRAL  .and.  ML_DEPTH <= zw(k)  &
+             .and.  ML_DEPTH > zw_top )
+       WORK3 = ML_DEPTH - zw_top
+     endwhere
 
-            if( CONTINUE_INTEGRAL(i,j)  .and.  ML_DEPTH(i,j) > zw(k) )then
-              WORK3(i,j) = dz(k)
-          endif 
+     where ( CONTINUE_INTEGRAL )
+       BX_VERT_AVG(:,:,1) = BX_VERT_AVG(:,:,1)        &
+                           + RX(:,:,1,k,bid) * WORK3
+       BX_VERT_AVG(:,:,2) = BX_VERT_AVG(:,:,2)        &
+                           + RX(:,:,2,k,bid) * WORK3
+       BY_VERT_AVG(:,:,1) = BY_VERT_AVG(:,:,1)        &
+                           + RY(:,:,1,k,bid) * WORK3
+       BY_VERT_AVG(:,:,2) = BY_VERT_AVG(:,:,2)        &
+                           + RY(:,:,2,k,bid) * WORK3
+     endwhere
 
-             if( CONTINUE_INTEGRAL(i,j)  .and.  ML_DEPTH(i,j) <= zw(k)  &
-             .and.  ML_DEPTH(i,j) > zw_top )then
-               WORK3(i,j) = ML_DEPTH(i,j) - zw_top
-           endif 
+     where ( CONTINUE_INTEGRAL .and.  ML_DEPTH <= zw(k)  &
+             .and.  ML_DEPTH > zw_top )
+       CONTINUE_INTEGRAL = .false.
+     endwhere  
 
-             if( CONTINUE_INTEGRAL(i,j) ) then
-
-                 BX_VERT_AVG(i,j,1) = BX_VERT_AVG(i,j,1)        &
-                                     + RX(i,j,1,k,bid) * WORK3(i,j)
-                 BX_VERT_AVG(i,j,2) = BX_VERT_AVG(i,j,2)        &
-                                     + RX(i,j,2,k,bid) * WORK3(i,j)
-                 BY_VERT_AVG(i,j,1) = BY_VERT_AVG(i,j,1)        &
-                                     + RY(i,j,1,k,bid) * WORK3(i,j)
-                 BY_VERT_AVG(i,j,2) = BY_VERT_AVG(i,j,2)        &
-                                     + RY(i,j,2,k,bid) * WORK3(i,j)
-             endif  
-
-             if( CONTINUE_INTEGRAL(i,j) .and.  ML_DEPTH(i,j) <= zw(k)  &
-                        .and.  ML_DEPTH(i,j) > zw_top ) then
-                         CONTINUE_INTEGRAL(i,j) = .false.
-             endif  
-
-          enddo
-     enddo
-     !$OMP END PARALLEL DO
    enddo
 
-   !end_time = omp_get_wtime()
-
-   !print *,"1st part time is",end_time - start_time,my_task
-
-   !if(my_task==master_task)then
-
-      !open(unit=10,file="/home/aketh/ocn_correctness_data/changed.txt",status="unknown",position="append",action="write",form="formatted")
-      !write(10,*),WORK3,BY_VERT_AVG,BX_VERT_AVG
-      !close(10)
-
-   !endif
- 
-     do j=1,ny_block !LOOP 6
-          do i=1,nx_block
-
-
 #ifdef CCSMCOUPLED
- 
-             if ( (CONTINUE_INTEGRAL(i,j)) ) then
-             call shr_sys_abort ('Incorrect mixed layer depth in submeso subroutine (I)')
-             endif
-
+   if ( any(CONTINUE_INTEGRAL) ) then
+     call shr_sys_abort ('Incorrect mixed layer depth in submeso subroutine (I)')
+   endif
 #endif
 
-             if ( KMT(i,j,bid) > 0 )then
-                    BX_VERT_AVG(i,j,1) = - grav * BX_VERT_AVG(i,j,1)/ML_DEPTH(i,j)
-                    BX_VERT_AVG(i,j,2) = - grav * BX_VERT_AVG(i,j,2)/ML_DEPTH(i,j)
-                    BY_VERT_AVG(i,j,1) = - grav * BY_VERT_AVG(i,j,1)/ML_DEPTH(i,j)
-                    BY_VERT_AVG(i,j,2) = - grav * BY_VERT_AVG(i,j,2)/ML_DEPTH(i,j)
-             endif
+   where ( KMT(:,:,bid) > 0 )
+     BX_VERT_AVG(:,:,1) = - grav * BX_VERT_AVG(:,:,1) / ML_DEPTH
+     BX_VERT_AVG(:,:,2) = - grav * BX_VERT_AVG(:,:,2) / ML_DEPTH
+     BY_VERT_AVG(:,:,1) = - grav * BY_VERT_AVG(:,:,1) / ML_DEPTH
+     BY_VERT_AVG(:,:,2) = - grav * BY_VERT_AVG(:,:,2) / ML_DEPTH
+   endwhere
 
-          enddo
-     enddo
-
-     !print *,"1st part time is",end_time - start_time
 !-----------------------------------------------------------------------
 !
 !  compute horizontal length scale if necessary
 !
 !-----------------------------------------------------------------------
-
-   start_time = omp_get_wtime()
 
    if ( luse_const_horiz_len_scale ) then
 
@@ -539,7 +494,6 @@
      where ( KMT(:,:,bid) == 0 ) 
        CONTINUE_INTEGRAL = .false.
      endwhere
-
 
      WORK2 = c0
 
@@ -580,10 +534,6 @@
      endwhere
 
    endif
-   
-   end_time = omp_get_wtime()
-
-   print *,"Time at 2nd part is",end_time - start_time
 
 !-----------------------------------------------------------------------
 !
@@ -591,8 +541,6 @@
 !
 !-----------------------------------------------------------------------
 
-   !start_time = omp_get_wtime()
-  
    do k=1,km
 
      reference_depth(ktp) = zt(k) - p25 * dz(k)
@@ -633,12 +581,6 @@
    USMT = c0
    VSMT = c0
 
-   !end_time = omp_get_wtime()
-
-   !print *,"Time at 3rd part is",end_time - start_time
-
-   !start_time = omp_get_wtime()
-
    do k=1,km
 
 !-----------------------------------------------------------------------
@@ -653,8 +595,6 @@
        kp1 = k
        factor = c0
      endif
-  
-     start_time = omp_get_wtime() 
 
      do j=1,ny_block-1
        do i=1,nx_block-1
@@ -674,26 +614,16 @@
        enddo
      enddo
 
-     do j=1,ny_block
-        do i=1,nx_block
- 
-           USMB(i,j) = merge( WORK1(i,j), c0, k < KMT(i,j,bid) .and. k < KMTE(i,j,bid) )
-           VSMB(i,j) = merge( WORK2(i,j), c0, k < KMT(i,j,bid) .and. k < KMTN(i,j,bid) )
+     USMB = merge( WORK1, c0, k < KMT(:,:,bid) .and. k < KMTE(:,:,bid) )
+     VSMB = merge( WORK2, c0, k < KMT(:,:,bid) .and. k < KMTN(:,:,bid) )
 
-           WORK1(i,j) = merge( USMT(i,j) - USMB(i,j), c0, k <= KMT(i,j,bid)  &
-                                      .and. k <= KMTE(i,j,bid) )
-           WORK2(i,j) = merge( VSMT(i,j) - VSMB(i,j), c0, k <= KMT(i,j,bid)  &
-                                      .and. k <= KMTN(i,j,bid) )
+     WORK1 = merge( USMT - USMB, c0, k <= KMT(:,:,bid)  &
+                               .and. k <= KMTE(:,:,bid) )
+     WORK2 = merge( VSMT - VSMB, c0, k <= KMT(:,:,bid)  &
+                               .and. k <= KMTN(:,:,bid) )
 
-           U_SUBM(i,j) = WORK1(i,j) * dzr(k) / HTE(i,j,bid)
-           V_SUBM(i,j) = WORK2(i,j) * dzr(k) / HTN(i,j,bid)
-
-        enddo 
-     enddo 
-
-     end_time = omp_get_wtime()     
- 
-     !print *,end_time - start_time
+     U_SUBM = WORK1 * dzr(k) / HTE(:,:,bid)
+     V_SUBM = WORK2 * dzr(k) / HTN(:,:,bid)
 
      do j=this_block%jb,this_block%je
        do i=this_block%ib,this_block%ie
@@ -817,10 +747,6 @@
      WTOP_SUBM = WBOT_SUBM
 
    enddo
-
-   !end_time = omp_get_wtime()
-
-   !print *,"4th part time is",end_time - start_time
 
 !-----------------------------------------------------------------------
 !EOC
