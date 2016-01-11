@@ -497,6 +497,7 @@
 !
 !-----------------------------------------------------------------------
 
+   start_time = omp_get_wtime()
    if ( luse_const_horiz_len_scale ) then
 
     do j=1,ny_block
@@ -539,25 +540,32 @@
 
      do k=2,km
 
-       WORK3 = c0
-       where ( CONTINUE_INTEGRAL  .and.  ML_DEPTH > zt(k) )
-         WORK3 = dzw(k-1) 
-       endwhere
-       where ( CONTINUE_INTEGRAL  .and.  ML_DEPTH <= zt(k)  &
-            .and.  ML_DEPTH >= zt(k-1) )
-         WORK3 = ( (ML_DEPTH - zt(k-1))**2 ) * dzwr(k-1)
-       endwhere
+        do j=1,ny_block
+           do i=1,nx_block
 
-       where ( CONTINUE_INTEGRAL )
-         WORK2 = WORK2 + sqrt(-RZ_SAVE(:,:,k,bid) * WORK3)
-       endwhere
+              WORK3(i,j) = c0
+              if ( CONTINUE_INTEGRAL(i,j)  .and.  ML_DEPTH(i,j) > zt(k) ) then
+                   WORK3(i,j) = dzw(k-1) 
+              endif
 
-       where ( CONTINUE_INTEGRAL .and.  ML_DEPTH <= zt(k)  &
-               .and.  ML_DEPTH >= zt(k-1) )
-         CONTINUE_INTEGRAL = .false.
-       endwhere
+             if ( CONTINUE_INTEGRAL(i,j)  .and.  ML_DEPTH(i,j) <= zt(k)  &
+                  .and.  ML_DEPTH(i,j) >= zt(k-1) ) then
+                  WORK3(i,j) = ( (ML_DEPTH(i,j) - zt(k-1))**2 ) * dzwr(k-1)
+             endif
 
-     enddo
+             if ( CONTINUE_INTEGRAL(i,j) ) then
+             WORK2(i,j) = WORK2(i,j) + sqrt(-RZ_SAVE(i,j,k,bid) * WORK3(i,j))
+             endif
+
+             if ( CONTINUE_INTEGRAL(i,j) .and.  ML_DEPTH <= zt(k)  &
+                     .and.  ML_DEPTH >= zt(k-1) )then
+                CONTINUE_INTEGRAL(i,j) = .false.
+             endif
+
+           enddo
+        enddo
+
+    enddo
 
 #ifdef CCSMCOUPLED
      if ( any(CONTINUE_INTEGRAL) ) then
@@ -574,6 +582,9 @@
      endwhere
 
    endif
+
+   end_time = omp_get_wtime()
+   print *,end_time - start_time
 
 !-----------------------------------------------------------------------
 !
