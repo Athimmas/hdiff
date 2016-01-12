@@ -527,16 +527,19 @@
                   WORK1(i,j) = WORK1(i,j) * ML_DEPTH(i,j) * (TIME_SCALE(i,j,bid)**2)
             endif
 
+
             CONTINUE_INTEGRAL(i,j) = .true.
             if( KMT(i,j,bid) == 0 ) then
                         CONTINUE_INTEGRAL(i,j) = .false.
             endif
+ 
+            WORK2(i,j) = c0
+
 
         enddo
      enddo
 
-
-     WORK2 = c0
+          
 
      do k=2,km
 
@@ -557,8 +560,8 @@
              WORK2(i,j) = WORK2(i,j) + sqrt(-RZ_SAVE(i,j,k,bid) * WORK3(i,j))
              endif
 
-             if ( CONTINUE_INTEGRAL(i,j) .and.  ML_DEPTH <= zt(k)  &
-                     .and.  ML_DEPTH >= zt(k-1) )then
+             if ( CONTINUE_INTEGRAL(i,j) .and.  ML_DEPTH(i,j) <= zt(k)  &
+                     .and.  ML_DEPTH(i,j) >= zt(k-1) )then
                 CONTINUE_INTEGRAL(i,j) = .false.
              endif
 
