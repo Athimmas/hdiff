@@ -469,9 +469,6 @@
 
   enddo
 
-
-!  end_time = omp_get_wtime()
-
 #ifdef CCSMCOUPLED
    if ( any(CONTINUE_INTEGRAL) ) then
      call shr_sys_abort ('Incorrect mixed layer depth in submeso subroutine (I)')
@@ -491,13 +488,16 @@
         enddo
      enddo
     
+!     end_time = omp_get_wtime()
+!     print *,"Time at part1 is ",end_time - start_time
+
 !-----------------------------------------------------------------------
 !
 !  compute horizontal length scale if necessary
 !
 !-----------------------------------------------------------------------
+!   start_time = omp_get_wtime()
 
-   start_time = omp_get_wtime()
    if ( luse_const_horiz_len_scale ) then
 
     do j=1,ny_block
@@ -592,8 +592,8 @@
 
    endif
 
-   end_time = omp_get_wtime()
-   print *,end_time - start_time
+   !end_time = omp_get_wtime()
+   !print *,"Time at part2 is",end_time - start_time
 
 !     if(master_task == my_task) then
 !      open(unit=10,file="/home/aketh/ocn_correctness_data/changed.txt",status="unknown",position="append",action="write")
@@ -609,6 +609,8 @@
 !
 !-----------------------------------------------------------------------
 
+   start_time = omp_get_wtime() 
+
    do k=1,km
 
      reference_depth(ktp) = zt(k) - p25 * dz(k)
@@ -616,35 +618,46 @@
 
      do kk=ktp,kbt
 
-       where ( reference_depth(kk) < ML_DEPTH  .and.  &
-            KMT(:,:,bid) >= k )
+       do j=1,ny_block
+           do i=1,nx_block
 
-         WORK3 = ( c1 - ( c2 * reference_depth(kk) / ML_DEPTH ) )**2
+
+               if ( reference_depth(kk) < ML_DEPTH(i,j)  .and.  &
+                    KMT(i,j,bid) >= k ) then
+
+                        WORK3(i,j) = ( c1 - ( c2 * reference_depth(kk) / ML_DEPTH(i,j) ) )**2
             
-         WORK2 = ( c1 - WORK3 )  &
-               * ( c1 + ( 5.0_r8 / 21.0_r8 ) * WORK3 )
+                        WORK2(i,j) = ( c1 - WORK3(i,j) )  &
+                                    * ( c1 + ( 5.0_r8 / 21.0_r8 ) * WORK3(i,j) )
 
-         WORK1 = efficiency_factor * (ML_DEPTH**2) * WORK2  &
-                * TIME_SCALE(:,:,bid) / HLS
+                        WORK1(i,j) = efficiency_factor * (ML_DEPTH(i,j)**2) * WORK2(i,j)  &
+                                     * TIME_SCALE(i,j,bid) / HLS(i,j)
 
 !     in the following negative sign is omitted to be consistent with
 !     the GM implementation in hmix_gm subroutine. also, DXT and
 !     DYT usage is approximate. 
 
-         SF_SUBM_X(:,:,1,kk,k,bid) = WORK1 * BX_VERT_AVG(:,:,1)  &
-                                    * min(DXT(:,:,bid),max_hor_grid_scale)
-         SF_SUBM_X(:,:,2,kk,k,bid) = WORK1 * BX_VERT_AVG(:,:,2)  &
-                                    * min(DXT(:,:,bid),max_hor_grid_scale)
-         SF_SUBM_Y(:,:,1,kk,k,bid) = WORK1 * BY_VERT_AVG(:,:,1)  &
-                                    * min(DYT(:,:,bid),max_hor_grid_scale)
-         SF_SUBM_Y(:,:,2,kk,k,bid) = WORK1 * BY_VERT_AVG(:,:,2)  &
-                                    * min(DYT(:,:,bid),max_hor_grid_scale)
+                        SF_SUBM_X(i,j,1,kk,k,bid) = WORK1(i,j) * BX_VERT_AVG(i,j,1)  &
+                                                          * min(DXT(i,j,bid),max_hor_grid_scale)
+                        SF_SUBM_X(i,j,2,kk,k,bid) = WORK1(i,j) * BX_VERT_AVG(i,j,2)  &
+                                                          * min(DXT(i,j,bid),max_hor_grid_scale)
+                        SF_SUBM_Y(i,j,1,kk,k,bid) = WORK1(i,j) * BY_VERT_AVG(i,j,1)  &
+                                                          * min(DYT(i,j,bid),max_hor_grid_scale)
+                        SF_SUBM_Y(i,j,2,kk,k,bid) = WORK1(i,j) * BY_VERT_AVG(i,j,2)  &
+                                                          * min(DYT(i,j,bid),max_hor_grid_scale)
 
-       endwhere
+               endif
+
+           enddo
+        enddo
+
 
      enddo
 
    enddo
+
+   end_time = omp_get_wtime()
+   print *,"Part 3 timings is",end_time - start_time
 
    USMT = c0
    VSMT = c0
