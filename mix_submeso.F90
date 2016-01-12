@@ -466,9 +466,9 @@
 
       enddo
    enddo
- 
 
   enddo
+
 
 !  end_time = omp_get_wtime()
 
@@ -540,9 +540,8 @@
      enddo
 
           
-
      do k=2,km
-
+        !$OMP PARALLEL DO SHARED(WORK3,CONTINUE_INTEGRAL,WORK2,k,bid,dzw,zt,dzwr,RZ_SAVE,ML_DEPTH)PRIVATE(i,j)DEFAULT(NONE)num_threads(16)
         do j=1,ny_block
            do i=1,nx_block
 
@@ -576,18 +575,33 @@
      endif
 #endif
 
-     where ( KMT(:,:,bid) > 0 )
+       do j=1,ny_block
+           do i=1,nx_block
 
-       WORK2 = sqrt_grav * WORK2 * TIME_SCALE(:,:,bid)
+             if ( KMT(i,j,bid) > 0 ) then
 
-       HLS = max ( WORK1, WORK2, hor_length_scale )
+                  WORK2(i,j) = sqrt_grav * WORK2(i,j) * TIME_SCALE(i,j,bid)
 
-     endwhere
+                  HLS(i,j) = max ( WORK1(i,j), WORK2(i,j), hor_length_scale )
+
+             endif
+
+           enddo
+        enddo
+
 
    endif
 
    end_time = omp_get_wtime()
    print *,end_time - start_time
+
+!     if(master_task == my_task) then
+!      open(unit=10,file="/home/aketh/ocn_correctness_data/changed.txt",status="unknown",position="append",action="write")
+!       write(10,*),WORK1,WORK2,WORK3,HLS
+!       close(10)
+!   endif
+
+  
 
 !-----------------------------------------------------------------------
 !
