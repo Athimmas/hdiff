@@ -609,7 +609,7 @@
 !
 !-----------------------------------------------------------------------
 
-   start_time = omp_get_wtime() 
+   !start_time = omp_get_wtime() 
 
    do k=1,km
 
@@ -658,8 +658,8 @@
 
    enddo
 
-   end_time = omp_get_wtime()
-   print *,"Part 3 timings is",end_time - start_time
+   !end_time = omp_get_wtime()
+   !print *,"Part 3 timings is",end_time - start_time
 
    USMT = c0
    VSMT = c0

@@ -553,10 +553,10 @@
 	 endif
 	endif
         if (k == 1) then
-         !start_time = omp_get_wtime()
+         start_time = omp_get_wtime()
 	 call submeso_sf(TMIX, this_block)
-         !end_time = omp_get_wtime()
-         !print *,"time at submeso_sf is ",end_time - start_time
+         end_time = omp_get_wtime()
+         print *,"time at submeso_sf is ",end_time - start_time
 	endif
         !start_time = omp_get_wtime()
         call submeso_flux(k, TDTK, TMIX, tavg_HDIFE_TRACER, &
