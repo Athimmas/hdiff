@@ -618,6 +618,8 @@
 
      do kk=ktp,kbt
 
+       !$OMP PARALLEL DO DEFAULT(NONE)PRIVATE(i,j)SHARED(reference_depth,ML_DEPTH,KMT,WORK3,WORK2,WORK1,TIME_SCALE,HLS,SF_SUBM_X,SF_SUBM_Y) &
+       !$OMP SHARED(BX_VERT_AVG,BY_VERT_AVG,DXT,DYT,max_hor_grid_scale,efficiency_factor,kk,k,bid)num_threads(16)  
        do j=1,ny_block
            do i=1,nx_block
 
