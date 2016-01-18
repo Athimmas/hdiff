@@ -32,7 +32,7 @@
       use exit_mod
       use registry
       use hmix_gm_submeso_share
-!      use  omp_lib
+      use  omp_lib
 
 #ifdef CCSMCOUPLED
    use shr_sys_mod
@@ -274,6 +274,14 @@
 
    integer (int_kind) :: &
       timer_nloop         ! main n loop
+
+!-----------------------------------------------------------------------
+!
+!  manual omp timer
+!
+!-----------------------------------------------------------------------
+
+   real (r8) start_time,end_time
 
 !EOC
 !***********************************************************************
@@ -1209,6 +1217,8 @@
 !
 !-----------------------------------------------------------------------
 
+      start_time = omp_get_wtime() 
+
       bid = this_block%local_id
 
       U_ISOP = c0
@@ -1399,13 +1409,17 @@
           enddo
         endif
 
+        end_time = omp_get_wtime()
+
+        print *,"First part time is",end_time - start_time
+
 
 !-----------------------------------------------------------------------
 !
 !     control slope of isopycnal surfaces or KAPPA
 !
 !-----------------------------------------------------------------------
-	
+
         do kk=1,km
 
           kp1 = min(kk+1,km)
@@ -1668,9 +1682,21 @@
 
         if ( transition_layer_on ) then
 
+          start_time = omp_get_wtime()
+
           call merged_streamfunction ( this_block )
 
+          end_time = omp_get_wtime()
+
+          print *,"Time taken at function1 is ",end_time - start_time
+
+          start_time = omp_get_wtime()
+ 
           call apply_vertical_profile_to_isop_hor_diff ( this_block ) 
+
+          end_time = omp_get_wtime()
+  
+          print *,"Time taken at function2 is ",end_time - start_time
 
         else
 
@@ -1707,6 +1733,8 @@
           enddo    ! end of kk-loop
 
         endif
+
+
 
       endif  ! end of k==1 if statement
 
@@ -2561,7 +2589,7 @@
 
 !***********************************************************************
 !BOP
-! !IROUTINE: kappa_eg
+
 ! !INTERFACE:
 
       subroutine kappa_eg (TMIX, UMIX, VMIX, this_block)
@@ -3757,22 +3785,33 @@
 !
 !-----------------------------------------------------------------------
 
-      WORK5 = c0
-      where (KMT(:,:,bid) /= 0)
-        WORK5(:,:) = c1 / ( c2 * TLT%DIABATIC_DEPTH(:,:,bid) &
-                   + TLT%THICKNESS(:,:,bid) )
-      endwhere
+          do j=1,ny_block
+             do i=1,nx_block
 
-      WORK6 = c0
-      where ((KMT(:,:,bid) /= 0) .AND. (TLT%THICKNESS(:,:,bid) > eps))
-        WORK6(:,:) = WORK5(:,:) / TLT%THICKNESS(:,:,bid)
-      endwhere
+                WORK5(i,j) = c0
+                if (KMT(i,j,bid) /= 0) then
+                   WORK5(i,j) = c1 / ( c2 * TLT%DIABATIC_DEPTH(i,j,bid) &
+                   + TLT%THICKNESS(i,j,bid) )
+ 
+                endif 
+
+                WORK6(i,j) = c0
+                if ((KMT(i,j,bid) /= 0) .AND. (TLT%THICKNESS(i,j,bid) > eps))then
+                   WORK6(i,j) = WORK5(i,j) / TLT%THICKNESS(i,j,bid)
+      
+                endif
+
+             enddo
+          enddo
+
 
 !-----------------------------------------------------------------------
 !
 !     start of interpolation to construct the merged streamfunction
 !
 !-----------------------------------------------------------------------
+
+      !start_time = omp_get_wtime()
 
       do k=1,km
 
@@ -3787,26 +3826,37 @@
 !
 !-----------------------------------------------------------------------
 
-          where ( reference_depth(kk) <= TLT%DIABATIC_DEPTH(:,:,bid)  &
-                  .and.  k <= KMT(:,:,bid) ) 
+          do j=1,ny_block
+             do i=1,nx_block
 
-            SF_SLX(:,:,1,kk,k,bid) = reference_depth(kk) * WORK5  &
-                  * ( c2 * WORK1(:,:,1) + TLT%THICKNESS(:,:,bid)  &
-                     * WORK2(:,:,1) )
 
-            SF_SLX(:,:,2,kk,k,bid) = reference_depth(kk) * WORK5  &
-                  * ( c2 * WORK1(:,:,2) + TLT%THICKNESS(:,:,bid)  &
-                     * WORK2(:,:,2) )
+                if ( reference_depth(kk) <= TLT%DIABATIC_DEPTH(i,j,bid)  &
+                       .and.  k <= KMT(i,j,bid) ) then
 
-            SF_SLY(:,:,1,kk,k,bid) = reference_depth(kk) * WORK5  &
-                  * ( c2 * WORK3(:,:,1) + TLT%THICKNESS(:,:,bid)  &
-                     * WORK4(:,:,1) )
+                       SF_SLX(i,j,1,kk,k,bid) = reference_depth(kk) * WORK5(i,j)  &
+                             * ( c2 * WORK1(i,j,1) + TLT%THICKNESS(i,j,bid)       &
+                                * WORK2(i,j,1) )
 
-            SF_SLY(:,:,2,kk,k,bid) = reference_depth(kk) * WORK5  &
-                  * ( c2 * WORK3(:,:,2) + TLT%THICKNESS(:,:,bid)  &
-                     * WORK4(:,:,2) )
+                       SF_SLX(i,j,2,kk,k,bid) = reference_depth(kk) * WORK5(i,j)  &
+                              * ( c2 * WORK1(i,j,2) + TLT%THICKNESS(i,j,bid)      &
+                                * WORK2(i,j,2) )
 
-          endwhere
+                       SF_SLY(i,j,1,kk,k,bid) = reference_depth(kk) * WORK5(i,j)  &
+                             * ( c2 * WORK3(i,j,1) + TLT%THICKNESS(i,j,bid)       &
+                                * WORK4(i,j,1) )
+
+                       SF_SLY(i,j,2,kk,k,bid) = reference_depth(kk) * WORK5(i,j)  &
+                             * ( c2 * WORK3(i,j,2) + TLT%THICKNESS(i,j,bid)       &
+                                * WORK4(i,j,2) )
+     
+                endif
+      
+             enddo
+          enddo
+
+          !end_time = omp_get_wtime()
+
+          !print *,"Time at merged_stream 2 is ",end_time - start_time
 
 !-----------------------------------------------------------------------
 !
