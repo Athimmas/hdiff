@@ -1217,7 +1217,7 @@
 !
 !-----------------------------------------------------------------------
 
-      start_time = omp_get_wtime() 
+      !start_time = omp_get_wtime() 
 
       bid = this_block%local_id
 
@@ -1409,9 +1409,9 @@
           enddo
         endif
 
-        end_time = omp_get_wtime()
+        !end_time = omp_get_wtime()
 
-        print *,"First part time is",end_time - start_time
+        !print *,"First part time is",end_time - start_time
 
 
 !-----------------------------------------------------------------------
@@ -1682,21 +1682,21 @@
 
         if ( transition_layer_on ) then
 
-          start_time = omp_get_wtime()
+          !start_time = omp_get_wtime()
 
           call merged_streamfunction ( this_block )
 
-          end_time = omp_get_wtime()
+          !end_time = omp_get_wtime()
 
-          print *,"Time taken at function1 is ",end_time - start_time
+          !print *,"Time taken at function1 is ",end_time - start_time
 
-          start_time = omp_get_wtime()
+          !start_time = omp_get_wtime()
  
           call apply_vertical_profile_to_isop_hor_diff ( this_block ) 
 
-          end_time = omp_get_wtime()
+          !end_time = omp_get_wtime()
   
-          print *,"Time taken at function2 is ",end_time - start_time
+          !print *,"Time taken at function2 is ",end_time - start_time
 
         else
 
@@ -3825,7 +3825,8 @@
 !     diabatic region: use linear interpolation (in streamfunction) 
 !
 !-----------------------------------------------------------------------
-
+     
+          !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(i,j)num_threads(16)SCHEDULE(DYNAMIC,6) 
           do j=1,ny_block
              do i=1,nx_block
 
@@ -3851,12 +3852,6 @@
      
                 endif
       
-             enddo
-          enddo
-
-          !end_time = omp_get_wtime()
-
-          !print *,"Time at merged_stream 2 is ",end_time - start_time
 
 !-----------------------------------------------------------------------
 !
@@ -3864,42 +3859,44 @@
 !
 !-----------------------------------------------------------------------
 
-          where ( reference_depth(kk) > TLT%DIABATIC_DEPTH(:,:,bid)   &
-            .and.  reference_depth(kk) <= TLT%INTERIOR_DEPTH(:,:,bid) &
-            .and.  k <= KMT(:,:,bid) )
 
-            WORK7 = (TLT%DIABATIC_DEPTH(:,:,bid)  &
-                     - reference_depth(kk))**2
+                 if ( reference_depth(kk) > TLT%DIABATIC_DEPTH(i,j,bid)   &
+                .and.  reference_depth(kk) <= TLT%INTERIOR_DEPTH(i,j,bid) &
+                .and.  k <= KMT(i,j,bid) ) then
 
-            SF_SLX(:,:,1,kk,k,bid) = - WORK7 * WORK6            &
-                * ( WORK1(:,:,1) + TLT%INTERIOR_DEPTH(:,:,bid)  &
-                   * WORK2(:,:,1) )                             &
-               + reference_depth(kk) * WORK5                    &
-                * ( c2 * WORK1(:,:,1) + TLT%THICKNESS(:,:,bid)  &
-                   * WORK2(:,:,1) )
+                               WORK7(i,j) = (TLT%DIABATIC_DEPTH(i,j,bid)  &
+                                       - reference_depth(kk))**2
 
-            SF_SLX(:,:,2,kk,k,bid) = - WORK7 * WORK6            &
-                * ( WORK1(:,:,2) + TLT%INTERIOR_DEPTH(:,:,bid)  &
-                   * WORK2(:,:,2) )                             &
-               + reference_depth(kk) * WORK5                    &
-                * ( c2 * WORK1(:,:,2) + TLT%THICKNESS(:,:,bid)  &
-                   * WORK2(:,:,2) )
+                      SF_SLX(i,j,1,kk,k,bid) = - WORK7(i,j) * WORK6(i,j)  &
+                          * ( WORK1(i,j,1) + TLT%INTERIOR_DEPTH(i,j,bid)  &
+                             * WORK2(i,j,1) )                             &
+                         + reference_depth(kk) * WORK5(i,j)               &
+                          * ( c2 * WORK1(i,j,1) + TLT%THICKNESS(i,j,bid)  &
+                                     * WORK2(i,j,1) )
 
-            SF_SLY(:,:,1,kk,k,bid) = - WORK7 * WORK6            &
-                * ( WORK3(:,:,1) + TLT%INTERIOR_DEPTH(:,:,bid)  &
-                   * WORK4(:,:,1) )                             &
-               + reference_depth(kk) * WORK5                    &
-                * ( c2 * WORK3(:,:,1) + TLT%THICKNESS(:,:,bid)  &
-                   * WORK4(:,:,1) )
+                      SF_SLX(i,j,2,kk,k,bid) = - WORK7(i,j) * WORK6(i,j)  &
+                          * ( WORK1(i,j,2) + TLT%INTERIOR_DEPTH(i,j,bid)  &
+                             * WORK2(i,j,2) )                             &
+                         + reference_depth(kk) * WORK5(i,j)               &
+                          * ( c2 * WORK1(i,j,2) + TLT%THICKNESS(i,j,bid)  &
+                                       * WORK2(i,j,2) )
 
-            SF_SLY(:,:,2,kk,k,bid) = - WORK7 * WORK6            &
-                * ( WORK3(:,:,2) + TLT%INTERIOR_DEPTH(:,:,bid)  &
-                   * WORK4(:,:,2) )                             &
-               + reference_depth(kk) * WORK5                    &
-                * ( c2 * WORK3(:,:,2) + TLT%THICKNESS(:,:,bid)  &
-                   * WORK4(:,:,2) )
+                      SF_SLY(i,j,1,kk,k,bid) = - WORK7(i,j) * WORK6(i,j)  &
+                          * ( WORK3(i,j,1) + TLT%INTERIOR_DEPTH(i,j,bid)  &
+                             * WORK4(i,j,1) )                             &
+                         + reference_depth(kk) * WORK5(i,j)               &
+                          * ( c2 * WORK3(i,j,1) + TLT%THICKNESS(i,j,bid)  &
+                             * WORK4(i,j,1) )
 
-          endwhere
+                      SF_SLY(i,j,2,kk,k,bid) = - WORK7(i,j) * WORK6(i,j)  &
+                          * ( WORK3(i,j,2) + TLT%INTERIOR_DEPTH(i,j,bid)  &
+                             * WORK4(i,j,2) )                             &
+                         + reference_depth(kk) * WORK5(i,j)               &
+                          * ( c2 * WORK3(i,j,2) + TLT%THICKNESS(i,j,bid)  &
+                             * WORK4(i,j,2) )
+ 
+                  endif
+
 
 !-----------------------------------------------------------------------
 !
@@ -3908,26 +3905,43 @@
 !
 !-----------------------------------------------------------------------
 
-          where ( reference_depth(kk) > TLT%INTERIOR_DEPTH(:,:,bid)  & 
-                  .and.  k <= KMT(:,:,bid) )
+                 if ( reference_depth(kk) > TLT%INTERIOR_DEPTH(i,j,bid)  & 
+                       .and.  k <= KMT(i,j,bid) ) then
 
-            SF_SLX(:,:,1,kk,k,bid) =  KAPPA_THIC(:,:,kk,k,bid)  &
-                              * SLX(:,:,1,kk,k,bid) * dz(k)
+                     SF_SLX(i,j,1,kk,k,bid) =  KAPPA_THIC(i,j,kk,k,bid)  &
+                                       * SLX(i,j,1,kk,k,bid) * dz(k)
 
-            SF_SLX(:,:,2,kk,k,bid) =  KAPPA_THIC(:,:,kk,k,bid)  &
-                              * SLX(:,:,2,kk,k,bid) * dz(k)
+                     SF_SLX(i,j,2,kk,k,bid) =  KAPPA_THIC(i,j,kk,k,bid)  &
+                                       * SLX(i,j,2,kk,k,bid) * dz(k)
 
-            SF_SLY(:,:,1,kk,k,bid) =  KAPPA_THIC(:,:,kk,k,bid)  &
-                              * SLY(:,:,1,kk,k,bid) * dz(k)
+                     SF_SLY(i,j,1,kk,k,bid) =  KAPPA_THIC(i,j,kk,k,bid)  &
+                                       * SLY(i,j,1,kk,k,bid) * dz(k)
 
-            SF_SLY(:,:,2,kk,k,bid) =  KAPPA_THIC(:,:,kk,k,bid)  &
-                              * SLY(:,:,2,kk,k,bid) * dz(k)
+                     SF_SLY(i,j,2,kk,k,bid) =  KAPPA_THIC(i,j,kk,k,bid)  &
+                                       * SLY(i,j,2,kk,k,bid) * dz(k)
 
-          endwhere
+                endif
+
+             enddo
+          enddo
 
         enddo  ! end of kk-loop
 
       enddo    ! end of k-loop
+
+      if(my_task==master_task)then
+
+       open(unit=10,file="/home/aketh/ocn_correctness_data/changed.txt",status="unknown",position="append",action="write",form="unformatted")
+       write(10),SF_SLX,SF_SLY
+       close(10)
+
+      endif
+     
+
+      !end_time = omp_get_wtime()
+
+      !print *,"Time at merged_stream 2 is ",end_time - start_time
+
 
 !-----------------------------------------------------------------------
 !EOC
