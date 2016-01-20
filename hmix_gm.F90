@@ -1217,7 +1217,7 @@
 !
 !-----------------------------------------------------------------------
 
-      !start_time = omp_get_wtime() 
+      start_time = omp_get_wtime() 
 
       bid = this_block%local_id
 
@@ -1409,9 +1409,9 @@
           enddo
         endif
 
-        !end_time = omp_get_wtime()
+        end_time = omp_get_wtime()
 
-        !print *,"First part time is",end_time - start_time
+        print *,"First part time is",end_time - start_time
 
 
 !-----------------------------------------------------------------------
@@ -1682,21 +1682,21 @@
 
         if ( transition_layer_on ) then
 
-          !start_time = omp_get_wtime()
+          start_time = omp_get_wtime()
 
           call merged_streamfunction ( this_block )
 
-          !end_time = omp_get_wtime()
+          end_time = omp_get_wtime()
 
-          !print *,"Time taken at function1 is ",end_time - start_time
+          print *,"Time taken at function1 is ",end_time - start_time
 
-          !start_time = omp_get_wtime()
+          start_time = omp_get_wtime()
  
           call apply_vertical_profile_to_isop_hor_diff ( this_block ) 
 
-          !end_time = omp_get_wtime()
-  
-          !print *,"Time taken at function2 is ",end_time - start_time
+          end_time = omp_get_wtime()
+ 
+          print *,"Time taken at function2 is ",end_time - start_time
 
         else
 
@@ -3775,7 +3775,7 @@
 
       !end_time = omp_get_wtime()
 
-      !print *,"time taken is ",end_time - start_time
+      !print *,"time taken at merged_stream 1 is ",end_time - start_time
 
 !-----------------------------------------------------------------------
 !
@@ -3812,7 +3812,7 @@
 !-----------------------------------------------------------------------
 
       !start_time = omp_get_wtime()
-
+      !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(i,j,k,kk,reference_depth)num_threads(16)SCHEDULE(DYNAMIC,6) 
       do k=1,km
 
         reference_depth(ktp) = zt(k) - p25 * dz(k)
@@ -3826,7 +3826,6 @@
 !
 !-----------------------------------------------------------------------
      
-          !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(i,j)num_threads(16)SCHEDULE(DYNAMIC,6) 
           do j=1,ny_block
              do i=1,nx_block
 
@@ -3929,13 +3928,13 @@
 
       enddo    ! end of k-loop
 
-      if(my_task==master_task)then
+      !if(my_task==master_task)then
 
-       open(unit=10,file="/home/aketh/ocn_correctness_data/changed.txt",status="unknown",position="append",action="write",form="unformatted")
-       write(10),SF_SLX,SF_SLY
-       close(10)
+       !open(unit=10,file="/home/aketh/ocn_correctness_data/changed.txt",status="unknown",position="append",action="write",form="unformatted")
+       !write(10),SF_SLX,SF_SLY
+       !close(10)
 
-      endif
+      !endif
      
 
       !end_time = omp_get_wtime()
