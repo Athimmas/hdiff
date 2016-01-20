@@ -3594,7 +3594,7 @@
 
       integer (int_kind) :: &
          k, kk,     &        ! loop indices
-         bid,i,j             ! local block address for this sub block
+         bid,i,j,temp        ! local block address for this sub block
  
       real (r8), dimension(nx_block,ny_block,2) :: &
          WORK1, WORK2, WORK3, WORK4   ! work arrays
@@ -3622,10 +3622,30 @@
 !
 !-----------------------------------------------------------------------
 
+      start_time = omp_get_wtime() 
       bid = this_block%local_id
 
-      SF_SLX(:,:,:,:,:,bid) = c0
-      SF_SLY(:,:,:,:,:,bid) = c0
+     !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(k,kk,temp,j,i)num_threads(16)collapse(4)
+     do k=1,km
+        do kk=1,2
+           do temp=1,2 
+              do j=1,ny_block
+                 !dir$ vector aligned
+                 !dir$ ivdep
+                 do i=1,nx_block
+ 
+                    SF_SLX(i,j,temp,kk,k,bid) = c0
+                    SF_SLY(i,j,temp,kk,k,bid) = c0
+
+                 enddo
+              enddo
+            enddo
+          enddo
+      enddo   
+
+      end_time = omp_get_wtime()
+      print *,end_time - start_time
+
 
       WORK1 = c0
       WORK2 = c0
