@@ -3622,7 +3622,7 @@
 !
 !-----------------------------------------------------------------------
 
-      start_time = omp_get_wtime() 
+      !start_time = omp_get_wtime() 
       bid = this_block%local_id
 
      !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(k,kk,temp,j,i)num_threads(16)collapse(4)
@@ -3643,8 +3643,8 @@
           enddo
       enddo   
 
-      end_time = omp_get_wtime()
-      print *,end_time - start_time
+      !end_time = omp_get_wtime()
+      !print *,end_time - start_time
 
 
       WORK1 = c0
@@ -3656,6 +3656,8 @@
       WORK7 = c0
       WORK2_NEXT = c0
       WORK4_NEXT = c0
+ 
+
 
 !-----------------------------------------------------------------------
 !
@@ -3997,7 +3999,7 @@
 
       integer (int_kind) :: &
          k, kk,     &        ! loop indices
-         bid                 ! local block address for this sub block
+         bid,i,j             ! local block address for this sub block
 
       real (r8), dimension(2) :: &
          reference_depth
@@ -4022,11 +4024,16 @@
 !     diabatic region: no isopycnal diffusion 
 !
 !-----------------------------------------------------------------------
+           do j=1,ny_block
+              do i=1,nx_block
 
-          where ( reference_depth(kk) <= TLT%DIABATIC_DEPTH(:,:,bid)  &
-                  .and.  k <= KMT(:,:,bid) ) 
-            KAPPA_ISOP(:,:,kk,k,bid) = c0
-          endwhere
+                 if ( reference_depth(kk) <= TLT%DIABATIC_DEPTH(i,j,bid)  &
+                 .and.  k <= KMT(i,j,bid) ) then
+
+                    KAPPA_ISOP(i,j,kk,k,bid) = c0
+
+                endif
+  
 
 !-----------------------------------------------------------------------
 !
@@ -4035,19 +4042,20 @@
 !
 !-----------------------------------------------------------------------
 
-          where ( reference_depth(kk) > TLT%DIABATIC_DEPTH(:,:,bid)   &
-            .and.  reference_depth(kk) <= TLT%INTERIOR_DEPTH(:,:,bid) &
-            .and.  k <= KMT(:,:,bid)  .and.                           &
-                   TLT%THICKNESS(:,:,bid) > eps )
+                if( reference_depth(kk) > TLT%DIABATIC_DEPTH(i,j,bid)   &
+              .and.  reference_depth(kk) <= TLT%INTERIOR_DEPTH(i,j,bid) &
+              .and.  k <= KMT(i,j,bid)  .and.                           &
+                     TLT%THICKNESS(i,j,bid) > eps ) then
 
-            HOR_DIFF(:,:,kk,k,bid) = ( TLT%INTERIOR_DEPTH(:,:,bid)  &
-                  - reference_depth(kk) ) * HOR_DIFF(:,:,kk,k,bid)  &
-                  / TLT%THICKNESS(:,:,bid)
-            KAPPA_ISOP(:,:,kk,k,bid) = ( reference_depth(kk)        &
-                                   - TLT%DIABATIC_DEPTH(:,:,bid) )  &
-                 * KAPPA_ISOP(:,:,kk,k,bid) / TLT%THICKNESS(:,:,bid)
+                     HOR_DIFF(i,j,kk,k,bid) = ( TLT%INTERIOR_DEPTH(i,j,bid)  &
+                           - reference_depth(kk) ) * HOR_DIFF(i,j,kk,k,bid)  &
+                                 / TLT%THICKNESS(i,j,bid)
 
-          endwhere
+                     KAPPA_ISOP(i,j,kk,k,bid) = ( reference_depth(kk)        &
+                                            - TLT%DIABATIC_DEPTH(i,j,bid) )  &
+                          * KAPPA_ISOP(i,j,kk,k,bid) / TLT%THICKNESS(i,j,bid)
+
+                 endif
 
 !-----------------------------------------------------------------------
 !
@@ -4055,14 +4063,29 @@
 !
 !-----------------------------------------------------------------------
 
-          where ( reference_depth(kk) > TLT%INTERIOR_DEPTH(:,:,bid)  &
-                  .and.  k <= KMT(:,:,bid) )
-            HOR_DIFF(:,:,kk,k,bid) = c0
-          endwhere
+                 if ( reference_depth(kk) > TLT%INTERIOR_DEPTH(i,j,bid)  &
+                  .and.  k <= KMT(i,j,bid) ) then
+
+                          HOR_DIFF(i,j,kk,k,bid) = c0
+                 endif
+
+              enddo
+           enddo
 
         enddo  ! end of kk-loop
 
       enddo    ! end of k-loop
+
+
+     !print *,KAPPA_ISOP(45,45,1,45,bid),HOR_DIFF(45,45,1,45,bid) 
+     !if(my_task==master_task)then
+
+       !open(unit=10,file="/home/aketh/ocn_correctness_data/changed.txt",status="unknown",position="append",action="write",form="unformatted")
+       !write(10),HOR_DIFF,KAPPA_ISOP
+       !close(10)
+
+     !endif
+
 
 !-----------------------------------------------------------------------
 !EOC
