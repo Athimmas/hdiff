@@ -4011,7 +4011,7 @@
 !     start of tapering
 !
 !-----------------------------------------------------------------------
-
+      !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(i,j,k,kk,reference_depth)num_threads(16)
       do k=1,km
 
         reference_depth(ktp) = zt(k) - p25 * dz(k)
@@ -4078,13 +4078,13 @@
 
 
      !print *,KAPPA_ISOP(45,45,1,45,bid),HOR_DIFF(45,45,1,45,bid) 
-     !if(my_task==master_task)then
+     if(my_task==master_task)then
 
-       !open(unit=10,file="/home/aketh/ocn_correctness_data/changed.txt",status="unknown",position="append",action="write",form="unformatted")
-       !write(10),HOR_DIFF,KAPPA_ISOP
-       !close(10)
+       open(unit=10,file="/home/aketh/ocn_correctness_data/changed.txt",status="unknown",position="append",action="write",form="unformatted")
+       write(10),HOR_DIFF,KAPPA_ISOP
+       close(10)
 
-     !endif
+     endif
 
 
 !-----------------------------------------------------------------------
