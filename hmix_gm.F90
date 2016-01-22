@@ -1217,7 +1217,7 @@
 !
 !-----------------------------------------------------------------------
 
-      start_time = omp_get_wtime() 
+      !start_time = omp_get_wtime() 
 
       bid = this_block%local_id
 
@@ -1343,6 +1343,8 @@
                kappa_thic_type == kappa_type_bfreq_dradius )      &
             call kappa_lon_lat_dradius (this_block)
 
+          start_time = omp_get_wtime()
+
           if ( kappa_isop_type == kappa_type_bfreq          .or.  &
                kappa_thic_type == kappa_type_bfreq          .or.  &
                kappa_isop_type == kappa_type_bfreq_vmhs     .or.  &
@@ -1352,6 +1354,10 @@
                kappa_isop_type == kappa_type_bfreq_dradius  .or.  &
                kappa_thic_type == kappa_type_bfreq_dradius )      &
             call buoyancy_frequency_dependent_profile (TMIX, this_block)
+
+            end_time = omp_get_wtime()
+
+            print *,"Time at buoy diff is",end_time - start_time
 
           if ( kappa_isop_type == kappa_type_eg  .or.  &
                kappa_thic_type == kappa_type_eg ) &
@@ -1409,9 +1415,9 @@
           enddo
         endif
 
-        end_time = omp_get_wtime()
+        !end_time = omp_get_wtime()
 
-        print *,"First part time is",end_time - start_time
+        !print *,"First part time is",end_time - start_time
 
 
 !-----------------------------------------------------------------------
@@ -1682,21 +1688,21 @@
 
         if ( transition_layer_on ) then
 
-          start_time = omp_get_wtime()
+          !start_time = omp_get_wtime()
 
           call merged_streamfunction ( this_block )
 
-          end_time = omp_get_wtime()
+          !end_time = omp_get_wtime()
 
-          print *,"Time taken at function1 is ",end_time - start_time
+          !print *,"Time taken at function1 is ",end_time - start_time
 
-          start_time = omp_get_wtime()
+          !start_time = omp_get_wtime()
  
           call apply_vertical_profile_to_isop_hor_diff ( this_block ) 
 
-          end_time = omp_get_wtime()
+          !end_time = omp_get_wtime()
  
-          print *,"Time taken at function2 is ",end_time - start_time
+          !print *,"Time taken at function2 is ",end_time - start_time
 
         else
 
@@ -3178,7 +3184,7 @@
 
       integer (int_kind) :: &
          k,        &          ! vertical loop index
-         bid                  ! local block address for this sub block
+         bid,i,j              ! local block address for this sub block
 
       integer (int_kind), dimension(nx_block,ny_block) :: &
          K_MIN                ! k index below SDL 
@@ -3225,23 +3231,35 @@
 !
 !-----------------------------------------------------------------------
 
+         
         do k=1,km-1
 
-          if ( k == 1 ) &
-            TEMP_K = max( -c2, TMIX(:,:,k,1) )
+          !if ( k == 1 ) TEMP_K = max( -c2, TMIX(:,:,k,1) )
 
-          TEMP_KP1 = max( -c2, TMIX(:,:,k+1,1) )
+          !TEMP_KP1 = max( -c2, TMIX(:,:,k+1,1) )
 
           call state( k, k+1, TMIX(:,:,k,1), TMIX(:,:,k,2), &
                       this_block, DRHODT=RHOT, DRHODS=RHOS )
 
-          where ( k < KMT(:,:,bid) ) 
-            BUOY_FREQ_SQ(:,:,k,bid) = max( c0, - grav * dzwr(k) &
-                * ( RHOT * ( TEMP_K - TEMP_KP1 )                &
-                  + RHOS * ( TMIX(:,:,k,  2) - TMIX(:,:,k+1,2) ) ) )
-          endwhere
+          do j=1,ny_block
+             do i=1,nx_block
 
-          TEMP_K = TEMP_KP1
+                if ( k == 1 ) TEMP_K(i,j) = max( -c2, TMIX(i,j,k,1) )
+
+                 TEMP_KP1(i,j) = max( -c2, TMIX(i,j,k+1,1) )
+ 
+
+
+                 if ( k < KMT(i,j,bid) ) then
+                    BUOY_FREQ_SQ(i,j,k,bid) = max( c0, - grav * dzwr(k) &
+                        * ( RHOT(i,j) * ( TEMP_K(i,j) - TEMP_KP1(i,j) ) &
+                  + RHOS(i,j) * ( TMIX(i,j,k,  2) - TMIX(i,j,k+1,2) ) ) )
+                 endif
+
+              TEMP_K(i,j) = TEMP_KP1(i,j)
+           
+             enddo
+           enddo  
 
         enddo
 
@@ -3255,37 +3273,50 @@
 !-----------------------------------------------------------------------
 
       do k=1,km-1
-        where ( ( K_MIN == km+1 ) .and. ( zw(k) > SDL ) .and.  &
-                ( k <= KMT(:,:,bid) )  .and.                   &
-                ( BUOY_FREQ_SQ(:,:,k,bid) > c0 ) ) 
-          BUOY_FREQ_SQ_REF = BUOY_FREQ_SQ(:,:,k,bid)
-          K_MIN = k
-        endwhere
-      enddo
+       do j=1,ny_block
+        do i=1,nx_block 
+
+         if ( ( K_MIN(i,j) == km+1 ) .and. ( zw(k) > SDL(i,j) ) .and.  &
+                ( k <= KMT(i,j,bid) )  .and.                 &
+                ( BUOY_FREQ_SQ(i,j,k,bid) > c0 ) ) then
+          BUOY_FREQ_SQ_REF(i,j) = BUOY_FREQ_SQ(i,j,k,bid)
+          K_MIN(i,j) = k
+  
+         endif
+
         
 !-----------------------------------------------------------------------
 !
 !     now compute the normalized profiles at the interfaces 
 !
 !-----------------------------------------------------------------------
+ 
+          if ( ( k >= K_MIN(i,j) ) .and. ( k < KMT(i,j,bid) ) .and. &
+                  ( BUOY_FREQ_SQ_REF(i,j) /= c0 ) ) then
+                      BUOY_FREQ_SQ_NORM(i,j,k) =  &
+                      max( BUOY_FREQ_SQ(i,j,k,bid) / BUOY_FREQ_SQ_REF(i,j), 0.1_r8 )
+                      BUOY_FREQ_SQ_NORM(i,j,k) =  &
+                      min( BUOY_FREQ_SQ_NORM(i,j,k), c1 ) 
+          else
+              BUOY_FREQ_SQ_NORM(i,j,k) = c1
+          endif
 
-      do k=1,km-1
-        where ( ( k >= K_MIN ) .and. ( k < KMT(:,:,bid) ) .and. &
-               ( BUOY_FREQ_SQ_REF /= c0 ) )
-          BUOY_FREQ_SQ_NORM(:,:,k) =  &
-              max( BUOY_FREQ_SQ(:,:,k,bid) / BUOY_FREQ_SQ_REF, 0.1_r8 )
-          BUOY_FREQ_SQ_NORM(:,:,k) =  &
-              min( BUOY_FREQ_SQ_NORM(:,:,k), c1 ) 
-        elsewhere
-          BUOY_FREQ_SQ_NORM(:,:,k) = c1
-        endwhere
+            enddo
+         enddo
       enddo
 
       do k=1,km-1
-        where ( k == KMT(:,:,bid)-1 ) 
-          BUOY_FREQ_SQ_NORM(:,:,k+1) = BUOY_FREQ_SQ_NORM(:,:,k)
-        endwhere
+       do j=1,ny_block
+        do i=1,nx_block
+  
+        if ( k == KMT(i,j,bid)-1 ) then
+          BUOY_FREQ_SQ_NORM(i,j,k+1) = BUOY_FREQ_SQ_NORM(i,j,k)
+        endif
+
+        enddo
+       enddo 
       enddo
+
 
 !-----------------------------------------------------------------------
 !
@@ -3296,10 +3327,27 @@
 !-----------------------------------------------------------------------
 
       do k=2,km
-        where ( ( k > K_MIN ) .and. ( k <= KMT(:,:,bid) ) )
-          KAPPA_VERTICAL(:,:,k,bid) = BUOY_FREQ_SQ_NORM(:,:,k-1)
-        endwhere
+       do j=1,ny_block
+        do i=1,nx_block
+ 
+         if ( ( k > K_MIN(i,j) ) .and. ( k <= KMT(i,j,bid) ) ) then
+          KAPPA_VERTICAL(i,j,k,bid) = BUOY_FREQ_SQ_NORM(i,j,k-1)
+         endif
+
+        enddo
+       enddo
       enddo
+
+      !if(my_task==master_task)then
+
+         !open(unit=10,file="/home/aketh/ocn_correctness_data/changed.txt",status="unknown",position="append",action="write",form="unformatted")
+         !write(10),KAPPA_VERTICAL,BUOY_FREQ_SQ_NORM,BUOY_FREQ_SQ_REF,K_MIN,BUOY_FREQ_SQ,TEMP_K,TEMP_KP1
+         !close(10)
+
+      !endif
+
+
+
 
 !-----------------------------------------------------------------------
 !EOC
@@ -4078,13 +4126,13 @@
 
 
      !print *,KAPPA_ISOP(45,45,1,45,bid),HOR_DIFF(45,45,1,45,bid) 
-     if(my_task==master_task)then
+     !if(my_task==master_task)then
 
-       open(unit=10,file="/home/aketh/ocn_correctness_data/changed.txt",status="unknown",position="append",action="write",form="unformatted")
-       write(10),HOR_DIFF,KAPPA_ISOP
-       close(10)
+       !open(unit=10,file="/home/aketh/ocn_correctness_data/changed.txt",status="unknown",position="append",action="write",form="unformatted")
+       !write(10),HOR_DIFF,KAPPA_ISOP
+       !close(10)
 
-     endif
+     !endif
 
 
 !-----------------------------------------------------------------------
