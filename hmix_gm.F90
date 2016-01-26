@@ -32,7 +32,7 @@
       use exit_mod
       use registry
       use hmix_gm_submeso_share
-      use  omp_lib
+      use omp_lib
 
 #ifdef CCSMCOUPLED
    use shr_sys_mod
@@ -1343,7 +1343,7 @@
                kappa_thic_type == kappa_type_bfreq_dradius )      &
             call kappa_lon_lat_dradius (this_block)
 
-          start_time = omp_get_wtime()
+          !start_time = omp_get_wtime()
 
           if ( kappa_isop_type == kappa_type_bfreq          .or.  &
                kappa_thic_type == kappa_type_bfreq          .or.  &
@@ -1355,9 +1355,9 @@
                kappa_thic_type == kappa_type_bfreq_dradius )      &
             call buoyancy_frequency_dependent_profile (TMIX, this_block)
 
-            end_time = omp_get_wtime()
+            !end_time = omp_get_wtime()
 
-            print *,"Time at buoy diff is",end_time - start_time
+            !print *,"Time at buoy diff is",end_time - start_time
 
           if ( kappa_isop_type == kappa_type_eg  .or.  &
                kappa_thic_type == kappa_type_eg ) &
@@ -1373,7 +1373,7 @@
 !     reinitialize the diffusivity coefficients 
 !
 !-----------------------------------------------------------------------
-	
+
         if ( kappa_isop_type == kappa_type_const ) then
           KAPPA_ISOP(:,:,:,:,bid) = ah
         elseif ( kappa_isop_type == kappa_type_eg ) then
@@ -1398,12 +1398,22 @@
           KAPPA_THIC(:,:,:,:,bid) = ah_bolus
         else if ( kappa_thic_type == kappa_type_depth  .or.  &
                   kappa_thic_type == kappa_type_bfreq ) then
-          do kk_sub=ktp,kbt
+
+          !start_time = omp_get_wtime()
+          !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(kk_sub,kk,j,i)NUM_THREADS(16)collapse(3)schedule(dynamic,4)      
+           do kk_sub=ktp,kbt
             do kk=1,km
-              KAPPA_THIC(:,:,kk_sub,kk,bid) =  ah_bolus  &
-                                        * KAPPA_VERTICAL(:,:,kk,bid)
+             do j=1,ny_block
+              do i=1,nx_block
+                 KAPPA_THIC(i,j,kk_sub,kk,bid) =  ah_bolus  &
+                                          * KAPPA_VERTICAL(i,j,kk,bid)
+              enddo
+             enddo
             enddo
-          enddo 
+          enddo
+          !$OMP END PARALLEL DO
+          !end_time = omp_get_wtime()
+          !print *,"Loop time at kappa_thic_type == kappa_type_const else if is ",end_time - start_time
         else if ( kappa_thic_type == kappa_type_eg ) then
           KAPPA_THIC(:,:,:,:,bid) = KAPPA_ISOP(:,:,:,:,bid)
         else
@@ -1419,7 +1429,13 @@
 
         !print *,"First part time is",end_time - start_time
 
+        !if( my_task == master_task) then
 
+        !open(unit=10,file="/home/aketh/ocn_correctness_data/changed.txt",status="unknown",position="append",action="write",form="unformatted")
+        !write(10),KAPPA_THIC
+        !close(10)
+
+        !endif 
 !-----------------------------------------------------------------------
 !
 !     control slope of isopycnal surfaces or KAPPA
@@ -3340,9 +3356,9 @@
 
       !if(my_task==master_task)then
 
-         !open(unit=10,file="/home/aketh/ocn_correctness_data/changed.txt",status="unknown",position="append",action="write",form="unformatted")
-         !write(10),KAPPA_VERTICAL,BUOY_FREQ_SQ_NORM,BUOY_FREQ_SQ_REF,K_MIN,BUOY_FREQ_SQ,TEMP_K,TEMP_KP1
-         !close(10)
+      !   open(unit=10,file="/home/aketh/ocn_correctness_data/changed.txt",status="unknown",position="append",action="write",form="unformatted")
+      !   write(10),KAPPA_VERTICAL,BUOY_FREQ_SQ_NORM,BUOY_FREQ_SQ
+      !   close(10)
 
       !endif
 
@@ -3383,7 +3399,7 @@
 
       integer (int_kind) :: &
          k, kk,     &        ! loop indices
-         bid                 ! local block address for this sub block
+         bid,i,j             ! local block address for this sub block
 
       integer (int_kind), dimension(nx_block,ny_block) :: &
          K_START,   &        ! work arrays for TLT%K_LEVEL and 
@@ -3515,6 +3531,8 @@
 !
 !-----------------------------------------------------------------------
 
+      start_time = omp_get_wtime()
+
       do k=2,km
 
         reference_depth(ktp) = zt(k)
@@ -3522,28 +3540,49 @@
 
         do kk=ktp,kbt
 
-          WORK = c0
+              if (kk == ktp) then
+                   do j=1,ny_block
+                      do i=1,nx_block
+                       
+                         WORK(i,j) = c0 
+                         if ( COMPUTE_TLT(i,j)  .and.  K_START(i,j) <= KMT(i,j,bid)  .and. &
+                         K_START(i,j) == k ) then
+                         WORK(i,j) = max(SLA_SAVE(i,j,ktp,k,bid), &
+                         SLA_SAVE(i,j,kbt,k,bid)) * RB(i,j,bid)
+                         endif
+                      enddo
+                   enddo
 
-          if (kk == ktp) then
-            where ( COMPUTE_TLT  .and.  K_START <= KMT(:,:,bid)  .and. &
-                    K_START == k )
-              WORK = max(SLA_SAVE(:,:,ktp,k,bid), &
-                         SLA_SAVE(:,:,kbt,k,bid)) * RB(:,:,bid)
-            endwhere
-          else
-            ! Checking k < km guarantees that k+1 is not out of bounds
-            if (k.lt.km) then
-              where ( COMPUTE_TLT  .and.  K_START < KMT(:,:,bid)  .and. &
-                      K_START == k )
-                WORK = max(SLA_SAVE(:,:,kbt,k,bid), &
-                           SLA_SAVE(:,:,ktp,k+1,bid)) * RB(:,:,bid)
-              endwhere
-            end if
-            where ( COMPUTE_TLT  .and.  K_START == KMT(:,:,bid)  .and. &
-                    K_START == k )
-              WORK = SLA_SAVE(:,:,kbt,k,bid) * RB(:,:,bid)
-            endwhere
-          endif
+              else
+                   ! Checking k < km guarantees that k+1 is not out of bounds
+                   if (k.lt.km) then
+
+                       do j=1,ny_block
+                            do i=1,nx_block
+ 
+                               if ( COMPUTE_TLT(i,j)  .and.  K_START(i,j) < KMT(i,j,bid)  .and. &
+                                   K_START(i,j) == k ) then
+
+                                   WORK(i,j) = max(SLA_SAVE(i,j,kbt,k,bid), &
+                                   SLA_SAVE(i,j,ktp,k+1,bid)) * RB(i,j,bid)
+                               endif
+                            enddo
+                       enddo
+
+                   endif
+
+                       do j=1,ny_block
+                            do i=1,nx_block
+
+                               if ( COMPUTE_TLT(i,j)  .and.  K_START(i,j) == KMT(i,j,bid)  .and. &
+                               K_START(i,j) == k ) then
+                               WORK(i,j) = SLA_SAVE(i,j,kbt,k,bid) * RB(i,j,bid)
+                               endif
+                            enddo
+                       enddo
+    
+              endif
+ 
 
           where ( WORK /= c0  .and.  &
            TLT%DIABATIC_DEPTH(:,:,bid) <  (reference_depth(kk) - WORK) )
@@ -3565,6 +3604,17 @@
         endwhere
 
       enddo
+
+      !if(my_task == master_task)then
+      !open(unit=10,file="/home/aketh/ocn_correctness_data/changed.txt",status="unknown",position="append",action="write",form="unformatted")
+      !write(10),WORK
+       !close(10)
+      !endif
+
+
+      end_time = omp_get_wtime()
+
+      print *,"Transition layer time is",end_time - start_time  
 
 #ifdef CCSMCOUPLED
 #ifndef _HIRES
