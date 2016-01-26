@@ -3550,34 +3550,28 @@
                          WORK(i,j) = max(SLA_SAVE(i,j,ktp,k,bid), &
                          SLA_SAVE(i,j,kbt,k,bid)) * RB(i,j,bid)
                          endif
+
                       enddo
                    enddo
 
               else
                    ! Checking k < km guarantees that k+1 is not out of bounds
-                   if (k.lt.km) then
 
                        do j=1,ny_block
                             do i=1,nx_block
  
                                if ( COMPUTE_TLT(i,j)  .and.  K_START(i,j) < KMT(i,j,bid)  .and. &
-                                   K_START(i,j) == k ) then
-
-                                   WORK(i,j) = max(SLA_SAVE(i,j,kbt,k,bid), &
-                                   SLA_SAVE(i,j,ktp,k+1,bid)) * RB(i,j,bid)
+                               K_START(i,j) == k .and. k .lt. km) then
+                               WORK(i,j) = max(SLA_SAVE(i,j,kbt,k,bid), &
+                               SLA_SAVE(i,j,ktp,k+1,bid)) * RB(i,j,bid)
                                endif
-                            enddo
-                       enddo
 
-                   endif
-
-                       do j=1,ny_block
-                            do i=1,nx_block
 
                                if ( COMPUTE_TLT(i,j)  .and.  K_START(i,j) == KMT(i,j,bid)  .and. &
                                K_START(i,j) == k ) then
                                WORK(i,j) = SLA_SAVE(i,j,kbt,k,bid) * RB(i,j,bid)
                                endif
+
                             enddo
                        enddo
     
@@ -3605,11 +3599,11 @@
 
       enddo
 
-      !if(my_task == master_task)then
-      !open(unit=10,file="/home/aketh/ocn_correctness_data/changed.txt",status="unknown",position="append",action="write",form="unformatted")
-      !write(10),WORK
-       !close(10)
-      !endif
+      if(my_task == master_task)then
+      open(unit=10,file="/home/aketh/ocn_correctness_data/changed.txt",status="unknown",position="append",action="write",form="unformatted")
+      write(10),WORK
+      close(10)
+      endif
 
 
       end_time = omp_get_wtime()
