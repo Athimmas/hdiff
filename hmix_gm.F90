@@ -3540,10 +3540,11 @@
 
         do kk=ktp,kbt
 
-              if (kk == ktp) then
-                   do j=1,ny_block
-                      do i=1,nx_block
-                       
+              !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(j,i)NUM_THREADS(16)SCHEDULE(DYNAMIC,16)
+              do j=1,ny_block
+                   do i=1,nx_block
+                      if (kk == ktp) then
+                   
                          WORK(i,j) = c0 
                          if ( COMPUTE_TLT(i,j)  .and.  K_START(i,j) <= KMT(i,j,bid)  .and. &
                          K_START(i,j) == k ) then
@@ -3551,59 +3552,59 @@
                          SLA_SAVE(i,j,kbt,k,bid)) * RB(i,j,bid)
                          endif
 
-                      enddo
-                   enddo
 
-              else
-                   ! Checking k < km guarantees that k+1 is not out of bounds
-
-                       do j=1,ny_block
-                            do i=1,nx_block
+                      else
  
-                               if ( COMPUTE_TLT(i,j)  .and.  K_START(i,j) < KMT(i,j,bid)  .and. &
-                               K_START(i,j) == k .and. k .lt. km) then
-                               WORK(i,j) = max(SLA_SAVE(i,j,kbt,k,bid), &
-                               SLA_SAVE(i,j,ktp,k+1,bid)) * RB(i,j,bid)
-                               endif
+                         if ( COMPUTE_TLT(i,j)  .and.  K_START(i,j) < KMT(i,j,bid)  .and. &
+                            K_START(i,j) == k .and. k .lt. km) then
+                            WORK(i,j) = max(SLA_SAVE(i,j,kbt,k,bid), &
+                            SLA_SAVE(i,j,ktp,k+1,bid)) * RB(i,j,bid)
+                         endif
 
 
-                               if ( COMPUTE_TLT(i,j)  .and.  K_START(i,j) == KMT(i,j,bid)  .and. &
+                         if ( COMPUTE_TLT(i,j)  .and.  K_START(i,j) == KMT(i,j,bid)  .and. &
                                K_START(i,j) == k ) then
                                WORK(i,j) = SLA_SAVE(i,j,kbt,k,bid) * RB(i,j,bid)
-                               endif
+                         endif
 
-                            enddo
-                       enddo
-    
-              endif
+                      endif  
+
+                      if ( WORK(i,j) /= c0  .and.  &
+                               TLT%DIABATIC_DEPTH(i,j,bid) <  (reference_depth(kk) - WORK(i,j)) )then 
+                               COMPUTE_TLT(i,j) = .false.
+                      endif
  
+                      if ( WORK(i,j) /= c0  .and.  &
+                        TLT%DIABATIC_DEPTH(i,j,bid) >= (reference_depth(kk) - WORK(i,j)) ) then
 
-          where ( WORK /= c0  .and.  &
-           TLT%DIABATIC_DEPTH(:,:,bid) <  (reference_depth(kk) - WORK) )
-            COMPUTE_TLT = .false.
-          endwhere
+                                TLT%THICKNESS(i,j,bid) = reference_depth(kk)  &
+                                    - TLT%DIABATIC_DEPTH(i,j,bid)
+                                TLT%K_LEVEL(i,j,bid)   = k
+                                TLT%ZTW(i,j,bid)       = kk
 
-          where ( WORK /= c0  .and.  &
-           TLT%DIABATIC_DEPTH(:,:,bid) >= (reference_depth(kk) - WORK) )
-            TLT%THICKNESS(:,:,bid) = reference_depth(kk)  &
-                                    - TLT%DIABATIC_DEPTH(:,:,bid)
-            TLT%K_LEVEL(:,:,bid)   = k
-            TLT%ZTW(:,:,bid)       = kk
-          endwhere
+                       endif
+
+                   enddo
+              enddo
 
         enddo
 
-        where ( COMPUTE_TLT  .and.  K_START == k )
-          K_START = K_START + 1
-        endwhere
+              do j=1,ny_block
+                   do i=1,nx_block
+
+                       if ( COMPUTE_TLT(i,j)  .and.  K_START(i,j) == k ) then
+                           K_START(i,j) = K_START(i,j) + 1
+                       endif
+                   enddo
+              enddo  
 
       enddo
 
-      if(my_task == master_task)then
-      open(unit=10,file="/home/aketh/ocn_correctness_data/changed.txt",status="unknown",position="append",action="write",form="unformatted")
-      write(10),WORK
-      close(10)
-      endif
+      !if(my_task == master_task)then
+      !open(unit=10,file="/home/aketh/ocn_correctness_data/changed.txt",status="unknown",position="append",action="write",form="unformatted")
+      !write(10),WORK,TLT%THICKNESS,TLT%K_LEVEL,TLT%ZTW,COMPUTE_TLT
+      !close(10)
+      !endif
 
 
       end_time = omp_get_wtime()
