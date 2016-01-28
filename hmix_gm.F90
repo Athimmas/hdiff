@@ -3447,6 +3447,8 @@
       start_time = omp_get_wtime()
       
       do k=1,km
+
+              !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(j,i)NUM_THREADS(16) 
               do j=1,ny_block
                    do i=1,nx_block
 
@@ -3499,6 +3501,7 @@
 !
 !-----------------------------------------------------------------------
 
+             !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(j,i)NUM_THREADS(16)
              do j=1,ny_block
                    do i=1,nx_block
 
@@ -3515,6 +3518,7 @@
 
       do k=1,km-1
 
+             !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(j,i)NUM_THREADS(16)
              do j=1,ny_block
                    do i=1,nx_block
 
@@ -3650,6 +3654,7 @@
 
       do k=1,km
 
+             !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(j,i)NUM_THREADS(16)
              do j=1,ny_block
                    do i=1,nx_block
 
@@ -3671,6 +3676,7 @@
               enddo
       enddo
 
+             !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(j,i)NUM_THREADS(16)
              do j=1,ny_block
                    do i=1,nx_block
 
@@ -3702,11 +3708,11 @@
 #endif
 #endif
 
-      if(my_task == master_task)then
-      open(unit=10,file="/home/aketh/ocn_correctness_data/changed.txt",status="unknown",position="append",action="write",form="unformatted")
-      write(10),WORK,TLT%THICKNESS,TLT%K_LEVEL,TLT%ZTW,COMPUTE_TLT
-      close(10)
-      endif
+      !if(my_task == master_task)then
+      !open(unit=10,file="/home/aketh/ocn_correctness_data/changed.txt",status="unknown",position="append",action="write",form="unformatted")
+      !write(10),WORK,TLT%THICKNESS,TLT%K_LEVEL,TLT%ZTW,COMPUTE_TLT
+      !close(10)
+      !endif
 
 
 !-----------------------------------------------------------------------

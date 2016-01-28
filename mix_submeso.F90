@@ -913,7 +913,7 @@
         factor    = c0
       endif
       
-	do n = 1,nt
+      do n = 1,nt
           if (.not.registry_match('init_gm')) then
            if (n > 2 .and. k < km)  &
              TZ(:,:,k+1,n,bid) = TMIX(:,:,k  ,n) - TMIX(:,:,k+1,n)
@@ -930,7 +930,7 @@
           enddo
 
         end do
-	
+
        do n = 1,nt
 
           do j=1,ny_block-1
@@ -944,11 +944,11 @@
           enddo
 
        end do
-	
+
       ! zero halo regions so accumulate_tavg_field calls do not trap
       WORK1 = c0
       WORK2 = c0
-	    
+
       do n = 1,nt
 
 !-----------------------------------------------------------------------
