@@ -1281,7 +1281,11 @@
             enddo
           enddo
 
+          start_time = omp_get_wtime()
           call transition_layer ( this_block )
+          end_time = omp_get_wtime()
+
+          print *,end_time - start_time 
 
         endif
 
@@ -3440,34 +3444,40 @@
 !
 !-----------------------------------------------------------------------
 
+      start_time = omp_get_wtime()
+      
       do k=1,km
+              do j=1,ny_block
+                   do i=1,nx_block
 
-        where ( COMPUTE_TLT  .and.  &
-                TLT%DIABATIC_DEPTH(:,:,bid) < zw(k) )
+                      if ( COMPUTE_TLT(i,j)  .and.  &
+                         TLT%DIABATIC_DEPTH(i,j,bid) < zw(k) ) then
 
-          K_START = k+1
-          K_SUB   = ktp
+                         K_START(i,j) = k+1
+                         K_SUB(i,j)   = ktp
 
-          TLT%THICKNESS(:,:,bid) = zw(k) - TLT%DIABATIC_DEPTH(:,:,bid)
-          TLT%K_LEVEL(:,:,bid)   = k
-          TLT%ZTW(:,:,bid)       = 2
+                         TLT%THICKNESS(i,j,bid) = zw(k) - TLT%DIABATIC_DEPTH(i,j,bid)
+                         TLT%K_LEVEL(i,j,bid)   = k
+                         TLT%ZTW(i,j,bid)       = 2
 
-          COMPUTE_TLT = .false.
+                         COMPUTE_TLT(i,j) = .false.
 
-        endwhere
+                      endif
 
-        where ( k /= 1  .and.  K_START == k+1  .and. &
-                TLT%DIABATIC_DEPTH(:,:,bid) < zt(k) )
+          
+                      if ( k /= 1  .and.  K_START(i,j) == k+1  .and. &
+                         TLT%DIABATIC_DEPTH(i,j,bid) < zt(k) ) then
+                         K_START(i,j) = k
+                         K_SUB(i,j)   = kbt
 
-          K_START = k
-          K_SUB   = kbt
+                         TLT%THICKNESS(i,j,bid) = zt(k) - TLT%DIABATIC_DEPTH(i,j,bid)
+                         TLT%K_LEVEL(i,j,bid)   = k
+                         TLT%ZTW(i,j,bid)       = 1
 
-          TLT%THICKNESS(:,:,bid) = zt(k) - TLT%DIABATIC_DEPTH(:,:,bid)
-          TLT%K_LEVEL(:,:,bid)   = k
-          TLT%ZTW(:,:,bid)       = 1
+                      endif
 
-        endwhere
-
+                   enddo
+              enddo
       enddo
 
 #ifdef CCSMCOUPLED
@@ -3489,41 +3499,74 @@
 !
 !-----------------------------------------------------------------------
 
-      where ( KMT(:,:,bid) == 0  .or.  K_START > KMT(:,:,bid)  .or.  &
-              ( K_START == KMT(:,:,bid)  .and.  K_SUB == kbt ) )
-        COMPUTE_TLT = .false.
-      elsewhere
-        COMPUTE_TLT = .true.
-      endwhere
+             do j=1,ny_block
+                   do i=1,nx_block
+
+                      if ( KMT(i,j,bid) == 0  .or.  K_START(i,j) > KMT(i,j,bid)  .or.  &
+                      ( K_START(i,j) == KMT(i,j,bid)  .and.  K_SUB(i,j) == kbt ) ) then
+                         COMPUTE_TLT(i,j) = .false.
+                      else
+                         COMPUTE_TLT(i,j) = .true.
+
+                      endif
+
+                   enddo
+              enddo
 
       do k=1,km-1
 
-        WORK = c0
+             do j=1,ny_block
+                   do i=1,nx_block
 
-        where ( COMPUTE_TLT  .and.  K_SUB == kbt  .and.  &
-                K_START < KMT(:,:,bid)  .and.  K_START == k )
-          WORK = max(SLA_SAVE(:,:,kbt,k,bid), &
-                     SLA_SAVE(:,:,ktp,k+1,bid)) * RB(:,:,bid)
-        endwhere
+                     WORK(i,j) = c0
 
-        where ( WORK /= c0  .and.  &
-                TLT%DIABATIC_DEPTH(:,:,bid) <  (zw(k) - WORK) )
-          COMPUTE_TLT = .false.
-        endwhere
+                      if ( COMPUTE_TLT(i,j)  .and.  K_SUB(i,j) == kbt  .and.  &
+                         K_START(i,j) < KMT(i,j,bid)  .and.  K_START(i,j) == k ) then
 
-        where ( WORK /= c0  .and.  &
-                TLT%DIABATIC_DEPTH(:,:,bid) >= (zw(k) - WORK) )
+                         WORK(i,j) = max(SLA_SAVE(i,j,kbt,k,bid), &
+                         SLA_SAVE(i,j,ktp,k+1,bid)) * RB(i,j,bid)
 
-          K_START = K_START + 1
-          K_SUB   = ktp
+                      endif
 
-          TLT%THICKNESS(:,:,bid) = zw(k) - TLT%DIABATIC_DEPTH(:,:,bid)
-          TLT%K_LEVEL(:,:,bid)   = k
-          TLT%ZTW(:,:,bid)       = 2
+                   enddo
+              enddo
 
-        endwhere
+             do j=1,ny_block
+                   do i=1,nx_block
+
+                      if ( WORK(i,j) /= c0  .and.  &
+                      TLT%DIABATIC_DEPTH(i,j,bid) <  (zw(k) - WORK(i,j)) ) then
+                      COMPUTE_TLT(i,j) = .false.
+                    endif
+
+                   enddo
+              enddo
+
+
+             do j=1,ny_block
+                   do i=1,nx_block
+
+                      if ( WORK(i,j) /= c0  .and.  &
+                         TLT%DIABATIC_DEPTH(i,j,bid) >= (zw(k) - WORK(i,j)) ) then
+
+                      K_START(i,j) = K_START(i,j) + 1
+                      K_SUB(i,j)   = ktp
+
+                      TLT%THICKNESS(i,j,bid) = zw(k) - TLT%DIABATIC_DEPTH(i,j,bid)
+                      TLT%K_LEVEL(i,j,bid)   = k
+                      TLT%ZTW(i,j,bid)       = 2
+
+                      endif
+
+                   enddo
+              enddo
 
       enddo
+
+      end_time = omp_get_wtime()
+
+      print *,"Transition layer time is",end_time - start_time
+
 
 !-----------------------------------------------------------------------
 !
@@ -3531,7 +3574,7 @@
 !
 !-----------------------------------------------------------------------
 
-      start_time = omp_get_wtime()
+      !start_time = omp_get_wtime()
 
       do k=2,km
 
@@ -3600,16 +3643,16 @@
 
       enddo
 
-      !if(my_task == master_task)then
-      !open(unit=10,file="/home/aketh/ocn_correctness_data/changed.txt",status="unknown",position="append",action="write",form="unformatted")
-      !write(10),WORK,TLT%THICKNESS,TLT%K_LEVEL,TLT%ZTW,COMPUTE_TLT
-      !close(10)
-      !endif
+      if(my_task == master_task)then
+      open(unit=10,file="/home/aketh/ocn_correctness_data/changed.txt",status="unknown",position="append",action="write",form="unformatted")
+      write(10),WORK,TLT%THICKNESS,TLT%K_LEVEL,TLT%ZTW,COMPUTE_TLT
+      close(10)
+      endif
 
 
-      end_time = omp_get_wtime()
+      !end_time = omp_get_wtime()
 
-      print *,"Transition layer time is",end_time - start_time  
+      !print *,"Transition layer time is",end_time - start_time  
 
 #ifdef CCSMCOUPLED
 #ifndef _HIRES
