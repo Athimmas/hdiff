@@ -3528,39 +3528,25 @@
 
                       endif
 
-                   enddo
-              enddo
-
-             do j=1,ny_block
-                   do i=1,nx_block
-
                       if ( WORK(i,j) /= c0  .and.  &
-                      TLT%DIABATIC_DEPTH(i,j,bid) <  (zw(k) - WORK(i,j)) ) then
-                      COMPUTE_TLT(i,j) = .false.
-                    endif
+                         TLT%DIABATIC_DEPTH(i,j,bid) <  (zw(k) - WORK(i,j)) ) then
+                         COMPUTE_TLT(i,j) = .false.
+                      endif
 
-                   enddo
-              enddo
-
-
-             do j=1,ny_block
-                   do i=1,nx_block
 
                       if ( WORK(i,j) /= c0  .and.  &
                          TLT%DIABATIC_DEPTH(i,j,bid) >= (zw(k) - WORK(i,j)) ) then
 
-                      K_START(i,j) = K_START(i,j) + 1
-                      K_SUB(i,j)   = ktp
+                         K_START(i,j) = K_START(i,j) + 1
+                         K_SUB(i,j)   = ktp
 
-                      TLT%THICKNESS(i,j,bid) = zw(k) - TLT%DIABATIC_DEPTH(i,j,bid)
-                      TLT%K_LEVEL(i,j,bid)   = k
-                      TLT%ZTW(i,j,bid)       = 2
+                         TLT%THICKNESS(i,j,bid) = zw(k) - TLT%DIABATIC_DEPTH(i,j,bid)
+                         TLT%K_LEVEL(i,j,bid)   = k
+                         TLT%ZTW(i,j,bid)       = 2
 
                       endif
-
                    enddo
-              enddo
-
+             enddo
       enddo
 
       end_time = omp_get_wtime()
@@ -3643,12 +3629,6 @@
 
       enddo
 
-      if(my_task == master_task)then
-      open(unit=10,file="/home/aketh/ocn_correctness_data/changed.txt",status="unknown",position="append",action="write",form="unformatted")
-      write(10),WORK,TLT%THICKNESS,TLT%K_LEVEL,TLT%ZTW,COMPUTE_TLT
-      close(10)
-      endif
-
 
       !end_time = omp_get_wtime()
 
@@ -3669,23 +3649,50 @@
 !-----------------------------------------------------------------------
 
       do k=1,km
-        where ( TLT%K_LEVEL(:,:,bid) == k  .and.  &
-                TLT%ZTW(:,:,bid) == 1 )
-          TLT%INTERIOR_DEPTH(:,:,bid) = zt(k)
-        endwhere
-        where ( TLT%K_LEVEL(:,:,bid) == k  .and.  &
-                TLT%ZTW(:,:,bid) == 2 )
-          TLT%INTERIOR_DEPTH(:,:,bid) = zw(k)
-        endwhere
+
+             do j=1,ny_block
+                   do i=1,nx_block
+
+
+                      if ( TLT%K_LEVEL(i,j,bid) == k  .and.  &
+                         TLT%ZTW(i,j,bid) == 1 ) then
+
+                            TLT%INTERIOR_DEPTH(i,j,bid) = zt(k)
+                      endif
+
+
+                      if ( TLT%K_LEVEL(i,j,bid) == k  .and.  &
+                         TLT%ZTW(i,j,bid) == 2 ) then
+
+                            TLT%INTERIOR_DEPTH(i,j,bid) = zw(k)
+                      endif
+
+                   enddo
+              enddo
       enddo
 
-      COMPUTE_TLT = .false.
-      where ( KMT(:,:,bid) /= 0  .and.  &
-              TLT%INTERIOR_DEPTH(:,:,bid) == c0 )  &
-        COMPUTE_TLT = .true.
-      where ( KMT(:,:,bid) == 0  .and.  &
-              TLT%INTERIOR_DEPTH(:,:,bid) /= c0 )  &
-        COMPUTE_TLT = .true.
+             do j=1,ny_block
+                   do i=1,nx_block
+
+
+                      COMPUTE_TLT(i,j) = .false.
+
+                      if ( KMT(i,j,bid) /= 0  .and.  &
+                           TLT%INTERIOR_DEPTH(i,j,bid) == c0 ) then 
+                           
+                           COMPUTE_TLT(i,j) = .true.
+
+                      endif    
+
+                      if ( KMT(i,j,bid) == 0  .and.  &
+                            TLT%INTERIOR_DEPTH(i,j,bid) /= c0 )  then
+
+                            COMPUTE_TLT(i,j) = .true.
+
+                      endif  
+
+                   enddo
+              enddo
 
 #ifdef CCSMCOUPLED
 #ifndef _HIRES
@@ -3694,6 +3701,13 @@
       endif
 #endif
 #endif
+
+      if(my_task == master_task)then
+      open(unit=10,file="/home/aketh/ocn_correctness_data/changed.txt",status="unknown",position="append",action="write",form="unformatted")
+      write(10),WORK,TLT%THICKNESS,TLT%K_LEVEL,TLT%ZTW,COMPUTE_TLT
+      close(10)
+      endif
+
 
 !-----------------------------------------------------------------------
 !EOC
