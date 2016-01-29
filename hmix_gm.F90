@@ -1263,8 +1263,15 @@
 
           if ( vmix_itype == vmix_type_kpp ) then
 
+            !start_time = omp_get_wtime()
+ 
             call smooth_hblt ( .false., .true., bid,  &
                                SMOOTH_OUT=TLT%DIABATIC_DEPTH(:,:,bid) )
+
+            !end_time = omp_get_wtime()
+ 
+            !print *,"Smmoth takes ",end_time - start_time  
+
           else
             TLT%DIABATIC_DEPTH(:,:,bid) = zw(k)
           endif
@@ -1401,7 +1408,7 @@
 !     reinitialize the diffusivity coefficients 
 !
 !-----------------------------------------------------------------------
-        start_time = omp_get_wtime()
+        !start_time = omp_get_wtime()
 
         if ( kappa_isop_type == kappa_type_const ) then
           KAPPA_ISOP(:,:,:,:,bid) = ah
@@ -1425,9 +1432,9 @@
           enddo
         endif
 
-        end_time = omp_get_wtime()  
+        !end_time = omp_get_wtime()  
 
-        print *,"Time at KAPPA_ISOP_TYPE",end_time - start_time
+        !print *,"Time at KAPPA_ISOP_TYPE",end_time - start_time
 
         if ( .not. use_const_ah_bkg_srfbl )  &
           HOR_DIFF(:,:,ktp,k,bid) = KAPPA_ISOP(:,:,ktp,k,bid) 

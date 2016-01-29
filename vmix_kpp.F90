@@ -36,6 +36,7 @@
    use registry
    use prognostic
    use time_management
+   use omp_lib
 
    implicit none
    private
@@ -3092,6 +3093,8 @@
      cc, cw, ce, cn, cs, &  ! averaging weights
      ztmp                   ! temp for level depth
 
+   real (r8) start_time,end_time
+
 !-----------------------------------------------------------------------
 !
 !     consistency checks 
@@ -3133,6 +3136,7 @@
    endif
 
    WORK1 = WORK2
+
    do j=2,ny_block-1
      do i=2,nx_block-1
        if ( KMT(i,j,bid) /= 0 ) then
@@ -3166,7 +3170,12 @@
      enddo
    enddo
 
+
+   start_time = omp_get_wtime()
+
+
    do k=1,km
+     !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(ztmp,j,i)NUM_THREADS(16)
      do j=2,ny_block-1
        do i=2,nx_block-1
 
@@ -3185,9 +3194,12 @@
      enddo
    enddo
 
+
    if ( overwrite_hblt  .and.  .not.use_hmxl ) then
 
      HBLT = WORK2
+
+     start_time = omp_get_wtime()
 
      do k=1,km
        do j=2,ny_block-1
@@ -3213,6 +3225,10 @@
      SMOOTH_OUT = WORK2
 
    endif
+  
+   end_time = omp_get_wtime()
+
+   print *,"Time at smooth HBLT is",end_time - start_time
 
 !-----------------------------------------------------------------------
 
