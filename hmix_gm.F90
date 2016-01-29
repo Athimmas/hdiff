@@ -1272,12 +1272,13 @@
           start_time = omp_get_wtime()
 
          !$OMP PARALLEL DO &
-         !$OMP DEFAULT(SHARED)PRIVATE(kid,i,j,kk_sub,kk)NUM_THREADS(16) 
+         !$OMP DEFAULT(SHARED)PRIVATE(kid,i,j,kk_sub,kk)NUM_THREADS(16)COLLAPSE(3) 
           do kk=1,km
             do kk_sub = ktp,kbt
-              kid = kk + kk_sub - 2
                   do j=1,ny_block
                      do i=1,nx_block                 
+
+                        kid = kk + kk_sub - 2  
 
                         SLA_SAVE(i,j,kk_sub,kk,bid) = dzw(kid)*sqrt(p5*( &
                         (SLX(i,j,1,kk_sub,kk,bid)**2                     &
