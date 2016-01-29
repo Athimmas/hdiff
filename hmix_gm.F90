@@ -1269,23 +1269,46 @@
             TLT%DIABATIC_DEPTH(:,:,bid) = zw(k)
           endif
 
+          start_time = omp_get_wtime()
+
+         !$OMP PARALLEL DO &
+         !$OMP DEFAULT(SHARED)PRIVATE(kid,i,j,kk_sub,kk)NUM_THREADS(16) 
           do kk=1,km
             do kk_sub = ktp,kbt
               kid = kk + kk_sub - 2
-              SLA_SAVE(:,:,kk_sub,kk,bid) = dzw(kid)*sqrt(p5*(       &
-                     (SLX(:,:,1,kk_sub,kk,bid)**2                    &
-                    + SLX(:,:,2,kk_sub,kk,bid)**2)/DXT(:,:,bid)**2   &
-                   + (SLY(:,:,1,kk_sub,kk,bid)**2                    &
-                    + SLY(:,:,2,kk_sub,kk,bid)**2)/DYT(:,:,bid)**2)) &
-                   + eps
+                  do j=1,ny_block
+                     do i=1,nx_block                 
+
+                        SLA_SAVE(i,j,kk_sub,kk,bid) = dzw(kid)*sqrt(p5*( &
+                        (SLX(i,j,1,kk_sub,kk,bid)**2                     &
+                        + SLX(i,j,2,kk_sub,kk,bid)**2)/DXT(i,j,bid)**2   &
+                        + (SLY(i,j,1,kk_sub,kk,bid)**2                   &
+                        + SLY(i,j,2,kk_sub,kk,bid)**2)/DYT(i,j,bid)**2)) &
+                        + eps
+                     
+                     enddo
+                  enddo         
             enddo
           enddo
+          !$OMP END PARALLEL DO
 
-          start_time = omp_get_wtime()
-          call transition_layer ( this_block )
           end_time = omp_get_wtime()
 
-          print *,end_time - start_time 
+          print *,"SLA_SAVE loop time",end_time - start_time 
+
+          if(my_task == master_task)then   
+
+          open(unit=10,file="/home/aketh/ocn_correctness_data/changed.txt",status="unknown",position="append",action="write",form="unformatted")
+          write(10),SLA_SAVE
+          close(10)
+
+          endif          
+
+          !start_time = omp_get_wtime()
+          call transition_layer ( this_block )
+          !end_time = omp_get_wtime()
+
+          !print *,end_time - start_time 
 
         endif
 
@@ -3444,7 +3467,7 @@
 !
 !-----------------------------------------------------------------------
 
-      start_time = omp_get_wtime()
+      !start_time = omp_get_wtime()
       
       do k=1,km
 
@@ -3516,7 +3539,7 @@
                    enddo
               enddo
 
-      do k=1,km-1
+             do k=1,km-1
 
              !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(j,i)NUM_THREADS(16)
              do j=1,ny_block
@@ -3551,11 +3574,11 @@
                       endif
                    enddo
              enddo
-      enddo
+             enddo
 
-      end_time = omp_get_wtime()
+      !end_time = omp_get_wtime()
 
-      print *,"Transition layer time is",end_time - start_time
+      !print *,"Transition layer time is",end_time - start_time
 
 
 !-----------------------------------------------------------------------
