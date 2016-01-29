@@ -1269,7 +1269,7 @@
             TLT%DIABATIC_DEPTH(:,:,bid) = zw(k)
           endif
 
-          start_time = omp_get_wtime()
+          !start_time = omp_get_wtime()
 
          !$OMP PARALLEL DO &
          !$OMP DEFAULT(SHARED)PRIVATE(kid,i,j,kk_sub,kk)NUM_THREADS(16)COLLAPSE(3) 
@@ -1293,17 +1293,17 @@
           enddo
           !$OMP END PARALLEL DO
 
-          end_time = omp_get_wtime()
+          !end_time = omp_get_wtime()
 
-          print *,"SLA_SAVE loop time",end_time - start_time 
+          !print *,"SLA_SAVE loop time",end_time - start_time 
 
-          if(my_task == master_task)then   
+          !if(my_task == master_task)then   
 
-          open(unit=10,file="/home/aketh/ocn_correctness_data/changed.txt",status="unknown",position="append",action="write",form="unformatted")
-          write(10),SLA_SAVE
-          close(10)
+          !open(unit=10,file="/home/aketh/ocn_correctness_data/changed.txt",status="unknown",position="append",action="write",form="unformatted")
+          !write(10),SLA_SAVE
+          !close(10)
 
-          endif          
+          !endif          
 
           !start_time = omp_get_wtime()
           call transition_layer ( this_block )
@@ -1401,6 +1401,7 @@
 !     reinitialize the diffusivity coefficients 
 !
 !-----------------------------------------------------------------------
+        start_time = omp_get_wtime()
 
         if ( kappa_isop_type == kappa_type_const ) then
           KAPPA_ISOP(:,:,:,:,bid) = ah
@@ -1411,13 +1412,22 @@
             enddo
           enddo
         else
+          !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(kk_sub,kk,j,i)NUM_THREADS(16)
           do kk_sub=ktp,kbt
             do kk=1,km
-              KAPPA_ISOP(:,:,kk_sub,kk,bid) =  KAPPA_LATERAL(:,:,bid)  &
-                                         * KAPPA_VERTICAL(:,:,kk,bid)
+               do j=1,ny_block
+                   do i=1,nx_block
+                       KAPPA_ISOP(i,j,kk_sub,kk,bid) =  KAPPA_LATERAL(i,j,bid)  &
+                                                     * KAPPA_VERTICAL(i,j,kk,bid)
+                   enddo
+               enddo  
             enddo
           enddo
         endif
+
+        end_time = omp_get_wtime()  
+
+        print *,"Time at KAPPA_ISOP_TYPE",end_time - start_time
 
         if ( .not. use_const_ah_bkg_srfbl )  &
           HOR_DIFF(:,:,ktp,k,bid) = KAPPA_ISOP(:,:,ktp,k,bid) 
