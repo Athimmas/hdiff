@@ -1486,6 +1486,7 @@
 !     control slope of isopycnal surfaces or KAPPA
 !
 !-----------------------------------------------------------------------
+        start_time = omp_get_wtime()
 
         do kk=1,km
 
@@ -1504,56 +1505,61 @@
 !     ocean surface Large et al (1997), JPO, 27, pp 2418-2447.
 !     WORK1 = ratio between the depth of water parcel and
 !     the vertical displacement of isopycnal surfaces
-!     where the vertical displacement =
+!     where the vertical displacement =/dz_botto/dz_bottomm
 !     Rossby radius * slope of isopycnal surfaces
 !
 !-----------------------------------------------------------------------
 
-            if ( transition_layer_on ) then
-              SLA = SLA_SAVE(:,:,kk_sub,kk,bid)
-            else
-              SLA = dzw(kid)*sqrt(p5*(                               &
-                     (SLX(:,:,1,kk_sub,kk,bid)**2                    & 
-                    + SLX(:,:,2,kk_sub,kk,bid)**2)/DXT(:,:,bid)**2   &
-                   + (SLY(:,:,1,kk_sub,kk,bid)**2                    &
-                    + SLY(:,:,2,kk_sub,kk,bid)**2)/DYT(:,:,bid)**2)) &
-                   + eps
-            endif
+             !!$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(j,i,dzw,dz_bottom,zt)NUM_THREADS(16)
+             do j=1,ny_block
+                   do i=1,nx_block
 
-            TAPER1 = c1 
-            if ( .not. transition_layer_on ) then
+                       if ( transition_layer_on ) then
+                          SLA(i,j) = SLA_SAVE(i,j,kk_sub,kk,bid)
+                       else
+                          SLA(i,j) = dzw(kid)*sqrt(p5*(                               &
+                                 (SLX(i,j,1,kk_sub,kk,bid)**2                    & 
+                                + SLX(i,j,2,kk_sub,kk,bid)**2)/DXT(i,j,bid)**2   &
+                                + (SLY(i,j,1,kk_sub,kk,bid)**2                   &
+                                + SLY(i,j,2,kk_sub,kk,bid)**2)/DYT(i,j,bid)**2)) &
+                                + eps
+                        endif
 
-              if ( kk == 1 ) then
-                dz_bottom = c0
-              else
-                dz_bottom = zt(kk-1)
-              endif
+                        TAPER1(i,j) = c1 
+                        if ( .not. transition_layer_on ) then
 
-              if (slope_control == slope_control_tanh) then
+                        if ( kk == 1 ) then
+                        dz_bottom = c0
+                        else
+                        dz_bottom = zt(kk-1)
+                        endif
 
-                WORK1 = min(c1,zt(kk)*RBR(:,:,bid)/SLA)
-                TAPER1 = p5*(c1+sin(pi*(WORK1-p5)))
+                        if (slope_control == slope_control_tanh) then
+
+                        WORK1(i,j) = min(c1,zt(kk)*RBR(i,j,bid)/SLA(i,j))
+                        TAPER1(i,j) = p5*(c1+sin(pi*(WORK1(i,j)-p5)))
 
 !     use the Rossby deformation radius tapering
 !     only within the boundary layer
 
-                TAPER1 = merge(TAPER1, c1,  &
-                               dz_bottom <= BL_DEPTH(:,:,bid))
+                        TAPER1(i,j) = merge(TAPER1(i,j), c1,  &
+                               dz_bottom <= BL_DEPTH(i,j,bid))
 
-              else
+                         else
 
 !     sine function is replaced by
 !     function = 4.*x*(1.-abs(x)) for |x|<0.5
 
-                WORK1 = min(c1,zt(kk)*RBR(:,:,bid)/SLA)
-                TAPER1 = (p5+c2*(WORK1-p5)*(c1-abs(WORK1-p5)))
+                         WORK1(i,j) = min(c1,zt(kk)*RBR(i,j,bid)/SLA(i,j))
+                         TAPER1(i,j) = (p5+c2*(WORK1(i,j)-p5)*(c1-abs(WORK1(i,j)-p5)))
 
-                TAPER1 = merge(TAPER1, c1,  &
-                               dz_bottom <= BL_DEPTH(:,:,bid))
+                         TAPER1(i,j) = merge(TAPER1(i,j), c1,  &
+                                  dz_bottom <= BL_DEPTH(i,j,bid))
 
-              endif
+                         endif
 
-            endif
+                         endif
+
 
 !-----------------------------------------------------------------------
 !
@@ -1565,9 +1571,25 @@
 !     methods to control slope
 !
 !-----------------------------------------------------------------------
+      
+                        TAPER2(i,j) = c1
+                        TAPER3(i,j) = c1
 
-            TAPER2 = c1 
-            TAPER3 = c1 
+                   enddo
+              enddo
+
+              start_time = omp_get_wtime()
+
+!-----------------------------------------------------------------------
+!
+!     control KAPPA for numerical stability
+!
+!-----------------------------------------------------------------------
+!-----------------------------------------------------------------------
+!
+!     methods to control slope
+!
+!-----------------------------------------------------------------------
 
             select case (slope_control)
             case (slope_control_tanh)
@@ -1720,6 +1742,10 @@
             KAPPA_THIC(:,:,kk_sub,kk,bid) =  &
                   TAPER1 * TAPER3 * KAPPA_THIC(:,:,kk_sub,kk,bid)
 
+          end_time = omp_get_wtime()
+          print *,"Time at 2-1 part is",end_time - start_time
+ 
+
           end do  ! end of kk_sub loop
 
 
@@ -1737,8 +1763,18 @@
             KAPPA_ISOP(:,:,kbt,kk,bid) = c0
             KAPPA_THIC(:,:,kbt,kk,bid) = c0
           end where
-
+ 
         enddo              ! end of kk-loop
+
+      !if(my_task == master_task)then      
+ 
+      !open(unit=10,file="/home/aketh/ocn_correctness_data/changed.txt",status="unknown",position="append",action="write",form="unformatted")
+       !write(10),SF_SLX,SF_SLY,KAPPA_ISOP,KAPPA_THIC,HOR_DIFF
+       !close(10)
+
+      !endif
+
+
 
 !     B.C. at the top
 
@@ -3301,7 +3337,7 @@
 
           call state( k, k+1, TMIX(:,:,k,1), TMIX(:,:,k,2), &
                       this_block, DRHODT=RHOT, DRHODS=RHOS )
-
+ 
           do j=1,ny_block
              do i=1,nx_block
 
@@ -3317,7 +3353,7 @@
                   + RHOS(i,j) * ( TMIX(i,j,k,  2) - TMIX(i,j,k+1,2) ) ) )
                  endif
 
-              TEMP_K(i,j) = TEMP_KP1(i,j)
+                 TEMP_K(i,j) = TEMP_KP1(i,j)
            
              enddo
            enddo  
@@ -3398,16 +3434,6 @@
         enddo
        enddo
       enddo
-
-      !if(my_task==master_task)then
-
-      !   open(unit=10,file="/home/aketh/ocn_correctness_data/changed.txt",status="unknown",position="append",action="write",form="unformatted")
-      !   write(10),KAPPA_VERTICAL,BUOY_FREQ_SQ_NORM,BUOY_FREQ_SQ
-      !   close(10)
-
-      !endif
-
-
 
 
 !-----------------------------------------------------------------------

@@ -3170,10 +3170,6 @@
      enddo
    enddo
 
-
-   start_time = omp_get_wtime()
-
-
    do k=1,km
      !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(ztmp,j,i)NUM_THREADS(16)
      do j=2,ny_block-1
@@ -3226,9 +3222,6 @@
 
    endif
   
-   end_time = omp_get_wtime()
-
-   print *,"Time at smooth HBLT is",end_time - start_time
 
 !-----------------------------------------------------------------------
 
