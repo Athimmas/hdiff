@@ -1510,14 +1510,14 @@
 !
 !-----------------------------------------------------------------------
 
-             !!$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(j,i,dzw,dz_bottom,zt)NUM_THREADS(16)
+             !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(j,i,dzw,dz_bottom,zt)NUM_THREADS(16)
              do j=1,ny_block
                    do i=1,nx_block
 
                        if ( transition_layer_on ) then
                           SLA(i,j) = SLA_SAVE(i,j,kk_sub,kk,bid)
                        else
-                          SLA(i,j) = dzw(kid)*sqrt(p5*(                               &
+                          SLA(i,j) = dzw(kid)*sqrt(p5*(                          &
                                  (SLX(i,j,1,kk_sub,kk,bid)**2                    & 
                                 + SLX(i,j,2,kk_sub,kk,bid)**2)/DXT(i,j,bid)**2   &
                                 + (SLY(i,j,1,kk_sub,kk,bid)**2                   &
@@ -1575,10 +1575,104 @@
                         TAPER2(i,j) = c1
                         TAPER3(i,j) = c1
 
-                   enddo
-              enddo
 
-              start_time = omp_get_wtime()
+                         select case (slope_control)
+                         case (slope_control_tanh)
+
+!     method by Danabasoglu & Mcwilliams (1995)
+
+                         TAPER2(i,j) = merge(p5*  &
+                          (c1-tanh(c10*SLA(i,j)/slm_r-c4)), c0, SLA(i,j) < slm_r)
+
+                         if ( diff_tapering ) then
+                          TAPER3(i,j) = merge(p5*  &
+                          (c1-tanh(c10*SLA(i,j)/slm_b-c4)), c0, SLA(i,j) < slm_b)
+                         else
+                          TAPER3(i,j) = TAPER2(i,j)
+                         endif
+
+                         case (slope_control_notanh)
+
+!     similar to DM95 except replacing tanh by
+!     function = x*(1.-0.25*abs(x)) for |x|<2
+!              = sign(x)            for |x|>2
+!     (faster than DM95)
+
+
+                         if (SLA(i,j) > 0.2_r8*slm_r .and. &
+                             SLA(i,j) < 0.6_r8*slm_r) then
+                             TAPER2(i,j) = &
+                             p5*(c1-(2.5_r8*SLA(i,j)/slm_r-c1)*  &
+                             (c4-abs(c10*SLA(i,j)/slm_r-c4)))
+                         else if (SLA(i,j) >= 0.6_r8*slm_r) then
+                             TAPER2(i,j) = c0
+                         endif
+
+
+                         if ( diff_tapering ) then
+
+                           if (SLA(i,j) > 0.2_r8*slm_b .and. &
+                              SLA(i,j) < 0.6_r8*slm_b) then
+                              TAPER3(i,j) = &
+                              p5*(c1-(2.5_r8*SLA(i,j)/slm_b-c1)* &
+                              (c4-abs(c10*SLA(i,j)/slm_b-c4)))
+                           else if (SLA(i,j) >= 0.6_r8*slm_b) then
+                              TAPER3(i,j) = c0
+                         endif
+
+                         else
+                              TAPER3(i,j) = TAPER2(i,j)
+                         endif
+
+                         case (slope_control_clip)
+
+!     slope clipping
+
+                         do n=1,2
+
+                         if (abs(SLX(i,j,n,kk_sub,kk,bid)  &
+                            * dzw(kid) / HUS(i,j,bid)) > slm_r) then
+                            SLX(i,j,n,kk_sub,kk,bid) =             &
+                                        sign(slm_r * HUS(i,j,bid)  &
+                                           * dzwr(kid),            &
+                                        SLX(i,j,n,kk_sub,kk,bid))
+                         endif
+                         enddo
+
+                         do n=1,2
+
+                         if (abs(SLY(i,j,n,kk_sub,kk,bid)  &
+                          * dzw(kid) / HUW(i,j,bid)) > slm_r) then  
+                          SLY(i,j,n,kk_sub,kk,bid) =             &
+                                  sign(slm_r * HUW(i,j,bid)  &
+                                     * dzwr(kid),            &
+                                  SLY(i,j,n,kk_sub,kk,bid))
+                          endif
+                          enddo
+
+                          case (slope_control_Gerd)
+
+!     method by Gerdes et al (1991)
+
+
+                          if (SLA(i,j) > slm_r)  &
+                             TAPER2(i,j) = (slm_r/SLA(i,j))**2
+
+
+                          if (diff_tapering) then
+
+                             if (SLA(i,j) > slm_b)  &
+                                TAPER3(i,j) = (slm_b/SLA(i,j))**2
+
+                             else
+                                TAPER3(i,j) = TAPER2(i,j)
+                             endif
+
+                          end select
+
+
+                   !enddo
+             !enddo
 
 !-----------------------------------------------------------------------
 !
@@ -1590,161 +1684,58 @@
 !     methods to control slope
 !
 !-----------------------------------------------------------------------
+            !do j=1,ny_block
+                   !do i=1,nx_block
 
-            select case (slope_control)
-            case (slope_control_tanh)
 
-!     method by Danabasoglu & Mcwilliams (1995)
+                      if ( transition_layer_on ) then
+                           TAPER2(i,j) = merge(c1, TAPER2(i,j), reference_depth(kk_sub) &
+                                                         <= TLT%DIABATIC_DEPTH(i,j,bid))
+                           TAPER3(i,j) = merge(c1, TAPER3(i,j), reference_depth(kk_sub) &
+                                                         <= TLT%DIABATIC_DEPTH(i,j,bid))
+                      endif
 
-              TAPER2 = merge(p5*  &
-                 (c1-tanh(c10*SLA/slm_r-c4)), c0, SLA < slm_r)
+                       if ( transition_layer_on  .and.  use_const_ah_bkg_srfbl ) then
 
-              if ( diff_tapering ) then
-                TAPER3 = merge(p5*  &
-                 (c1-tanh(c10*SLA/slm_b-c4)), c0, SLA < slm_b)
-              else
-                TAPER3 = TAPER2
-              endif
+                           HOR_DIFF(i,j,kk_sub,kk,bid) = ah_bkg_srfbl
 
-            case (slope_control_notanh)
+                       else if ( transition_layer_on .and.               &
+                               ( .not. use_const_ah_bkg_srfbl      .or.  &
+                                 kappa_isop_type == kappa_type_eg  .or.  &
+                                 kappa_thic_type == kappa_type_eg ) ) then
 
-!     similar to DM95 except replacing tanh by
-!     function = x*(1.-0.25*abs(x)) for |x|<2
-!              = sign(x)            for |x|>2
-!     (faster than DM95)
+                           HOR_DIFF(i,j,kk_sub,kk,bid) = KAPPA_ISOP(i,j,kk_sub,kk,bid) 
 
-              do j=1,ny_block
-                do i=1,nx_block
-                  if (SLA(i,j) > 0.2_r8*slm_r .and. &
-                      SLA(i,j) < 0.6_r8*slm_r) then
-                    TAPER2(i,j) = &
-                       p5*(c1-(2.5_r8*SLA(i,j)/slm_r-c1)*  &
-                          (c4-abs(c10*SLA(i,j)/slm_r-c4)))
-                  else if (SLA(i,j) >= 0.6_r8*slm_r) then
-                    TAPER2(i,j) = c0
-                  endif
-                enddo
-              enddo
+                       else
 
-              if ( diff_tapering ) then
-                do j=1,ny_block
-                  do i=1,nx_block
-                    if (SLA(i,j) > 0.2_r8*slm_b .and. &
-                        SLA(i,j) < 0.6_r8*slm_b) then
-                      TAPER3(i,j) = &
-                         p5*(c1-(2.5_r8*SLA(i,j)/slm_b-c1)* &
-                            (c4-abs(c10*SLA(i,j)/slm_b-c4)))
-                    else if (SLA(i,j) >= 0.6_r8*slm_b) then
-                      TAPER3(i,j) = c0
-                    endif
-                  end do
-                end do
-              else
-                TAPER3 = TAPER2
-              endif
+                       if ( .not. ( kk == 1 .and. kk_sub == ktp ) ) then 
 
-            case (slope_control_clip)
+                          if ( use_const_ah_bkg_srfbl ) then 
+                              HOR_DIFF(i,j,kk_sub,kk,bid) =                                 &
+                                   merge( ah_bkg_srfbl * (c1 - TAPER1(i,j) * TAPER2(i,j))   &
+                                          * KAPPA_VERTICAL(i,j,kk,bid),                     &
+                                           c0, dz_bottom <= BL_DEPTH(i,j,bid) )
+                          else
+                              HOR_DIFF(i,j,kk_sub,kk,bid) =         &
+                              merge( KAPPA_ISOP(i,j,kk_sub,kk,bid)  &
+                               * (c1 - TAPER1(i,j) * TAPER2(i,j)),  &
+                              c0, dz_bottom <= BL_DEPTH(i,j,bid) )
+                          endif
 
-!     slope clipping
+                       endif
 
-              do n=1,2
-                do j=1,ny_block
-                  do i=1,nx_block
-                    if (abs(SLX(i,j,n,kk_sub,kk,bid)  &
-                          * dzw(kid) / HUS(i,j,bid)) > slm_r) then
-                      SLX(i,j,n,kk_sub,kk,bid) =             &
-                                  sign(slm_r * HUS(i,j,bid)  &
-                                     * dzwr(kid),            &
-                                  SLX(i,j,n,kk_sub,kk,bid))
-                    endif
-                  enddo
-                enddo
-              enddo
+                       endif
 
-              do n=1,2
-                do j=1,ny_block
-                  do i=1,nx_block
-                    if (abs(SLY(i,j,n,kk_sub,kk,bid)  &
-                          * dzw(kid) / HUW(i,j,bid)) > slm_r) then  
-                      SLY(i,j,n,kk_sub,kk,bid) =             &
-                                  sign(slm_r * HUW(i,j,bid)  &
-                                     * dzwr(kid),            &
-                                  SLY(i,j,n,kk_sub,kk,bid))
-                    endif
-                  enddo
-                enddo
-              enddo
+                      KAPPA_ISOP(i,j,kk_sub,kk,bid) =  &
+                      TAPER1(i,j) * TAPER2(i,j) * KAPPA_ISOP(i,j,kk_sub,kk,bid)
 
-            case (slope_control_Gerd)
+                      KAPPA_THIC(i,j,kk_sub,kk,bid) =  &
+                      TAPER1(i,j) * TAPER3(i,j) * KAPPA_THIC(i,j,kk_sub,kk,bid)
 
-!     method by Gerdes et al (1991)
+             
+                   enddo
+             enddo
 
-              do j=1,ny_block
-                do i=1,nx_block
-                  if (SLA(i,j) > slm_r)  &
-                    TAPER2(i,j) = (slm_r/SLA(i,j))**2
-                enddo
-              enddo
-
-              if (diff_tapering) then
-                do j=1,ny_block
-                  do i=1,nx_block
-                    if (SLA(i,j) > slm_b)  &
-                      TAPER3(i,j) = (slm_b/SLA(i,j))**2
-                  enddo
-                enddo
-              else
-                TAPER3 = TAPER2
-              endif
-
-            end select
-
-            if ( transition_layer_on ) then
-              TAPER2 = merge(c1, TAPER2, reference_depth(kk_sub) &
-                                         <= TLT%DIABATIC_DEPTH(:,:,bid))
-              TAPER3 = merge(c1, TAPER3, reference_depth(kk_sub) &
-                                         <= TLT%DIABATIC_DEPTH(:,:,bid))
-            endif
-
-            if ( transition_layer_on  .and.  use_const_ah_bkg_srfbl ) then
-
-              HOR_DIFF(:,:,kk_sub,kk,bid) = ah_bkg_srfbl
-
-            else if ( transition_layer_on .and.               &
-                    ( .not. use_const_ah_bkg_srfbl      .or.  &
-                      kappa_isop_type == kappa_type_eg  .or.  &
-                      kappa_thic_type == kappa_type_eg ) ) then
-
-              HOR_DIFF(:,:,kk_sub,kk,bid) = KAPPA_ISOP(:,:,kk_sub,kk,bid) 
-
-            else
-
-              if ( .not. ( kk == 1 .and. kk_sub == ktp ) ) then 
-
-                if ( use_const_ah_bkg_srfbl ) then 
-                  HOR_DIFF(:,:,kk_sub,kk,bid) =                       &
-                       merge( ah_bkg_srfbl * (c1 - TAPER1 * TAPER2)   &
-                              * KAPPA_VERTICAL(:,:,kk,bid),           &
-                              c0, dz_bottom <= BL_DEPTH(:,:,bid) )
-                else
-                  HOR_DIFF(:,:,kk_sub,kk,bid) =                &
-                         merge( KAPPA_ISOP(:,:,kk_sub,kk,bid)  &
-                               * (c1 - TAPER1 * TAPER2),       &
-                              c0, dz_bottom <= BL_DEPTH(:,:,bid) )
-                endif
-
-              endif
-
-            endif
-
-            KAPPA_ISOP(:,:,kk_sub,kk,bid) =  &
-                  TAPER1 * TAPER2 * KAPPA_ISOP(:,:,kk_sub,kk,bid)
-            KAPPA_THIC(:,:,kk_sub,kk,bid) =  &
-                  TAPER1 * TAPER3 * KAPPA_THIC(:,:,kk_sub,kk,bid)
-
-          end_time = omp_get_wtime()
-          print *,"Time at 2-1 part is",end_time - start_time
- 
 
           end do  ! end of kk_sub loop
 
@@ -1765,6 +1756,10 @@
           end where
  
         enddo              ! end of kk-loop
+
+        end_time = omp_get_wtime()
+        print *,"Time at big loop is",end_time - start_time
+         
 
       !if(my_task == master_task)then      
  
