@@ -876,20 +876,20 @@
 
       integer (int_kind), parameter :: &
          ieast  = 1, iwest  = 2,       &
-	 jnorth = 1, jsouth = 2
+         jnorth = 1, jsouth = 2
       integer (int_kind)  :: &
-	 i,j,n,                &!dummy loop counters
-	 bid,                  &! local block address for this sub block
-	 kp1
+         i,j,n,                &!dummy loop counters
+         bid,                  &! local block address for this sub block
+         kp1
       
       real (r8) :: &
          fz, factor 
-	 
+ 
       real (r8), dimension(nx_block,ny_block) :: &
          CX, CY,                  &
-	 WORK1, WORK2,            &! local work space
-	 KMASK                     ! ocean mask
-	 
+         WORK1, WORK2,            &! local work space
+         KMASK                     ! ocean mask
+         
       real (r8), dimension(nx_block,ny_block,nt)  :: &
          FX, FY                    ! fluxes across east, north faces
 
@@ -989,8 +989,8 @@
                 enddo
               enddo
 
-	    
-	  do j=this_block%jb,this_block%je
+    
+          do j=this_block%jb,this_block%je
               do i=this_block%ib,this_block%ie
 
                 fz = -KMASK(i,j) * p25                                &
@@ -1004,9 +1004,9 @@
 
               enddo
           enddo
-	
 
-	 else                 ! k = km
+
+         else                 ! k = km
 
           do j=this_block%jb,this_block%je
             do i=this_block%ib,this_block%ie
@@ -1057,7 +1057,7 @@
           endif
       endif   ! mix_pass ne 1
 
-	   
+   
 !-----------------------------------------------------------------------
 !
 !     end of tracer loop

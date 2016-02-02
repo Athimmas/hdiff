@@ -1486,7 +1486,7 @@
 !     control slope of isopycnal surfaces or KAPPA
 !
 !-----------------------------------------------------------------------
-        start_time = omp_get_wtime()
+        !start_time = omp_get_wtime()
 
         do kk=1,km
 
@@ -1756,8 +1756,8 @@
  
         enddo              ! end of kk-loop
 
-        end_time = omp_get_wtime()
-        print *,"Time at big loop is",end_time - start_time
+        !end_time = omp_get_wtime()
+        !print *,"Time at big loop is",end_time - start_time
          
 
       !if(my_task == master_task)then      
@@ -1850,27 +1850,44 @@
 !
 !-----------------------------------------------------------------------
 
+      start_time = omp_get_wtime()
       
       if ( k < km ) then
 
-        WORK1 = dzw(k)*KMASK*TAREA_R(:,:,bid)*                &
-                (dz(k  )*p25*KAPPA_ISOP(:,:,kbt,k,  bid)*     &
-              (HYX (:,:,bid)*SLX(:,:,ieast, kbt,k,  bid)**2   &
-             + HYXW(:,:,bid)*SLX(:,:,iwest, kbt,k,  bid)**2   &
-             + HXY (:,:,bid)*SLY(:,:,jnorth,kbt,k,  bid)**2   &
-             + HXYS(:,:,bid)*SLY(:,:,jsouth,kbt,k,  bid)**2)  &
-                +dz(k+1)*p25*KAPPA_ISOP(:,:,ktp,k+1,bid)*     &
-              (HYX (:,:,bid)*SLX(:,:,ieast, ktp,k+1,bid)**2   &
-             + HYXW(:,:,bid)*SLX(:,:,iwest, ktp,k+1,bid)**2   &
-             + HXY (:,:,bid)*SLY(:,:,jnorth,ktp,k+1,bid)**2   &
-             + HXYS(:,:,bid)*SLY(:,:,jsouth,ktp,k+1,bid)**2))
+      do j=1,ny_block
+         do i=1,nx_block
 
-        do n=1,size(VDC,DIM=4)
-          VDC_GM(:,:,k,bid) = WORK1
-          VDC(:,:,k,n,bid) = VDC(:,:,k,n,bid) + WORK1
-        end do
+         WORK1(i,j) = dzw(k)*KMASK(i,j)*TAREA_R(i,j,bid)*      &
+                 (dz(k )*p25*KAPPA_ISOP(i,j,kbt,k,  bid)*      &
+               (HYX (i,j,bid)*SLX(i,j,ieast, kbt,k,  bid)**2   &
+              + HYXW(i,j,bid)*SLX(i,j,iwest, kbt,k,  bid)**2   &
+              + HXY (i,j,bid)*SLY(i,j,jnorth,kbt,k,  bid)**2   &
+              + HXYS(i,j,bid)*SLY(i,j,jsouth,kbt,k,  bid)**2)  &
+                 +dz(k+1)*p25*KAPPA_ISOP(i,j,ktp,k+1,bid)*     &
+               (HYX (i,j,bid)*SLX(i,j,ieast, ktp,k+1,bid)**2   &
+              + HYXW(i,j,bid)*SLX(i,j,iwest, ktp,k+1,bid)**2   &
+              + HXY (i,j,bid)*SLY(i,j,jnorth,ktp,k+1,bid)**2   &
+              + HXYS(i,j,bid)*SLY(i,j,jsouth,ktp,k+1,bid)**2))
+          
+
+              do n=1,size(VDC,DIM=4)
+                 VDC_GM(i,j,k,bid) = WORK1(i,j)
+                 VDC(i,j,k,n,bid) = VDC(i,j,k,n,bid) + WORK1(i,j)
+              end do
+
+          enddo
+      enddo 
+       
 
       end if
+
+      !if(my_task == master_task)then
+
+       !open(unit=10,file="/home/aketh/ocn_correctness_data/changed.txt",status="unknown",position="append",action="write",form="unformatted")
+       !write(10),VDC_GM,VDC,WORK1
+       !close(10)
+
+      !endif 
 
 !-----------------------------------------------------------------------
 !
@@ -1880,9 +1897,17 @@
 !-----------------------------------------------------------------------
 
       if ( ah_bkg_bottom /= c0 ) then
-        where ( k == KMT(:,:,bid) ) 
-          HOR_DIFF(:,:,kbt,k,bid) = ah_bkg_bottom
-        endwhere
+ 
+         do j=1,ny_block
+            do i=1,nx_block
+
+             if( k == KMT(i,j,bid)) then
+                  HOR_DIFF(i,j,kbt,k,bid) = ah_bkg_bottom
+             endif 
+ 
+            enddo
+         enddo
+   
       endif
 
 !-----------------------------------------------------------------------
@@ -1917,7 +1942,6 @@
         enddo
       enddo
       
-
 !-----------------------------------------------------------------------
 !
 !     start loop over tracers
@@ -1935,7 +1959,7 @@
         factor    = c0
       endif
 
-      call timer_start(timer_nloop, block_id=this_block%local_id)
+
 
       do n = 1,nt
 
@@ -1970,8 +1994,8 @@
                          - SF_SLX(i+1,j,iwest,kbt,k,bid)
           enddo
         enddo
-	
-	do n = 1,nt
+
+        do n = 1,nt
 
           if (n > 2 .and. k < km)  &
             TZ(:,:,k+1,n,bid) = TMIX(:,:,k  ,n) - TMIX(:,:,k+1,n)
@@ -2022,6 +2046,7 @@
 
       endif
 
+      start_time = omp_get_wtime()
       do n = 1,nt
 
 !-----------------------------------------------------------------------
@@ -2202,14 +2227,17 @@
 
       enddo
 
-      call timer_stop(timer_nloop, block_id=this_block%local_id)
+
+      end_time = omp_get_wtime()
+      print *,"tracer loop takes",end_time - start_time
+
 
 !-----------------------------------------------------------------------
 !
 !     diagnostic computation of the bolus velocities 
 !
 !-----------------------------------------------------------------------
-      
+
       if ( diag_gm_bolus ) then
 
         do j=1,ny_block-1
