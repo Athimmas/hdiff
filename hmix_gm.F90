@@ -1670,10 +1670,6 @@
 
                           end select
 
-
-                   !enddo
-             !enddo
-
 !-----------------------------------------------------------------------
 !
 !     control KAPPA for numerical stability
@@ -1684,9 +1680,6 @@
 !     methods to control slope
 !
 !-----------------------------------------------------------------------
-            !do j=1,ny_block
-                   !do i=1,nx_block
-
 
                       if ( transition_layer_on ) then
                            TAPER2(i,j) = merge(c1, TAPER2(i,j), reference_depth(kk_sub) &
@@ -1750,10 +1743,16 @@
 
 !     B.C. at the bottom
 
-          where (kk == KMT(:,:,bid))
-            KAPPA_ISOP(:,:,kbt,kk,bid) = c0
-            KAPPA_THIC(:,:,kbt,kk,bid) = c0
-          end where
+             do j=1,ny_block
+                   do i=1,nx_block
+
+                       if (kk == KMT(i,j,bid)) then
+                          KAPPA_ISOP(i,j,kbt,kk,bid) = c0
+                          KAPPA_THIC(i,j,kbt,kk,bid) = c0
+                       endif
+
+                   enddo
+              enddo
  
         enddo              ! end of kk-loop
 
@@ -1763,7 +1762,7 @@
 
       !if(my_task == master_task)then      
  
-      !open(unit=10,file="/home/aketh/ocn_correctness_data/changed.txt",status="unknown",position="append",action="write",form="unformatted")
+       !open(unit=10,file="/home/aketh/ocn_correctness_data/changed.txt",status="unknown",position="append",action="write",form="unformatted")
        !write(10),SF_SLX,SF_SLY,KAPPA_ISOP,KAPPA_THIC,HOR_DIFF
        !close(10)
 
