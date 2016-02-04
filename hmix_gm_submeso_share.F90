@@ -262,7 +262,7 @@
               enddo
             enddo
 
-            do j=1,ny_block-1
+            do j=1,ny_block
               do i=1,nx_block
                 if(j <= ny_block-1)& 
                 TYP(i,j,kn) = KMASKN(i,j) * (TEMP(i,j+1,kn)  &
@@ -302,14 +302,14 @@
 
 
             do j=1,ny_block
-              do i=2,nx_block
+              do i=1,nx_block
                  if(i >= 2)&
                    RX(i,j,iwest,kk,bid) = DRDT(i,j,kk) * TXP(i-1,j,kn)  &
                                      + DRDS(i,j,kk) * TX (i-1,j,kk,2,bid)
               enddo
             enddo
 
-            do j=2,ny_block
+            do j=1,ny_block
               do i=1,nx_block
                   if(j >= 2)& 
                      RY(i,j,jsouth,kk,bid) = DRDT(i,j,kk) * TYP(i,j-1,kn)  &
@@ -401,9 +401,10 @@
                 enddo
               enddo
 
-              do j=1,ny_block-1
+              do j=1,ny_block
                 do i=1,nx_block
-                  TY(i,j,kk+1,n,bid) = KMASKN(i,j)  &
+                   if(j <= ny_block-1)&
+                    TY(i,j,kk+1,n,bid) = KMASKN(i,j)  &
                             * (TMIX(i,j+1,kk+1,n) - TMIX(i,j,kk+1,n))
                 enddo
               enddo
@@ -421,14 +422,16 @@
                                     + DRDS(:,:,kk+1) * TY(:,:,kk+1,2,bid) 
 
             do j=1,ny_block
-              do i=2,nx_block
+              do i=1,nx_block 
+                if(i >= 2)&
                 RX(i,j,iwest,kk+1,bid) = DRDT(i,j,kk+1) * TXP(i-1,j,ks)  &
                                        + DRDS(i,j,kk+1) * TX (i-1,j,kk+1,2,bid)
               enddo
             enddo
 
-            do j=2,ny_block
+            do j=1,ny_block
               do i=1,nx_block
+                if(j >= 2)&
                 RY(i,j,jsouth,kk+1,bid) = DRDT(i,j,kk+1) * TYP(i,j-1,ks)  &
                                         + DRDS(i,j,kk+1) * TY (i,j-1,kk+1,2,bid)
               enddo
