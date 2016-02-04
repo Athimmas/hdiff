@@ -232,8 +232,6 @@
 !
 !-----------------------------------------------------------------------
 
-          if ( kk == 1 ) then
-
             do j=1,ny_block
               do i=1,nx_block
                 if ( kk <= KMT(i,j,bid) .and. kk <= KMTE(i,j,bid) ) then
@@ -288,10 +286,17 @@
 !     RX = Dx(rho) = DRDT*Dx(T) + DRDS*Dx(S)
 !     RY = Dy(rho) = DRDT*Dy(T) + DRDS*Dy(S)
 
-            RX(:,:,ieast ,kk,bid) = DRDT(:,:,kk) * TXP(:,:,kn)  &
-                                  + DRDS(:,:,kk) * TX(:,:,kk,2,bid) 
-            RY(:,:,jnorth,kk,bid) = DRDT(:,:,kk) * TYP(:,:,kn)  &
-                                  + DRDS(:,:,kk) * TY(:,:,kk,2,bid) 
+              do j=1,ny_block
+                do i=1,nx_block
+
+                   RX(i,j,ieast ,kk,bid) = DRDT(i,j,kk) * TXP(i,j,kn)  &
+                                         + DRDS(i,j,kk) * TX(i,j,kk,2,bid) 
+                   RY(i,j,jnorth,kk,bid) = DRDT(i,j,kk) * TYP(i,j,kn)  &
+                                         + DRDS(i,j,kk) * TY(i,j,kk,2,bid) 
+
+                enddo
+              enddo
+
 
             do j=1,ny_block
               do i=2,nx_block
@@ -306,8 +311,6 @@
                                       + DRDS(i,j,kk) * TY (i,j-1,kk,2,bid)
               enddo
             enddo
-
-          endif  ! end of kk == 1 if statement
 
 
 
