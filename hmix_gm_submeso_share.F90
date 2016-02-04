@@ -168,15 +168,15 @@
 
       integer (int_kind), parameter :: &
          ieast  = 1, iwest  = 2,       &
-	 jnorth = 1, jsouth = 2
+         jnorth = 1, jsouth = 2
       integer (int_kind) :: &
          i,j,n,kk,k,        &! dummy loop counters
-	 ktmp,              &! array indices
+         ktmp,              &! array indices
          kn, ks,            &! cyclic pointers for 2-level local arrays
          bid                 ! local block address for this sub block
       real (r8), dimension(nx_block,ny_block) :: &
-         KMASK, KMASKE, KMASKN,   &! ocean mask
-	 DRDT, DRDS                ! expansion coefficients d(rho)/dT,S
+         KMASK, KMASKE, KMASKN    ! ocean mask
+        !DRDT, DRDS              ! expansion coefficients d(rho)/dT,S
       real (r8), dimension(nx_block,ny_block,2) :: &
          TXP, TYP, TZP, TEMP
       real (r8), dimension(nx_block,ny_block) :: & 
@@ -184,6 +184,9 @@
       integer (int_kind), parameter :: &
          ktp = 1, kbt = 2     ! refer to the top and bottom halves of a 
                               ! grid cell, respectively
+
+      real (r8), dimension(nx_block,ny_block,km) :: &
+         DRDT, DRDS                ! expansion coefficients d(rho)/dT,S
 
 !-----------------------------------------------------------------------
 !
@@ -213,6 +216,13 @@
         ks = 2
 
         do kk=1,km
+
+        call state (kk, kk, TMIX(:,:,kk,1), TMIX(:,:,kk,2),  &
+                     this_block, DRHODT=DRDT(:,:,kk), DRHODS=DRDS(:,:,kk))
+
+        enddo 
+
+        kk=1
 
           KMASK = merge(c1, c0, kk < KMT(:,:,bid))
 
@@ -272,32 +282,52 @@
 
 !     D_T(rho) & D_S(rho) at level 1
 
-            call state (kk, kk, TMIX(:,:,kk,1), TMIX(:,:,kk,2),  &
-                        this_block, DRHODT=DRDT, DRHODS=DRDS) 
+            !call state (kk, kk, TMIX(:,:,kk,1), TMIX(:,:,kk,2),  &
+            !            this_block, DRHODT=DRDT, DRHODS=DRDS) 
 
 !     RX = Dx(rho) = DRDT*Dx(T) + DRDS*Dx(S)
 !     RY = Dy(rho) = DRDT*Dy(T) + DRDS*Dy(S)
 
-            RX(:,:,ieast ,kk,bid) = DRDT * TXP(:,:,kn)  &
-                                  + DRDS * TX(:,:,kk,2,bid) 
-            RY(:,:,jnorth,kk,bid) = DRDT * TYP(:,:,kn)  &
-                                  + DRDS * TY(:,:,kk,2,bid) 
+            RX(:,:,ieast ,kk,bid) = DRDT(:,:,kk) * TXP(:,:,kn)  &
+                                  + DRDS(:,:,kk) * TX(:,:,kk,2,bid) 
+            RY(:,:,jnorth,kk,bid) = DRDT(:,:,kk) * TYP(:,:,kn)  &
+                                  + DRDS(:,:,kk) * TY(:,:,kk,2,bid) 
 
             do j=1,ny_block
               do i=2,nx_block
-                RX(i,j,iwest,kk,bid) = DRDT(i,j) * TXP(i-1,j,kn)  &
-                                     + DRDS(i,j) * TX (i-1,j,kk,2,bid)
+                RX(i,j,iwest,kk,bid) = DRDT(i,j,kk) * TXP(i-1,j,kn)  &
+                                     + DRDS(i,j,kk) * TX (i-1,j,kk,2,bid)
               enddo
             enddo
 
             do j=2,ny_block
               do i=1,nx_block
-                RY(i,j,jsouth,kk,bid) = DRDT(i,j) * TYP(i,j-1,kn)  &
-                                      + DRDS(i,j) * TY (i,j-1,kk,2,bid)
+                RY(i,j,jsouth,kk,bid) = DRDT(i,j,kk) * TYP(i,j-1,kn)  &
+                                      + DRDS(i,j,kk) * TY (i,j-1,kk,2,bid)
               enddo
             enddo
 
           endif  ! end of kk == 1 if statement
+
+
+
+!-------------------------------------------------------------------------
+!
+!
+!      when kk is 1 ends
+!
+!
+!-------------------------------------------------------------------------
+
+        do kk=1,km
+
+          KMASK = merge(c1, c0, kk < KMT(:,:,bid))
+
+!-----------------------------------------------------------------------
+!
+!     compute RX=Dx(rho) and RY=Dy(rho) for all vertical levels. 
+!
+!-----------------------------------------------------------------------
 
 !-----------------------------------------------------------------------
 !
@@ -317,7 +347,7 @@
 
 !     RZ = Dz(rho) = DRDT*Dz(T) + DRDS*Dz(S)
 
-            RZ = DRDT * TZP(:,:,ks) + DRDS * TZ (:,:,kk+1,2,bid) 
+            RZ = DRDT(:,:,kk) * TZP(:,:,ks) + DRDS(:,:,kk) * TZ (:,:,kk+1,2,bid) 
             RZ = min(RZ,-eps2)
 
             if (registry_match('init_gm')) then
@@ -370,33 +400,33 @@
 
 !     D_T(rho) & D_S(rho) at level kk+1
 
-            call state (kk+1, kk+1, TMIX(:,:,kk+1,1),  &
-                        TMIX(:,:,kk+1,2), this_block,  &
-                        DRHODT=DRDT, DRHODS=DRDS)
+            !call state (kk+1, kk+1, TMIX(:,:,kk+1,1),  &
+            !            TMIX(:,:,kk+1,2), this_block,  &
+            !            DRHODT=DRDT, DRHODS=DRDS)
 
-            RX(:,:,ieast ,kk+1,bid) = DRDT * TXP(:,:,ks)  &
-                                    + DRDS * TX(:,:,kk+1,2,bid) 
-            RY(:,:,jnorth,kk+1,bid) = DRDT * TYP(:,:,ks)  &
-                                    + DRDS * TY(:,:,kk+1,2,bid) 
+            RX(:,:,ieast ,kk+1,bid) = DRDT(:,:,kk+1) * TXP(:,:,ks)  &
+                                    + DRDS(:,:,kk+1) * TX(:,:,kk+1,2,bid) 
+            RY(:,:,jnorth,kk+1,bid) = DRDT(:,:,kk+1) * TYP(:,:,ks)  &
+                                    + DRDS(:,:,kk+1) * TY(:,:,kk+1,2,bid) 
 
             do j=1,ny_block
               do i=2,nx_block
-                RX(i,j,iwest,kk+1,bid) = DRDT(i,j) * TXP(i-1,j,ks)  &
-                                       + DRDS(i,j) * TX (i-1,j,kk+1,2,bid)
+                RX(i,j,iwest,kk+1,bid) = DRDT(i,j,kk+1) * TXP(i-1,j,ks)  &
+                                       + DRDS(i,j,kk+1) * TX (i-1,j,kk+1,2,bid)
               enddo
             enddo
 
             do j=2,ny_block
               do i=1,nx_block
-                RY(i,j,jsouth,kk+1,bid) = DRDT(i,j) * TYP(i,j-1,ks)  &
-                                        + DRDS(i,j) * TY (i,j-1,kk+1,2,bid)
+                RY(i,j,jsouth,kk+1,bid) = DRDT(i,j,kk+1) * TYP(i,j-1,ks)  &
+                                        + DRDS(i,j,kk+1) * TY (i,j-1,kk+1,2,bid)
               enddo
             enddo
 
-            RZ = DRDT * TZP(:,:,ks) + DRDS * TZ(:,:,kk+1,2,bid) 
+            RZ = DRDT(:,:,kk+1) * TZP(:,:,ks) + DRDS(:,:,kk+1) * TZ(:,:,kk+1,2,bid) 
             RZ_SAVE(:,:,kk+1,bid) = min(RZ,c0)
             RZ = min(RZ,-eps2)
-	    
+ 
             if (registry_match('init_gm')) then
 
 !-----------------------------------------------------------------------
@@ -404,13 +434,18 @@
 !     compute slope of isopycnal surfaces at level kk+1
 !
 !-----------------------------------------------------------------------
+            do j=1,ny_block
+              do i=1,nx_block
 
-              where ( kk+1 <= KMT(:,:,bid) )
-                SLX(:,:,ieast, ktp,kk+1,bid) = RX(:,:,ieast ,kk+1,bid) / RZ
-                SLX(:,:,iwest, ktp,kk+1,bid) = RX(:,:,iwest ,kk+1,bid) / RZ
-                SLY(:,:,jnorth,ktp,kk+1,bid) = RY(:,:,jnorth,kk+1,bid) / RZ
-                SLY(:,:,jsouth,ktp,kk+1,bid) = RY(:,:,jsouth,kk+1,bid) / RZ
-              end where
+              if ( kk+1 <= KMT(i,j,bid) ) then
+                SLX(i,j,ieast, ktp,kk+1,bid) = RX(i,j,ieast ,kk+1,bid) / RZ(i,j)
+                SLX(i,j,iwest, ktp,kk+1,bid) = RX(i,j,iwest ,kk+1,bid) / RZ(i,j)
+                SLY(i,j,jnorth,ktp,kk+1,bid) = RY(i,j,jnorth,kk+1,bid) / RZ(i,j)
+                SLY(i,j,jsouth,ktp,kk+1,bid) = RY(i,j,jsouth,kk+1,bid) / RZ(i,j)
+              endif
+
+              enddo
+            enddo
             endif
 
 !-----------------------------------------------------------------------
@@ -426,7 +461,12 @@
           ks   = ktmp
 
         enddo   ! end of kk-loop
-	
+
+        if(my_task == master_task)then
+        open(unit=10,file="/home/aketh/ocn_correctness_data/changed.txt",status="unknown",position="append",action="write",form="unformatted")
+        write(10),SLX,SLY,RX,RY,TX,TY,TXP,TYP
+        close(10)
+        endif
 
 !-----------------------------------------------------------------------
 !
