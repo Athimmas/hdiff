@@ -264,6 +264,7 @@
 
             do j=1,ny_block-1
               do i=1,nx_block
+                if(j <= ny_block-1)& 
                 TYP(i,j,kn) = KMASKN(i,j) * (TEMP(i,j+1,kn)  &
                                             -TEMP(i,j,  kn))
               enddo
@@ -271,15 +272,17 @@
 
             do n=1,nt
               do j=1,ny_block
-                do i=1,nx_block-1
+                do i=1,nx_block
+                  if(i <= nx_block-1)&
                   TX(i,j,kk,n,bid) = KMASKE(i,j)  &
                               * (TMIX(i+1,j,kk,n) - TMIX(i,j,kk,n))
                 enddo
               enddo
 
-              do j=1,ny_block-1
+              do j=1,ny_block
                 do i=1,nx_block
-                  TY(i,j,kk,n,bid) = KMASKN(i,j)  &
+                    if(j <= ny_block-1)& 
+                       TY(i,j,kk,n,bid) = KMASKN(i,j)  &
                               * (TMIX(i,j+1,kk,n) - TMIX(i,j,kk,n))
                 enddo
               enddo
@@ -300,14 +303,16 @@
 
             do j=1,ny_block
               do i=2,nx_block
-                RX(i,j,iwest,kk,bid) = DRDT(i,j,kk) * TXP(i-1,j,kn)  &
+                 if(i >= 2)&
+                   RX(i,j,iwest,kk,bid) = DRDT(i,j,kk) * TXP(i-1,j,kn)  &
                                      + DRDS(i,j,kk) * TX (i-1,j,kk,2,bid)
               enddo
             enddo
 
             do j=2,ny_block
               do i=1,nx_block
-                RY(i,j,jsouth,kk,bid) = DRDT(i,j,kk) * TYP(i,j-1,kn)  &
+                  if(j >= 2)& 
+                     RY(i,j,jsouth,kk,bid) = DRDT(i,j,kk) * TYP(i,j-1,kn)  &
                                       + DRDS(i,j,kk) * TY (i,j-1,kk,2,bid)
               enddo
             enddo
@@ -372,22 +377,25 @@
                            kk+1 <= KMTN(:,:,bid))
 
             do j=1,ny_block
-              do i=1,nx_block-1
-                TXP(i,j,ks) = KMASKE(i,j)*(TEMP(i+1,j,ks)  &
-                                         - TEMP(i,j,ks)) 
+              do i=1,nx_block
+                  if(i <= nx_block-1)&
+                     TXP(i,j,ks) = KMASKE(i,j)*(TEMP(i+1,j,ks)  &
+                                               - TEMP(i,j,ks)) 
               enddo
             enddo
 
-            do j=1,ny_block-1
+            do j=1,ny_block
               do i=1,nx_block
-                TYP(i,j,ks) = KMASKN(i,j)*(TEMP(i,j+1,ks)  &
+                 if(j <= ny_block-1)&
+                  TYP(i,j,ks) = KMASKN(i,j)*(TEMP(i,j+1,ks)  &
                                          - TEMP(i,j,ks))
               enddo
             enddo
 
             do n=1,nt
               do j=1,ny_block
-                do i=1,nx_block-1
+                do i=1,nx_block
+                  if(i <= nx_block-1)&
                   TX(i,j,kk+1,n,bid) = KMASKE(i,j)  &
                             * (TMIX(i+1,j,kk+1,n) - TMIX(i,j,kk+1,n))
                 enddo
