@@ -224,7 +224,13 @@
 
         kk=1
 
-          KMASK = merge(c1, c0, kk < KMT(:,:,bid))
+            do j=1,ny_block
+              do i=1,nx_block
+
+                KMASK(i,j) = merge(c1, c0, kk < KMT(i,j,bid))
+
+              enddo
+            enddo
 
 !-----------------------------------------------------------------------
 !
@@ -249,8 +255,9 @@
             enddo
 
             do j=1,ny_block
-              do i=1,nx_block-1
-                TXP(i,j,kn) = KMASKE(i,j) * (TEMP(i+1,j,kn)  &
+              do i=1,nx_block
+                if(i <= nx_block-1) &
+                 TXP(i,j,kn) = KMASKE(i,j) * (TEMP(i+1,j,kn)  &
                                             -TEMP(i,  j,kn))
               enddo
             enddo
@@ -278,13 +285,6 @@
               enddo
             enddo
 
-!     D_T(rho) & D_S(rho) at level 1
-
-            !call state (kk, kk, TMIX(:,:,kk,1), TMIX(:,:,kk,2),  &
-            !            this_block, DRHODT=DRDT, DRHODS=DRDS) 
-
-!     RX = Dx(rho) = DRDT*Dx(T) + DRDS*Dx(S)
-!     RY = Dy(rho) = DRDT*Dy(T) + DRDS*Dy(S)
 
               do j=1,ny_block
                 do i=1,nx_block
