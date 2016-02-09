@@ -272,35 +272,22 @@
                               * (TMIX(i,j+1,kk,n) - TMIX(i,j,kk,n))
                 enddo
 
-              enddo
-            enddo
-
-
-              do j=1,ny_block
-                do i=1,nx_block
-
-                   RX(i,j,ieast ,kk,bid) = DRDT(i,j,kk) * TXP(i,j,kn)  &
+                RX(i,j,ieast ,kk,bid) = DRDT(i,j,kk) * TXP(i,j,kn)  &
                                          + DRDS(i,j,kk) * TX(i,j,kk,2,bid) 
-                   RY(i,j,jnorth,kk,bid) = DRDT(i,j,kk) * TYP(i,j,kn)  &
+
+                RY(i,j,jnorth,kk,bid) = DRDT(i,j,kk) * TYP(i,j,kn)  &
                                          + DRDS(i,j,kk) * TY(i,j,kk,2,bid) 
 
-                enddo
-              enddo
 
-
-            do j=1,ny_block
-              do i=1,nx_block
-                 if(i >= 2)&
+                 if(i >= 2) then
                    RX(i,j,iwest,kk,bid) = DRDT(i,j,kk) * TXP(i-1,j,kn)  &
                                      + DRDS(i,j,kk) * TX (i-1,j,kk,2,bid)
-              enddo
-            enddo
+                 endif 
 
-            do j=1,ny_block
-              do i=1,nx_block
-                  if(j >= 2)& 
+                  if(j >= 2)then 
                      RY(i,j,jsouth,kk,bid) = DRDT(i,j,kk) * TYP(i,j-1,kn)  &
                                       + DRDS(i,j,kk) * TY (i,j-1,kk,2,bid)
+                  endif 
               enddo
             enddo
 
