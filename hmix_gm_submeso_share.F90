@@ -178,7 +178,7 @@
          KMASK, KMASKE, KMASKN    ! ocean mask
         !DRDT, DRDS              ! expansion coefficients d(rho)/dT,S
       real (r8), dimension(nx_block,ny_block,2) :: &
-         TXP, TYP, TZP, TEMP
+         TXP, TYP, TZP , TEMP
       real (r8), dimension(nx_block,ny_block) :: & 
          RZ                  ! Dz(rho)
       integer (int_kind), parameter :: &
@@ -188,6 +188,7 @@
       real (r8), dimension(nx_block,ny_block,km) :: &
          DRDT, DRDS                ! expansion coefficients d(rho)/dT,S
 
+       real (r8) :: tempi,tempip1,tempj,tempjp1
 !-----------------------------------------------------------------------
 !
 !  register tracer_diffs_and_isopyc_slopes
@@ -227,10 +228,6 @@
             do j=1,ny_block
               do i=1,nx_block
 
-                KMASK(i,j) = merge(c1, c0, kk < KMT(i,j,bid))
-
-              enddo
-            enddo
 
 !-----------------------------------------------------------------------
 !
@@ -238,8 +235,6 @@
 !
 !-----------------------------------------------------------------------
 
-            do j=1,ny_block
-              do i=1,nx_block
                 if ( kk <= KMT(i,j,bid) .and. kk <= KMTE(i,j,bid) ) then
                   KMASKE(i,j) = c1
                 else
@@ -256,17 +251,23 @@
 
             do j=1,ny_block
               do i=1,nx_block
-                if(i <= nx_block-1) &
-                 TXP(i,j,kn) = KMASKE(i,j) * (TEMP(i+1,j,kn)  &
-                                            -TEMP(i,  j,kn))
+                if(i <= nx_block-1) then 
+                 tempi = max(-c2, TMIX(i,j,kk,1))
+                 tempip1 = max(-c2, TMIX(i+1,j,kk,1))
+                 TXP(i,j,kn) = KMASKE(i,j) * (tempip1  &
+                                            -tempi)
+                 endif 
               enddo
             enddo
 
             do j=1,ny_block
               do i=1,nx_block
-                if(j <= ny_block-1)& 
-                TYP(i,j,kn) = KMASKN(i,j) * (TEMP(i,j+1,kn)  &
-                                            -TEMP(i,j,  kn))
+                if(j <= ny_block-1)then
+                 tempjp1 = max(-c2, TMIX(i,j+1,kk,1))
+                 tempj = max(-c2, TMIX(i,j,kk,1))                
+                 TYP(i,j,kn) = KMASKN(i,j) * (tempjp1  &
+                                             -tempj )
+                endif   
               enddo
             enddo
 
