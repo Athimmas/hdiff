@@ -253,35 +253,25 @@
                  TXP(i,j,kn) = KMASKE(i,j) * (tempip1  &
                                             -tempi)
                  endif 
-              enddo
-            enddo
 
-            do j=1,ny_block
-              do i=1,nx_block
                 if(j <= ny_block-1)then
                  tempjp1 = max(-c2, TMIX(i,j+1,kk,1))
                  tempj = max(-c2, TMIX(i,j,kk,1))                
                  TYP(i,j,kn) = KMASKN(i,j) * (tempjp1  &
                                              -tempj )
                 endif   
-              enddo
-            enddo
 
-            do n=1,nt
-              do j=1,ny_block
-                do i=1,nx_block
+                do n=1,nt
                   if(i <= nx_block-1)&
                   TX(i,j,kk,n,bid) = KMASKE(i,j)  &
                               * (TMIX(i+1,j,kk,n) - TMIX(i,j,kk,n))
-                enddo
-              enddo
 
-              do j=1,ny_block
-                do i=1,nx_block
-                    if(j <= ny_block-1)& 
+
+                   if(j <= ny_block-1)& 
                        TY(i,j,kk,n,bid) = KMASKN(i,j)  &
                               * (TMIX(i,j+1,kk,n) - TMIX(i,j,kk,n))
                 enddo
+
               enddo
             enddo
 
