@@ -246,11 +246,7 @@
                   KMASKN(i,j) = c0
                 endif
                 TEMP(i,j,kn) = max(-c2, TMIX(i,j,kk,1))
-              enddo
-            enddo
 
-            do j=1,ny_block
-              do i=1,nx_block
                 if(i <= nx_block-1) then 
                  tempi = max(-c2, TMIX(i,j,kk,1))
                  tempip1 = max(-c2, TMIX(i+1,j,kk,1))
