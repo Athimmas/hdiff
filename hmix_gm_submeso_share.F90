@@ -24,6 +24,7 @@
    use time_management
    use domain_size, only: km, nt
    use domain, only: nblocks_clinic
+   use omp_lib
 
    implicit none
    private
@@ -188,7 +189,10 @@
       real (r8), dimension(nx_block,ny_block,km) :: &
          DRDT, DRDS                ! expansion coefficients d(rho)/dT,S
 
-       real (r8) :: tempi,tempip1,tempj,tempjp1
+      real (r8) :: tempi,tempip1,tempj,tempjp1
+
+      real (r8) start_time,end_time
+      
 !-----------------------------------------------------------------------
 !
 !  register tracer_diffs_and_isopyc_slopes
@@ -216,12 +220,18 @@
         kn = 1
         ks = 2
 
+        start_time = omp_get_wtime()  
+ 
         do kk=1,km
 
         call state (kk, kk, TMIX(:,:,kk,1), TMIX(:,:,kk,2),  &
                      this_block, DRHODT=DRDT(:,:,kk), DRHODS=DRDS(:,:,kk))
 
         enddo 
+
+        end_time = omp_get_wtime()
+
+        print *,"Time at first part is",end_time - start_time
 
         kk=1
 
@@ -293,6 +303,7 @@
 
 
 
+       start_time = omp_get_wtime()
 !-------------------------------------------------------------------------
 !
 !
@@ -321,16 +332,32 @@
 
           if ( kk < km ) then
 
-            TEMP(:,:,ks) = max(-c2, TMIX(:,:,kk+1,1))
+            do j=1,ny_block
+              do i=1,nx_block
+                 TEMP(i,j,ks) = max(-c2, TMIX(i,j,kk+1,1))
+              enddo
+            enddo 
 
-            TZ(:,:,kk+1,1,bid) = TMIX(:,:,kk  ,1) - TMIX(:,:,kk+1,1)
-            TZ(:,:,kk+1,2,bid) = TMIX(:,:,kk  ,2) - TMIX(:,:,kk+1,2) 
-            TZP(:,:,ks) = TEMP(:,:,kn) - TEMP(:,:,ks)
+            do j=1,ny_block
+              do i=1,nx_block
+                 TZ(i,j,kk+1,1,bid) = TMIX(i,j,kk  ,1) - TMIX(i,j,kk+1,1)
+                 TZ(i,j,kk+1,2,bid) = TMIX(i,j,kk  ,2) - TMIX(i,j,kk+1,2) 
+                 TZP(i,j,ks) = TEMP(i,j,kn) - TEMP(i,j,ks)
+              enddo
+            enddo
+
 
 !     RZ = Dz(rho) = DRDT*Dz(T) + DRDS*Dz(S)
 
-            RZ = DRDT(:,:,kk) * TZP(:,:,ks) + DRDS(:,:,kk) * TZ (:,:,kk+1,2,bid) 
-            RZ = min(RZ,-eps2)
+            do j=1,ny_block
+              do i=1,nx_block
+
+                 RZ(i,j) = DRDT(i,j,kk) * TZP(i,j,ks) + DRDS(i,j,kk) * TZ (i,j,kk+1,2,bid) 
+                 RZ(i,j) = min(RZ(i,j),-eps2)
+
+              enddo
+            enddo
+          
 
             if (registry_match('init_gm')) then
               SLX(:,:,ieast ,kbt,kk,bid) = KMASK * RX(:,:,ieast ,kk,bid) / RZ
@@ -449,6 +476,10 @@
           ks   = ktmp
 
         enddo   ! end of kk-loop
+
+        end_time = omp_get_wtime()
+
+        print *,"Time taken at second time",end_time - start_time
 
         if(my_task == master_task)then
         open(unit=10,file="/home/aketh/ocn_correctness_data/changed.txt",status="unknown",position="append",action="write",form="unformatted")
