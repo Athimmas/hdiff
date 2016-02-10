@@ -385,10 +385,18 @@
 !
 !-----------------------------------------------------------------------
 
-            KMASKE = merge(c1, c0, kk+1 <= KMT(:,:,bid) .and.  &
-                           kk+1 <= KMTE(:,:,bid))
-            KMASKN = merge(c1, c0, kk+1 <= KMT(:,:,bid) .and.  &
-                           kk+1 <= KMTN(:,:,bid))
+
+            do j=1,ny_block
+              do i=1,nx_block
+
+                 KMASKE(i,j) = merge(c1, c0, kk+1 <= KMT(i,j,bid) .and.  &
+                                kk+1 <= KMTE(i,j,bid))
+
+                 KMASKN(i,j) = merge(c1, c0, kk+1 <= KMT(i,j,bid) .and.  &
+                                kk+1 <= KMTN(i,j,bid))
+
+              enddo
+            enddo
 
             do j=1,ny_block
               do i=1,nx_block
@@ -486,6 +494,7 @@
 
               enddo
             enddo
+
             endif
 
 !-----------------------------------------------------------------------
