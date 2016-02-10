@@ -344,14 +344,10 @@
                  TZ(i,j,kk+1,1,bid) = TMIX(i,j,kk  ,1) - TMIX(i,j,kk+1,1)
                  TZ(i,j,kk+1,2,bid) = TMIX(i,j,kk  ,2) - TMIX(i,j,kk+1,2) 
                  TZP(i,j,ks) = TEMP(i,j,kn) - TEMP(i,j,ks)
-              enddo
-            enddo
 
 
 !     RZ = Dz(rho) = DRDT*Dz(T) + DRDS*Dz(S)
 
-            do j=1,ny_block
-              do i=1,nx_block
 
                  RZ(i,j) = DRDT(i,j,kk) * TZP(i,j,ks) + DRDS(i,j,kk) * TZ (i,j,kk+1,2,bid) 
                  RZ(i,j) = min(RZ(i,j),-eps2)
