@@ -192,6 +192,8 @@
       real (r8) :: tempi,tempip1,tempj,tempjp1
 
       real (r8) start_time,end_time
+
+      logical(log_kind) :: match
       
 !-----------------------------------------------------------------------
 !
@@ -304,6 +306,7 @@
 
 
        start_time = omp_get_wtime()
+       match = registry_match('init_gm')
 !-------------------------------------------------------------------------
 !
 !
@@ -352,34 +355,23 @@
                  RZ(i,j) = DRDT(i,j,kk) * TZP(i,j,ks) + DRDS(i,j,kk) * TZ (i,j,kk+1,2,bid) 
                  RZ(i,j) = min(RZ(i,j),-eps2)
 
-              enddo
-            enddo
          
-            if (registry_match('init_gm')) then 
+                 if (match) then 
 
-            do j=1,ny_block
-              do i=1,nx_block
 
                     SLX(i,j,ieast ,kbt,kk,bid) = KMASK(i,j) * RX(i,j,ieast ,kk,bid) / RZ(i,j)
                     SLX(i,j,iwest ,kbt,kk,bid) = KMASK(i,j) * RX(i,j,iwest ,kk,bid) / RZ(i,j)
                     SLY(i,j,jnorth,kbt,kk,bid) = KMASK(i,j) * RY(i,j,jnorth,kk,bid) / RZ(i,j)
                     SLY(i,j,jsouth,kbt,kk,bid) = KMASK(i,j) * RY(i,j,jsouth,kk,bid) / RZ(i,j)
 
-              enddo
-            enddo
 
-            endif
-
+                 endif
 
 !-----------------------------------------------------------------------
 !
 !     compute Dx(rho), Dy(rho) at level kk+1
 !
 !-----------------------------------------------------------------------
-
-
-            do j=1,ny_block
-              do i=1,nx_block
 
                  KMASKE(i,j) = merge(c1, c0, kk+1 <= KMT(i,j,bid) .and.  &
                                 kk+1 <= KMTE(i,j,bid))
