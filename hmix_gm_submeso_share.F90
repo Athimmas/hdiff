@@ -314,7 +314,12 @@
 
         do kk=1,km
 
-          KMASK = merge(c1, c0, kk < KMT(:,:,bid))
+            do j=1,ny_block
+              do i=1,nx_block
+                 KMASK(i,j) = merge(c1, c0, kk < KMT(i,j,bid))
+              enddo
+            enddo
+
 
 !-----------------------------------------------------------------------
 !
@@ -357,14 +362,22 @@
 
               enddo
             enddo
-          
+         
+            if (registry_match('init_gm')) then 
 
-            if (registry_match('init_gm')) then
-              SLX(:,:,ieast ,kbt,kk,bid) = KMASK * RX(:,:,ieast ,kk,bid) / RZ
-              SLX(:,:,iwest ,kbt,kk,bid) = KMASK * RX(:,:,iwest ,kk,bid) / RZ
-              SLY(:,:,jnorth,kbt,kk,bid) = KMASK * RY(:,:,jnorth,kk,bid) / RZ
-              SLY(:,:,jsouth,kbt,kk,bid) = KMASK * RY(:,:,jsouth,kk,bid) / RZ
+            do j=1,ny_block
+              do i=1,nx_block
+
+                    SLX(i,j,ieast ,kbt,kk,bid) = KMASK(i,j) * RX(i,j,ieast ,kk,bid) / RZ(i,j)
+                    SLX(i,j,iwest ,kbt,kk,bid) = KMASK(i,j) * RX(i,j,iwest ,kk,bid) / RZ(i,j)
+                    SLY(i,j,jnorth,kbt,kk,bid) = KMASK(i,j) * RY(i,j,jnorth,kk,bid) / RZ(i,j)
+                    SLY(i,j,jsouth,kbt,kk,bid) = KMASK(i,j) * RY(i,j,jsouth,kk,bid) / RZ(i,j)
+
+              enddo
+            enddo
+
             endif
+
 
 !-----------------------------------------------------------------------
 !
@@ -417,10 +430,16 @@
             !            TMIX(:,:,kk+1,2), this_block,  &
             !            DRHODT=DRDT, DRHODS=DRDS)
 
-            RX(:,:,ieast ,kk+1,bid) = DRDT(:,:,kk+1) * TXP(:,:,ks)  &
-                                    + DRDS(:,:,kk+1) * TX(:,:,kk+1,2,bid) 
-            RY(:,:,jnorth,kk+1,bid) = DRDT(:,:,kk+1) * TYP(:,:,ks)  &
-                                    + DRDS(:,:,kk+1) * TY(:,:,kk+1,2,bid) 
+            do j=1,ny_block
+              do i=1,nx_block
+
+                 RX(i,j,ieast ,kk+1,bid) = DRDT(i,j,kk+1) * TXP(i,j,ks)  &
+                                         + DRDS(i,j,kk+1) * TX(i,j,kk+1,2,bid) 
+                 RY(i,j,jnorth,kk+1,bid) = DRDT(i,j,kk+1) * TYP(i,j,ks)  &
+                                         + DRDS(i,j,kk+1) * TY(i,j,kk+1,2,bid) 
+
+              enddo
+            enddo
 
             do j=1,ny_block
               do i=1,nx_block 
