@@ -457,10 +457,16 @@
               enddo
             enddo
 
-            RZ = DRDT(:,:,kk+1) * TZP(:,:,ks) + DRDS(:,:,kk+1) * TZ(:,:,kk+1,2,bid) 
-            RZ_SAVE(:,:,kk+1,bid) = min(RZ,c0)
-            RZ = min(RZ,-eps2)
- 
+            do j=1,ny_block
+              do i=1,nx_block
+
+                 RZ(i,j) = DRDT(i,j,kk+1) * TZP(i,j,ks) + DRDS(i,j,kk+1) * TZ(i,j,kk+1,2,bid) 
+                 RZ_SAVE(i,j,kk+1,bid) = min(RZ(i,j),c0)
+                 RZ(i,j) = min(RZ(i,j),-eps2)
+
+              enddo
+            enddo
+
             if (registry_match('init_gm')) then
 
 !-----------------------------------------------------------------------
