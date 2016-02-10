@@ -340,11 +340,7 @@
             do j=1,ny_block
               do i=1,nx_block
                  TEMP(i,j,ks) = max(-c2, TMIX(i,j,kk+1,1))
-              enddo
-            enddo 
-
-            do j=1,ny_block
-              do i=1,nx_block
+              
                  TZ(i,j,kk+1,1,bid) = TMIX(i,j,kk  ,1) - TMIX(i,j,kk+1,1)
                  TZ(i,j,kk+1,2,bid) = TMIX(i,j,kk  ,2) - TMIX(i,j,kk+1,2) 
                  TZP(i,j,ks) = TEMP(i,j,kn) - TEMP(i,j,ks)
