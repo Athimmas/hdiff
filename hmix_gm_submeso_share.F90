@@ -391,7 +391,7 @@
                  
 
                  if(i <= nx_block-1)&
-                     TXP(i,j,ks) = KMASKE(i,j)*(temp_ksip1  &
+                  TXP(i,j,ks) = KMASKE(i,j)*(temp_ksip1  &
                                                - temp_ksi) 
 
                  if(j <= ny_block-1)&
@@ -403,36 +403,21 @@
                   TX(i,j,kk+1,n,bid) = KMASKE(i,j)  &
                             * (TMIX(i+1,j,kk+1,n) - TMIX(i,j,kk+1,n))
 
-                   if(j <= ny_block-1)&
-                    TY(i,j,kk+1,n,bid) = KMASKN(i,j)  &
+                  if(j <= ny_block-1)&
+                  TY(i,j,kk+1,n,bid) = KMASKN(i,j)  &
                             * (TMIX(i,j+1,kk+1,n) - TMIX(i,j,kk+1,n))
                  enddo
-
-              enddo
-            enddo
-
-!     D_T(rho) & D_S(rho) at level kk+1
-
-            !call state (kk+1, kk+1, TMIX(:,:,kk+1,1),  &
-            !            TMIX(:,:,kk+1,2), this_block,  &
-            !            DRHODT=DRDT, DRHODS=DRDS)
-
-            do j=1,ny_block
-              do i=1,nx_block
 
                  RX(i,j,ieast ,kk+1,bid) = DRDT(i,j,kk+1) * TXP(i,j,ks)  &
                                          + DRDS(i,j,kk+1) * TX(i,j,kk+1,2,bid) 
                  RY(i,j,jnorth,kk+1,bid) = DRDT(i,j,kk+1) * TYP(i,j,ks)  &
                                          + DRDS(i,j,kk+1) * TY(i,j,kk+1,2,bid) 
 
-              enddo
-            enddo
-
-            do j=1,ny_block
-              do i=1,nx_block 
                 if(i >= 2)&
                 RX(i,j,iwest,kk+1,bid) = DRDT(i,j,kk+1) * TXP(i-1,j,ks)  &
                                        + DRDS(i,j,kk+1) * TX (i-1,j,kk+1,2,bid)
+
+
               enddo
             enddo
 
