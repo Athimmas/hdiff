@@ -418,14 +418,10 @@
                                        + DRDS(i,j,kk+1) * TX (i-1,j,kk+1,2,bid)
 
 
-              enddo
-            enddo
-
-            do j=1,ny_block
-              do i=1,nx_block
                 if(j >= 2)&
                 RY(i,j,jsouth,kk+1,bid) = DRDT(i,j,kk+1) * TYP(i,j-1,ks)  &
                                         + DRDS(i,j,kk+1) * TY (i,j-1,kk+1,2,bid)
+
               enddo
             enddo
 
