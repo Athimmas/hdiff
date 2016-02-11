@@ -189,7 +189,9 @@
       real (r8), dimension(nx_block,ny_block,km) :: &
          DRDT, DRDS                ! expansion coefficients d(rho)/dT,S
 
-      real (r8) :: tempi,tempip1,tempj,tempjp1,temp_ksi,temp_ksip1
+      real (r8) :: tempi,tempip1,tempj,tempjp1
+ 
+      real (r8) ::  temp_ksi,temp_ksip1,temp_ksj,temp_ksjp1
 
       real (r8) start_time,end_time
 
@@ -384,17 +386,17 @@
                  temp_ksi = max(-c2, TMIX(i,j,kk+1,1))
                  temp_ksip1 = max(-c2, TMIX(i+1,j,kk+1,1))
 
+                 temp_ksj = max(-c2, TMIX(i,j,kk+1,1))
+                 temp_ksjp1 = max(-c2, TMIX(i,j+1,kk+1,1))
+                 
+
                  if(i <= nx_block-1)&
                      TXP(i,j,ks) = KMASKE(i,j)*(temp_ksip1  &
                                                - temp_ksi) 
-              enddo
-            enddo
 
-            do j=1,ny_block
-              do i=1,nx_block
                  if(j <= ny_block-1)&
-                  TYP(i,j,ks) = KMASKN(i,j)*(TEMP(i,j+1,ks)  &
-                                         - TEMP(i,j,ks))
+                  TYP(i,j,ks) = KMASKN(i,j)*(temp_ksjp1  &
+                                            - temp_ksj)
               enddo
             enddo
 
