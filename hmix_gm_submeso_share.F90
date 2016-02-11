@@ -397,24 +397,17 @@
                  if(j <= ny_block-1)&
                   TYP(i,j,ks) = KMASKN(i,j)*(temp_ksjp1  &
                                             - temp_ksj)
-              enddo
-            enddo
 
-            do n=1,nt
-              do j=1,ny_block
-                do i=1,nx_block
+                 do n=1,nt
                   if(i <= nx_block-1)&
                   TX(i,j,kk+1,n,bid) = KMASKE(i,j)  &
                             * (TMIX(i+1,j,kk+1,n) - TMIX(i,j,kk+1,n))
-                enddo
-              enddo
 
-              do j=1,ny_block
-                do i=1,nx_block
                    if(j <= ny_block-1)&
                     TY(i,j,kk+1,n,bid) = KMASKN(i,j)  &
                             * (TMIX(i,j+1,kk+1,n) - TMIX(i,j,kk+1,n))
-                enddo
+                 enddo
+
               enddo
             enddo
 
@@ -461,7 +454,7 @@
               enddo
             enddo
 
-            if (registry_match('init_gm')) then
+            if (match) then
 
 !-----------------------------------------------------------------------
 !
@@ -503,7 +496,7 @@
 
         if(my_task == master_task)then
         open(unit=10,file="/home/aketh/ocn_correctness_data/changed.txt",status="unknown",position="append",action="write",form="unformatted")
-        write(10),SLX,SLY,RX,RY,TX,TY,TXP,TYP
+        write(10),SLX,SLY,RX,RY,TX,TY
         close(10)
         endif
 
