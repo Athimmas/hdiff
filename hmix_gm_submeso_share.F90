@@ -413,27 +413,20 @@
                  RY(i,j,jnorth,kk+1,bid) = DRDT(i,j,kk+1) * TYP(i,j,ks)  &
                                          + DRDS(i,j,kk+1) * TY(i,j,kk+1,2,bid) 
 
-                if(i >= 2)&
-                RX(i,j,iwest,kk+1,bid) = DRDT(i,j,kk+1) * TXP(i-1,j,ks)  &
+                 if(i >= 2)&
+                 RX(i,j,iwest,kk+1,bid) = DRDT(i,j,kk+1) * TXP(i-1,j,ks)  &
                                        + DRDS(i,j,kk+1) * TX (i-1,j,kk+1,2,bid)
 
 
-                if(j >= 2)&
-                RY(i,j,jsouth,kk+1,bid) = DRDT(i,j,kk+1) * TYP(i,j-1,ks)  &
+                 if(j >= 2)&
+                 RY(i,j,jsouth,kk+1,bid) = DRDT(i,j,kk+1) * TYP(i,j-1,ks)  &
                                         + DRDS(i,j,kk+1) * TY (i,j-1,kk+1,2,bid)
 
-              enddo
-            enddo
-
-            do j=1,ny_block
-              do i=1,nx_block
 
                  RZ(i,j) = DRDT(i,j,kk+1) * TZP(i,j,ks) + DRDS(i,j,kk+1) * TZ(i,j,kk+1,2,bid) 
                  RZ_SAVE(i,j,kk+1,bid) = min(RZ(i,j),c0)
                  RZ(i,j) = min(RZ(i,j),-eps2)
 
-              enddo
-            enddo
 
             if (match) then
 
@@ -442,8 +435,6 @@
 !     compute slope of isopycnal surfaces at level kk+1
 !
 !-----------------------------------------------------------------------
-            do j=1,ny_block
-              do i=1,nx_block
 
               if ( kk+1 <= KMT(i,j,bid) ) then
                 SLX(i,j,ieast, ktp,kk+1,bid) = RX(i,j,ieast ,kk+1,bid) / RZ(i,j)
@@ -452,10 +443,12 @@
                 SLY(i,j,jsouth,ktp,kk+1,bid) = RY(i,j,jsouth,kk+1,bid) / RZ(i,j)
               endif
 
+
+           endif 
+
               enddo
             enddo
 
-            endif
 
 !-----------------------------------------------------------------------
 !
