@@ -175,8 +175,8 @@
          ktmp,              &! array indices
          kn, ks,            &! cyclic pointers for 2-level local arrays
          bid                 ! local block address for this sub block
-      real (r8), dimension(nx_block,ny_block) :: &
-         KMASK, KMASKE, KMASKN    ! ocean mask
+      !real (r8), dimension(nx_block,ny_block) :: &
+      !   KMASKE, KMASKN    ! ocean mask
         !DRDT, DRDS              ! expansion coefficients d(rho)/dT,S
       real (r8), dimension(nx_block,ny_block,2) :: &
          TXP, TYP, TZP , TEMP
@@ -191,7 +191,7 @@
 
       real (r8) :: tempi,tempip1,tempj,tempjp1
  
-      real (r8) ::  temp_ksi,temp_ksip1,temp_ksj,temp_ksjp1
+      real (r8) :: temp_ksi,temp_ksip1,temp_ksj,temp_ksjp1,kmask,kmaske,kmaskn
 
       real (r8) start_time,end_time
 
@@ -250,39 +250,39 @@
 !-----------------------------------------------------------------------
 
                 if ( kk <= KMT(i,j,bid) .and. kk <= KMTE(i,j,bid) ) then
-                  KMASKE(i,j) = c1
+                  KMASKE = c1
                 else
-                  KMASKE(i,j) = c0
+                  KMASKE = c0
                 endif
                 if ( kk <= KMT(i,j,bid) .and. kk <= KMTN(i,j,bid) ) then
-                  KMASKN(i,j) = c1
+                  KMASKN = c1
                 else
-                  KMASKN(i,j) = c0
+                  KMASKN = c0
                 endif
                 TEMP(i,j,kn) = max(-c2, TMIX(i,j,kk,1))
 
                 if(i <= nx_block-1) then 
                  tempi = max(-c2, TMIX(i,j,kk,1))
                  tempip1 = max(-c2, TMIX(i+1,j,kk,1))
-                 TXP(i,j,kn) = KMASKE(i,j) * (tempip1  &
+                 TXP(i,j,kn) = KMASKE * (tempip1  &
                                             -tempi)
                  endif 
 
                 if(j <= ny_block-1)then
                  tempjp1 = max(-c2, TMIX(i,j+1,kk,1))
                  tempj = max(-c2, TMIX(i,j,kk,1))                
-                 TYP(i,j,kn) = KMASKN(i,j) * (tempjp1  &
+                 TYP(i,j,kn) = KMASKN * (tempjp1  &
                                              -tempj )
                 endif   
 
                 do n=1,nt
                   if(i <= nx_block-1)&
-                  TX(i,j,kk,n,bid) = KMASKE(i,j)  &
+                  TX(i,j,kk,n,bid) = KMASKE  &
                               * (TMIX(i+1,j,kk,n) - TMIX(i,j,kk,n))
 
 
                    if(j <= ny_block-1)& 
-                       TY(i,j,kk,n,bid) = KMASKN(i,j)  &
+                       TY(i,j,kk,n,bid) = KMASKN  &
                               * (TMIX(i,j+1,kk,n) - TMIX(i,j,kk,n))
                 enddo
 
@@ -319,11 +319,12 @@
 
         do kk=1,km
 
+            if ( kk < km ) then
+
+            !!$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(j,i,temp_ksi,temp_ksip1,temp_ksj,temp_ksjp1,kmask)NUM_THREADS(16)
             do j=1,ny_block
               do i=1,nx_block
-                 KMASK(i,j) = merge(c1, c0, kk < KMT(i,j,bid))
-              enddo
-            enddo
+                 KMASK = merge(c1, c0, kk < KMT(i,j,bid))
 
 
 !-----------------------------------------------------------------------
@@ -340,10 +341,7 @@
 !
 !-----------------------------------------------------------------------
 
-          if ( kk < km ) then
 
-            do j=1,ny_block
-              do i=1,nx_block
                  TEMP(i,j,ks) = max(-c2, TMIX(i,j,kk+1,1))
               
                  TZ(i,j,kk+1,1,bid) = TMIX(i,j,kk  ,1) - TMIX(i,j,kk+1,1)
@@ -361,10 +359,10 @@
                  if (match) then 
 
 
-                    SLX(i,j,ieast ,kbt,kk,bid) = KMASK(i,j) * RX(i,j,ieast ,kk,bid) / RZ(i,j)
-                    SLX(i,j,iwest ,kbt,kk,bid) = KMASK(i,j) * RX(i,j,iwest ,kk,bid) / RZ(i,j)
-                    SLY(i,j,jnorth,kbt,kk,bid) = KMASK(i,j) * RY(i,j,jnorth,kk,bid) / RZ(i,j)
-                    SLY(i,j,jsouth,kbt,kk,bid) = KMASK(i,j) * RY(i,j,jsouth,kk,bid) / RZ(i,j)
+                    SLX(i,j,ieast ,kbt,kk,bid) = KMASK * RX(i,j,ieast ,kk,bid) / RZ(i,j)
+                    SLX(i,j,iwest ,kbt,kk,bid) = KMASK * RX(i,j,iwest ,kk,bid) / RZ(i,j)
+                    SLY(i,j,jnorth,kbt,kk,bid) = KMASK * RY(i,j,jnorth,kk,bid) / RZ(i,j)
+                    SLY(i,j,jsouth,kbt,kk,bid) = KMASK * RY(i,j,jsouth,kk,bid) / RZ(i,j)
 
 
                  endif
@@ -375,10 +373,10 @@
 !
 !-----------------------------------------------------------------------
 
-                 KMASKE(i,j) = merge(c1, c0, kk+1 <= KMT(i,j,bid) .and.  &
+                 KMASKE = merge(c1, c0, kk+1 <= KMT(i,j,bid) .and.  &
                                 kk+1 <= KMTE(i,j,bid))
 
-                 KMASKN(i,j) = merge(c1, c0, kk+1 <= KMT(i,j,bid) .and.  &
+                 KMASKN = merge(c1, c0, kk+1 <= KMT(i,j,bid) .and.  &
                                 kk+1 <= KMTN(i,j,bid))
 
 
@@ -391,20 +389,20 @@
                  
 
                  if(i <= nx_block-1)&
-                  TXP(i,j,ks) = KMASKE(i,j)*(temp_ksip1  &
+                  TXP(i,j,ks) = KMASKE*(temp_ksip1  &
                                                - temp_ksi) 
 
                  if(j <= ny_block-1)&
-                  TYP(i,j,ks) = KMASKN(i,j)*(temp_ksjp1  &
+                  TYP(i,j,ks) = KMASKN*(temp_ksjp1  &
                                             - temp_ksj)
 
                  do n=1,nt
                   if(i <= nx_block-1)&
-                  TX(i,j,kk+1,n,bid) = KMASKE(i,j)  &
+                  TX(i,j,kk+1,n,bid) = KMASKE  &
                             * (TMIX(i+1,j,kk+1,n) - TMIX(i,j,kk+1,n))
 
                   if(j <= ny_block-1)&
-                  TY(i,j,kk+1,n,bid) = KMASKN(i,j)  &
+                  TY(i,j,kk+1,n,bid) = KMASKN  &
                             * (TMIX(i,j+1,kk+1,n) - TMIX(i,j,kk+1,n))
                  enddo
 
