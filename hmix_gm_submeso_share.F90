@@ -189,7 +189,7 @@
       real (r8), dimension(nx_block,ny_block,km) :: &
          DRDT, DRDS                ! expansion coefficients d(rho)/dT,S
 
-      real (r8) :: tempi,tempip1,tempj,tempjp1
+      real (r8) :: tempi,tempip1,tempj,tempjp1,temp_ksi,temp_ksip1
 
       real (r8) start_time,end_time
 
@@ -379,14 +379,14 @@
                  KMASKN(i,j) = merge(c1, c0, kk+1 <= KMT(i,j,bid) .and.  &
                                 kk+1 <= KMTN(i,j,bid))
 
-              enddo
-            enddo
 
-            do j=1,ny_block
-              do i=1,nx_block
-                  if(i <= nx_block-1)&
-                     TXP(i,j,ks) = KMASKE(i,j)*(TEMP(i+1,j,ks)  &
-                                               - TEMP(i,j,ks)) 
+
+                 temp_ksi = max(-c2, TMIX(i,j,kk+1,1))
+                 temp_ksip1 = max(-c2, TMIX(i+1,j,kk+1,1))
+
+                 if(i <= nx_block-1)&
+                     TXP(i,j,ks) = KMASKE(i,j)*(temp_ksip1  &
+                                               - temp_ksi) 
               enddo
             enddo
 
