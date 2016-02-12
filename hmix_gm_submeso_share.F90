@@ -193,7 +193,9 @@
  
       real (r8) :: temp_ksi,temp_ksip1,temp_ksj,temp_ksjp1,kmask,kmaske,kmaskn
 
-      real (r8) :: txpim1,kmaskeim1,temp_ksim1
+      real (r8) :: txpim1,kmaskeim1,temp_ksim1,txim1
+
+      real (r8) :: typjm1,kmasknjm1,temp_ksjm1,tyjm1        
 
       real (r8) start_time,end_time
 
@@ -323,7 +325,8 @@
 
             if ( kk < km ) then
 
-            !!$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(j,i,temp_ksi,temp_ksip1,temp_ksj,temp_ksjp1,kmask,kmaske,kmaskn)NUM_THREADS(16)
+            !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(j,i,temp_ksi,temp_ksip1,temp_ksj,temp_ksjp1,kmask,kmaske,kmaskn,temp_ksim1,kmaskeim1) &
+            !$OMP PRIVATE(txpim1,txim1,temp_ksjm1,kmasknjm1,typjm1,tyjm1)NUM_THREADS(16)
             do j=1,ny_block
               do i=1,nx_block
                  KMASK = merge(c1, c0, kk < KMT(i,j,bid))
@@ -426,19 +429,30 @@
 
                  txpim1 = kmaskeim1 * (temp_ksi - temp_ksim1 ) 
 
-                 txim1 = kmaskeim1 * (TMIX(i,j,kk+1,n) - TMIX(i-1,j,kk+1,n))                 
-
-                 if( txim1 /= TX (i-1,j,kk+1,2,bid) ) print *,"okay its wrong now"
+                 txim1 = kmaskeim1 * (TMIX(i,j,kk+1,2) - TMIX(i-1,j,kk+1,2))                 
                    
                  RX(i,j,iwest,kk+1,bid) = DRDT(i,j,kk+1) * txpim1  &
-                                       + DRDS(i,j,kk+1) *  TX (i-1,j,kk+1,2,bid)
+                                       + DRDS(i,j,kk+1) *  txim1
 
                  endif
 
 
-                 if(j >= 2)&
-                 RY(i,j,jsouth,kk+1,bid) = DRDT(i,j,kk+1) * TYP(i,j-1,ks)  &
-                                        + DRDS(i,j,kk+1) * TY (i,j-1,kk+1,2,bid)
+                 if(j >= 2) then
+
+                 temp_ksjm1 = max(-c2, TMIX(i,j-1,kk+1,1))
+
+                 kmasknjm1 = merge(c1, c0, kk+1 <= KMT(i,j-1,bid) .and.  &
+                                kk+1 <= KMTN(i,j-1,bid))
+
+                 typjm1 = kmasknjm1 * (temp_ksj - temp_ksjm1 )
+
+                 tyjm1 = kmasknjm1 * (TMIX(i,j,kk+1,2) - TMIX(i,j-1,kk+1,2))
+
+
+                 RY(i,j,jsouth,kk+1,bid) = DRDT(i,j,kk+1) * typjm1  &
+                                        + DRDS(i,j,kk+1) * tyjm1
+
+                 endif
 
 
                  RZ(i,j) = DRDT(i,j,kk+1) * TZP(i,j,ks) + DRDS(i,j,kk+1) * TZ(i,j,kk+1,2,bid) 
