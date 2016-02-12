@@ -193,6 +193,8 @@
  
       real (r8) :: temp_ksi,temp_ksip1,temp_ksj,temp_ksjp1,kmask,kmaske,kmaskn
 
+      real (r8) :: txpim1,kmaskeim1,temp_ksim1
+
       real (r8) start_time,end_time
 
       logical(log_kind) :: match
@@ -321,7 +323,7 @@
 
             if ( kk < km ) then
 
-            !!$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(j,i,temp_ksi,temp_ksip1,temp_ksj,temp_ksjp1,kmask)NUM_THREADS(16)
+            !!$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(j,i,temp_ksi,temp_ksip1,temp_ksj,temp_ksjp1,kmask,kmaske,kmaskn)NUM_THREADS(16)
             do j=1,ny_block
               do i=1,nx_block
                  KMASK = merge(c1, c0, kk < KMT(i,j,bid))
@@ -388,13 +390,17 @@
                  temp_ksjp1 = max(-c2, TMIX(i,j+1,kk+1,1))
                  
 
-                 if(i <= nx_block-1)&
+                 if(i <= nx_block-1)then
+
                   TXP(i,j,ks) = KMASKE*(temp_ksip1  &
                                                - temp_ksi) 
+                 endif 
 
-                 if(j <= ny_block-1)&
+                 if(j <= ny_block-1)then
                   TYP(i,j,ks) = KMASKN*(temp_ksjp1  &
                                             - temp_ksj)
+                 
+                 endif 
 
                  do n=1,nt
                   if(i <= nx_block-1)&
@@ -411,9 +417,23 @@
                  RY(i,j,jnorth,kk+1,bid) = DRDT(i,j,kk+1) * TYP(i,j,ks)  &
                                          + DRDS(i,j,kk+1) * TY(i,j,kk+1,2,bid) 
 
-                 if(i >= 2)&
-                 RX(i,j,iwest,kk+1,bid) = DRDT(i,j,kk+1) * TXP(i-1,j,ks)  &
-                                       + DRDS(i,j,kk+1) * TX (i-1,j,kk+1,2,bid)
+                 if(i >= 2)then
+
+                 temp_ksim1 = max(-c2, TMIX(i-1,j,kk+1,1))
+
+                 kmaskeim1 = merge(c1, c0, kk+1 <= KMT(i-1,j,bid) .and.  &
+                                kk+1 <= KMTE(i-1,j,bid))
+
+                 txpim1 = kmaskeim1 * (temp_ksi - temp_ksim1 ) 
+
+                 txim1 = kmaskeim1 * (TMIX(i,j,kk+1,n) - TMIX(i-1,j,kk+1,n))                 
+
+                 if( txim1 /= TX (i-1,j,kk+1,2,bid) ) print *,"okay its wrong now"
+                   
+                 RX(i,j,iwest,kk+1,bid) = DRDT(i,j,kk+1) * txpim1  &
+                                       + DRDS(i,j,kk+1) *  TX (i-1,j,kk+1,2,bid)
+
+                 endif
 
 
                  if(j >= 2)&
