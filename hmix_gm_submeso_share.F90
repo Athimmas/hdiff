@@ -229,7 +229,8 @@
         ks = 2
 
         start_time = omp_get_wtime()  
- 
+
+        !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(kk)NUM_THREADS(16) 
         do kk=1,km
 
         call state (kk, kk, TMIX(:,:,kk,1), TMIX(:,:,kk,2),  &
