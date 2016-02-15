@@ -36,7 +36,9 @@
        sfc_layer_varthick, partial_bottom_cells, dz, DZT, CALCT, dzw, dzr
    use advection, only: advu, advt, comp_flux_vel_ghost
    use pressure_grad, only: lpressure_avg, gradp
-   use horizontal_mix, only: hdiffu, hdifft, iso_impvmixt_tavg
+   use horizontal_mix, only: hdiffu, hdifft, iso_impvmixt_tavg , hmix_tracer_itype &
+                             tavg_HDIFE_TRACER,tavg_HDIFN_TRACER,tavg_HDIFB_TRACER &
+                             lsubmesoscale_mixing
    use vertical_mix, only: vmix_coeffs, implicit_vertical_mix, vdiffu,       &
        vdifft, impvmixt, impvmixu, impvmixt_correct, convad, impvmixt_tavg
    use vmix_kpp, only: add_kpp_sources
@@ -1724,9 +1726,14 @@
 
    if(k==1)then
 
+   !dir$ offload begin target(mic:0)in(kk,TMIX,UMIX,VMIX,this_block,hmix_tracer_itype,tavg_HDIFE_TRACER,tavg_HDIFN_TRACER,tavg_HDIFB_TRACER &
+   !dir$ offload in(lsubmesoscale_mixing)out(WORKN_PHI)
+
    do kk=1,km
    call hdifft(kk, WORKN_PHI(:,:,:,kk), TMIX, UMIX, VMIX, this_block)
    enddo
+
+   !dir$ end offload
 
    endif
 

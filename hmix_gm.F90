@@ -1136,6 +1136,7 @@
 ! !IROUTINE: hdifft_gm
 ! !INTERFACE:
 
+      !dir$ attributes offload:mic :: hdifft_gm 
       subroutine hdifft_gm (k, GTK, TMIX, UMIX, VMIX, tavg_HDIFE_TRACER, &
                             tavg_HDIFN_TRACER, tavg_HDIFB_TRACER, this_block)
 
@@ -1228,9 +1229,9 @@
       WORK3  = c0
       WORK4  = c0
 
-      if ( .not. implicit_vertical_mix )  &
-        call exit_POP (sigAbort, &
-         'implicit vertical mixing must be used with GM horiz mixing')
+      if ( .not. implicit_vertical_mix )  print "Error in hmix_gm if ( .not. implicit_vertical_mix )"
+        !call exit_POP (sigAbort, &
+         !'implicit vertical mixing must be used with GM horiz mixing')
 
       if ( k == 1 ) then
 
@@ -2327,143 +2328,143 @@
 !
 !-----------------------------------------------------------------------
 
-      if ( mix_pass /= 1 ) then
+!      if ( mix_pass /= 1 ) then
 
-          call accumulate_tavg_field                      &
-                   (p5 * (KAPPA_ISOP(:,:,ktp,k,bid)    &
-                       +  KAPPA_ISOP(:,:,kbt,k,bid)),  &
-                          tavg_KAPPA_ISOP, bid, k)
+!          call accumulate_tavg_field                      &
+!                   (p5 * (KAPPA_ISOP(:,:,ktp,k,bid)    &
+!                       +  KAPPA_ISOP(:,:,kbt,k,bid)),  &
+!                          tavg_KAPPA_ISOP, bid, k)
 
-          call accumulate_tavg_field                      &
-                   (p5 * (KAPPA_THIC(:,:,ktp,k,bid)    &
-                       +  KAPPA_THIC(:,:,kbt,k,bid)),  &
-                          tavg_KAPPA_THIC, bid, k)
+!          call accumulate_tavg_field                      &
+!                   (p5 * (KAPPA_THIC(:,:,ktp,k,bid)    &
+!                       +  KAPPA_THIC(:,:,kbt,k,bid)),  &
+!                          tavg_KAPPA_THIC, bid, k)
 
-          call accumulate_tavg_field                      &
-                   (p5 * (HOR_DIFF(:,:,ktp,k,bid)      &
-                       +  HOR_DIFF(:,:,kbt,k,bid)),    &
-                          tavg_HOR_DIFF, bid, k)
+!          call accumulate_tavg_field                      &
+!                   (p5 * (HOR_DIFF(:,:,ktp,k,bid)      &
+!                       +  HOR_DIFF(:,:,kbt,k,bid)),    &
+!                          tavg_HOR_DIFF, bid, k)
 
-        if ( transition_layer_on  .and.  k == 1 ) then
+!        if ( transition_layer_on  .and.  k == 1 ) then
 
-            call accumulate_tavg_field (TLT%DIABATIC_DEPTH(:,:,bid),  &
-                                        tavg_DIA_DEPTH, bid, 1)  
+!            call accumulate_tavg_field (TLT%DIABATIC_DEPTH(:,:,bid),  &
+!                                        tavg_DIA_DEPTH, bid, 1)  
 
-            call accumulate_tavg_field (TLT%THICKNESS(:,:,bid),       &
-                                        tavg_TLT, bid, 1)  
+!            call accumulate_tavg_field (TLT%THICKNESS(:,:,bid),       &
+!                                        tavg_TLT, bid, 1)  
 
-            call accumulate_tavg_field (TLT%INTERIOR_DEPTH(:,:,bid),  &
-                                        tavg_INT_DEPTH, bid, 1)  
+!            call accumulate_tavg_field (TLT%INTERIOR_DEPTH(:,:,bid),  &
+!                                        tavg_INT_DEPTH, bid, 1)  
 
-        endif
+!        endif
 
-        if ( diag_gm_bolus ) then
+!        if ( diag_gm_bolus ) then
 
-            call accumulate_tavg_field (U_ISOP, tavg_UISOP, bid, k) 
-            call accumulate_tavg_field (V_ISOP, tavg_VISOP, bid, k) 
-            call accumulate_tavg_field (WTOP_ISOP(:,:,bid), tavg_WISOP,bid, k)
+!            call accumulate_tavg_field (U_ISOP, tavg_UISOP, bid, k) 
+!            call accumulate_tavg_field (V_ISOP, tavg_VISOP, bid, k) 
+!            call accumulate_tavg_field (WTOP_ISOP(:,:,bid), tavg_WISOP,bid, k)
 
-          if (accumulate_tavg_now(tavg_ADVT_ISOP)) then
+!          if (accumulate_tavg_now(tavg_ADVT_ISOP)) then
 
-            WORK1 = p5 * HTE(:,:,bid) * U_ISOP * ( TMIX(:,:,k,1)  &
-                      + eoshift(TMIX(:,:,k,1), dim=1, shift=1) )
-            WORK2 = eoshift(WORK1, dim=1, shift=-1)
-            WORK3 = WORK1 - WORK2
+!            WORK1 = p5 * HTE(:,:,bid) * U_ISOP * ( TMIX(:,:,k,1)  &
+!                      + eoshift(TMIX(:,:,k,1), dim=1, shift=1) )
+!            WORK2 = eoshift(WORK1, dim=1, shift=-1)
+!            WORK3 = WORK1 - WORK2
 
-            WORK1 = p5 * HTN(:,:,bid) * V_ISOP * ( TMIX(:,:,k,1)  &
-                      + eoshift(TMIX(:,:,k,1), dim=2, shift=1) )  
-            WORK2 = eoshift(WORK1, dim=2, shift=-1)
-            WORK3 = WORK3 + WORK1 - WORK2
+!            WORK1 = p5 * HTN(:,:,bid) * V_ISOP * ( TMIX(:,:,k,1)  &
+!                      + eoshift(TMIX(:,:,k,1), dim=2, shift=1) )  
+!            WORK2 = eoshift(WORK1, dim=2, shift=-1)
+!            WORK3 = WORK3 + WORK1 - WORK2
 
-            WORK1 = c0
-            do j=this_block%jb,this_block%je
-              do i=this_block%ib,this_block%ie
-                if ( k <= KMT(i,j,bid) ) then
-                  WORK1(i,j) = - dz(k) * TAREA_R(i,j,bid) * WORK3(i,j)
-                endif
-              enddo
-            enddo
+!            WORK1 = c0
+!            do j=this_block%jb,this_block%je
+!              do i=this_block%ib,this_block%ie
+!                if ( k <= KMT(i,j,bid) ) then
+!                  WORK1(i,j) = - dz(k) * TAREA_R(i,j,bid) * WORK3(i,j)
+!                endif
+!              enddo
+!            enddo
 
-            call accumulate_tavg_field (WORK1, tavg_ADVT_ISOP, bid, k)
+!            call accumulate_tavg_field (WORK1, tavg_ADVT_ISOP, bid, k)
 
-          endif
+!          endif
 
-           if (accumulate_tavg_now(tavg_ADVS_ISOP)) then
+!           if (accumulate_tavg_now(tavg_ADVS_ISOP)) then
 
-            WORK1 = p5 * HTE(:,:,bid) * U_ISOP * ( TMIX(:,:,k,2)  &
-                      + eoshift(TMIX(:,:,k,2), dim=1, shift=1) )
-            WORK2 = eoshift(WORK1, dim=1, shift=-1)
-            WORK3 = WORK1 - WORK2
+!            WORK1 = p5 * HTE(:,:,bid) * U_ISOP * ( TMIX(:,:,k,2)  &
+!                      + eoshift(TMIX(:,:,k,2), dim=1, shift=1) )
+!            WORK2 = eoshift(WORK1, dim=1, shift=-1)
+!            WORK3 = WORK1 - WORK2
 
-            WORK1 = p5 * HTN(:,:,bid) * V_ISOP * ( TMIX(:,:,k,2)  &
-                      + eoshift(TMIX(:,:,k,2), dim=2, shift=1) )
-            WORK2 = eoshift(WORK1, dim=2, shift=-1)
-            WORK3 = WORK3 + WORK1 - WORK2
+!            WORK1 = p5 * HTN(:,:,bid) * V_ISOP * ( TMIX(:,:,k,2)  &
+!                      + eoshift(TMIX(:,:,k,2), dim=2, shift=1) )
+!            WORK2 = eoshift(WORK1, dim=2, shift=-1)
+!            WORK3 = WORK3 + WORK1 - WORK2
 
-            WORK1 = c0
-            do j=this_block%jb,this_block%je
-              do i=this_block%ib,this_block%ie
-                if ( k <= KMT(i,j,bid) ) then
-                  WORK1(i,j) = - dz(k) * TAREA_R(i,j,bid) * WORK3(i,j)
-                endif
-              enddo
-            enddo
+!            WORK1 = c0
+!            do j=this_block%jb,this_block%je
+!              do i=this_block%ib,this_block%ie
+!                if ( k <= KMT(i,j,bid) ) then
+!                  WORK1(i,j) = - dz(k) * TAREA_R(i,j,bid) * WORK3(i,j)
+!                endif
+!              enddo
+!            enddo
 
-            call accumulate_tavg_field (WORK1, tavg_ADVS_ISOP, bid, k)
+!            call accumulate_tavg_field (WORK1, tavg_ADVS_ISOP, bid, k)
 
-          endif
+!          endif
 
-          if ( accumulate_tavg_now(tavg_VNT_ISOP)  .or.  &
-               accumulate_tavg_now(tavg_VNS_ISOP) ) then
+!          if ( accumulate_tavg_now(tavg_VNT_ISOP)  .or.  &
+!               accumulate_tavg_now(tavg_VNS_ISOP) ) then
 
-            WORK1 = p5 * V_ISOP * HTN(:,:,bid) * TAREA_R(:,:,bid) 
+!            WORK1 = p5 * V_ISOP * HTN(:,:,bid) * TAREA_R(:,:,bid) 
 
-            if (accumulate_tavg_now(tavg_VNT_ISOP)) then
-              WORK2 = WORK1 * (    TMIX(:,:,k,1)  &
-                         + eoshift(TMIX(:,:,k,1), dim=2, shift=1) )
-              call accumulate_tavg_field (WORK2, tavg_VNT_ISOP, bid, k) 
-            endif
+!            if (accumulate_tavg_now(tavg_VNT_ISOP)) then
+!              WORK2 = WORK1 * (    TMIX(:,:,k,1)  &
+!                         + eoshift(TMIX(:,:,k,1), dim=2, shift=1) )
+!              call accumulate_tavg_field (WORK2, tavg_VNT_ISOP, bid, k) 
+!            endif
 
-            if (accumulate_tavg_now(tavg_VNS_ISOP)) then
-              WORK2 = WORK1 * (    TMIX(:,:,k,2)  &
-                         + eoshift(TMIX(:,:,k,2), dim=2, shift=1) )
-              call accumulate_tavg_field (WORK2, tavg_VNS_ISOP, bid, k)
-            endif
+!            if (accumulate_tavg_now(tavg_VNS_ISOP)) then
+!              WORK2 = WORK1 * (    TMIX(:,:,k,2)  &
+!                         + eoshift(TMIX(:,:,k,2), dim=2, shift=1) )
+!              call accumulate_tavg_field (WORK2, tavg_VNS_ISOP, bid, k)
+!            endif
 
-          endif
+!          endif
 
-        endif ! bolus velocity option on
+!        endif ! bolus velocity option on
 
-        do n = 1,nt
-          if (accumulate_tavg_now(tavg_HDIFE_TRACER(n))) then
-            do j=this_block%jb,this_block%je
-            do i=this_block%ib,this_block%ie
-              WORK1(i,j) = FX(i,j,n)*dzr(k)*TAREA_R(i,j,bid)
-            enddo
-            enddo
-            call accumulate_tavg_field(WORK1,tavg_HDIFE_TRACER(n),bid,k)
-          endif
+!        do n = 1,nt
+!          if (accumulate_tavg_now(tavg_HDIFE_TRACER(n))) then
+!            do j=this_block%jb,this_block%je
+!            do i=this_block%ib,this_block%ie
+!              WORK1(i,j) = FX(i,j,n)*dzr(k)*TAREA_R(i,j,bid)
+!            enddo
+!            enddo
+!            call accumulate_tavg_field(WORK1,tavg_HDIFE_TRACER(n),bid,k)
+!          endif
 
-          if (accumulate_tavg_now(tavg_HDIFN_TRACER(n))) then
-            do j=this_block%jb,this_block%je
-            do i=this_block%ib,this_block%ie
-              WORK1(i,j) = FY(i,j,n)*dzr(k)*TAREA_R(i,j,bid)
-            enddo
-            enddo
-            call accumulate_tavg_field(WORK1,tavg_HDIFN_TRACER(n),bid,k)
-          endif
+!          if (accumulate_tavg_now(tavg_HDIFN_TRACER(n))) then
+!            do j=this_block%jb,this_block%je
+!            do i=this_block%ib,this_block%ie
+!              WORK1(i,j) = FY(i,j,n)*dzr(k)*TAREA_R(i,j,bid)
+!            enddo
+!            enddo
+!            call accumulate_tavg_field(WORK1,tavg_HDIFN_TRACER(n),bid,k)
+!          endif
 
-          if (accumulate_tavg_now(tavg_HDIFB_TRACER(n))) then
-            do j=this_block%jb,this_block%je
-            do i=this_block%ib,this_block%ie
-              WORK1(i,j) = FZTOP(i,j,n,bid)*dzr(k)*TAREA_R(i,j,bid)
-            enddo
-            enddo
-            call accumulate_tavg_field(WORK1,tavg_HDIFB_TRACER(n),bid,k)
-          endif
-        enddo
+!          if (accumulate_tavg_now(tavg_HDIFB_TRACER(n))) then
+!            do j=this_block%jb,this_block%je
+!            do i=this_block%ib,this_block%ie
+!              WORK1(i,j) = FZTOP(i,j,n,bid)*dzr(k)*TAREA_R(i,j,bid)
+!            enddo
+!            enddo
+!            call accumulate_tavg_field(WORK1,tavg_HDIFB_TRACER(n),bid,k)
+!          endif
+!        enddo
 
-      endif   ! mix_pass ne 1
+!      endif   ! mix_pass ne 1
 
 
 !-----------------------------------------------------------------------

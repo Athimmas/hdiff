@@ -145,7 +145,7 @@
 
 ! !IROUTINE: tracer_diffs_and_isopyc_slopes
 ! !INTERFACE:
-
+   !dir$ offload attributes : mic :: tracer_diffs_and_isopyc_slopes
    subroutine tracer_diffs_and_isopyc_slopes (TMIX, this_block)
 
 ! !DESCRIPTION:
@@ -228,7 +228,7 @@
         kn = 1
         ks = 2
 
-        start_time = omp_get_wtime()  
+        !start_time = omp_get_wtime()  
 
         !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(kk)NUM_THREADS(16) 
         do kk=1,km
@@ -238,9 +238,9 @@
 
         enddo 
 
-        end_time = omp_get_wtime()
+        !end_time = omp_get_wtime()
 
-        print *,"Time at first part is",end_time - start_time
+        !print *,"Time at first part is",end_time - start_time
 
         kk=1
 
@@ -312,7 +312,7 @@
 
 
 
-       start_time = omp_get_wtime()
+       !start_time = omp_get_wtime()
        match = registry_match('init_gm')
 !-------------------------------------------------------------------------
 !
@@ -497,15 +497,15 @@
 
         enddo   ! end of kk-loop
 
-        end_time = omp_get_wtime()
+        !end_time = omp_get_wtime()
 
-        print *,"Time taken at second time",end_time - start_time
+        !print *,"Time taken at second time",end_time - start_time
 
-        if(my_task == master_task)then
-        open(unit=10,file="/home/aketh/ocn_correctness_data/changed.txt",status="unknown",position="append",action="write",form="unformatted")
-        write(10),SLX,SLY,RX,RY,TX,TY
-        close(10)
-        endif
+        !if(my_task == master_task)then
+        !open(unit=10,file="/home/aketh/ocn_correctness_data/changed.txt",status="unknown",position="append",action="write",form="unformatted")
+        !write(10),SLX,SLY,RX,RY,TX,TY
+        !close(10)
+        !endif
 
 !-----------------------------------------------------------------------
 !
