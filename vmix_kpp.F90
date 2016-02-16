@@ -52,6 +52,7 @@
 
 ! !PUBLIC DATA MEMBERS:
 
+   !dir$ attributes offload:mic :: KPP_HBLT
    real (r8), dimension(:,:,:), allocatable, public :: & 
       HMXL,               &! mixed layer depth
       KPP_HBLT,           &! boundary layer depth

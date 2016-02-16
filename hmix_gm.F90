@@ -64,6 +64,8 @@
       real (r8), dimension(:), allocatable :: &
          kappa_depth          ! depth dependence for KAPPA 
 
+      !dir$ attributes offload:mic :: WTOP_ISOP
+      !dir$ attributes offload:mic :: WBOT_ISOP 
       real (r8), dimension(:,:,:), allocatable :: &
          HYXW, HXYS, &        ! west and south-shifted values of above
          RB,         &        ! Rossby radius

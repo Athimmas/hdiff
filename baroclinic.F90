@@ -33,15 +33,17 @@
    use broadcast, only: broadcast_scalar
    use communicate, only: my_task, master_task
    use grid, only: FCOR, DZU, HUR, KMU, KMT, sfc_layer_type,                 &
-       sfc_layer_varthick, partial_bottom_cells, dz, DZT, CALCT, dzw, dzr
+       sfc_layer_varthick, partial_bottom_cells, dz, DZT, CALCT, dzw,        &
+       dzr,KMTE,KMTN
    use advection, only: advu, advt, comp_flux_vel_ghost
    use pressure_grad, only: lpressure_avg, gradp
    use horizontal_mix, only: hdiffu, hdifft, iso_impvmixt_tavg , hmix_tracer_itype, &
                              tavg_HDIFE_TRACER,tavg_HDIFN_TRACER,tavg_HDIFB_TRACER, &
                              lsubmesoscale_mixing
    use vertical_mix, only: vmix_coeffs, implicit_vertical_mix, vdiffu,       &
-       vdifft, impvmixt, impvmixu, impvmixt_correct, convad, impvmixt_tavg
-   use vmix_kpp, only: add_kpp_sources
+       vdifft, impvmixt, impvmixu, impvmixt_correct, convad, impvmixt_tavg,  &
+       vmix_itype,VDC_GM 
+   use vmix_kpp, only: add_kpp_sources,KPP_HBLT
    use diagnostics, only: ldiag_cfl, cfl_check, ldiag_global,                &
        DIAG_KE_ADV_2D, DIAG_KE_PRESS_2D, DIAG_KE_HMIX_2D, DIAG_KE_VMIX_2D,   &
        DIAG_TRACER_HDIFF_2D, DIAG_PE_2D, DIAG_TRACER_ADV_2D,                 &
@@ -64,6 +66,8 @@
        reset_passive_tracers, tavg_passive_tracers, &
        tavg_passive_tracers_baroclinic_correct, &
        set_interior_passive_tracers_3D
+   use hmix_gm_submeso_share, only: HYX,HXY,SLX,SLY,RZ_SAVE,RX,RY,TX,TY,TZ
+   use hmix_gm, only: WTOP_ISOP,WBOT_ISOP
    use exit_mod, only: sigAbort, exit_pop, flushm
    use overflows
    use overflow_type
@@ -1727,7 +1731,8 @@
    if(k==1)then
 
    !dir$ offload begin target(mic:0)in(kk,TMIX,UMIX,VMIX,this_block,hmix_tracer_itype,tavg_HDIFE_TRACER,tavg_HDIFN_TRACER,tavg_HDIFB_TRACER) &
-   !dir$ in(lsubmesoscale_mixing,dt,dtu)out(WORKN_PHI)
+   !dir$ in(lsubmesoscale_mixing,dt,dtu,HYX,HXY,SLX,SLY,RZ_SAVE,RX,RY,TX,TY,TZ,KMT,KMTE,KMTN,implicit_vertical_mix,vmix_itype,KPP_HBLT)      &
+   !dir$ in(VDC_GM)out(WORKN_PHI)
 
    do kk=1,km
    call hdifft(kk, WORKN_PHI(:,:,:,kk), TMIX, UMIX, VMIX, this_block)

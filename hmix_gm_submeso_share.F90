@@ -18,7 +18,7 @@
    use registry
    use blocks
    use kinds_mod
-   use grid
+   use grid, only: KMTE, KMT, KMTN
    use constants
    use state_mod
    use time_management
@@ -40,7 +40,17 @@
 !  variables to save from one call to next
 !
 !-----------------------------------------------------------------------
-
+   !dir$ attributes offload:mic :: RX
+   !dir$ attributes offload:mic :: RY
+   !dir$ attributes offload:mic :: TX
+   !dir$ attributes offload:mic :: TY
+   !dir$ attributes offload:mic :: TZ
+   !dir$ attributes offload:mic :: SLX
+   !dir$ attributes offload:mic :: SLY
+   !dir$ attributes offload:mic :: RZ_SAVE
+   !dir$ attributes offload:mic :: HXY
+   !dir$ attributes offload:mic :: HYX 
+   
    real (r8), dimension(:,:,:,:,:), allocatable, public :: &
       RX,RY,            &     ! Dx(rho), Dy(rho)
       TX,TY,TZ               ! tracer differences in each direction

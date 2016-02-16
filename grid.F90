@@ -130,6 +130,7 @@
 
    !*** 2d landmasks
 
+   !dir$ attributes offload : mic :: KMT
    integer (POP_i4), dimension(nx_block,ny_block,max_blocks_clinic), &
       public :: &
       KMT            ,&! k index of deepest grid cell on T grid
@@ -145,6 +146,8 @@
       RCALCT         ,&! real equiv of CALCT,U to use as more
       RCALCU           !   efficient multiplicative mask
 
+   !dir$ attributes offload : mic :: KMTN
+   !dir$ attributes offload : mic :: KMTE
    integer (POP_i4), dimension(nx_block,ny_block,max_blocks_clinic), &
       public :: &
       KMTN,KMTS,KMTE,KMTW   ,&! KMT field at neighbor points

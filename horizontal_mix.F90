@@ -523,6 +523,7 @@
      WORK                 ! temporary to hold tavg field
    real (POP_r8), dimension(nx_block,ny_block,nt) :: &
       TDTK                ! Hdiff(T) for nth tracer at level k from submeso_flux code
+
    real (POP_r8) :: &
       start_time,end_time ! Timers
 
