@@ -3168,6 +3168,7 @@
 ! !IROUTINE: ugrid_to_tgrid
 ! !INTERFACE:
 
+ !dir$ attributes offload:mic :: ugrid_to_tgrid 
  subroutine ugrid_to_tgrid(ARRAY_TGRID, ARRAY_UGRID, iblock)
 
 ! !DESCRIPTION:

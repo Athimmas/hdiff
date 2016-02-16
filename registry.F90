@@ -75,7 +75,7 @@
  
  end subroutine init_registry
 
- 
+ !dir$ attributes offload:mic :: registry_match 
  function registry_match (string)
 
 !-----------------------------------------------------------------------
@@ -122,7 +122,7 @@
      registry_failure_count = 0
  end subroutine reset_registry_failure_count
  
- 
+ !dir$ attributes offload:mic :: register_string 
  subroutine register_string (string)
 
 !-----------------------------------------------------------------------

@@ -246,6 +246,7 @@
 ! !IROUTINE: state
 ! !INTERFACE:
 
+ !dir$ attributes offload:mic :: state
  subroutine state(k, kk, TEMPK, SALTK, this_block, &
                          RHOOUT, RHOFULL, DRHODT, DRHODS)
 
@@ -346,8 +347,9 @@
 
    case (state_range_check)
 
-      call exit_POP(sigAbort,  &
-          '(state) ERROR unsupported option -- must define time flag and use check_time_flag')
+      print *,"'(state) ERROR unsupported option -- must define time flag and use check_time_flag')"
+      !call exit_POP(sigAbort,  &
+      !    '(state) ERROR unsupported option -- must define time flag and use check_time_flag')
 !***  if (time_to_do(freq_opt_nstep, state_range_freq)) then
 
          ib = this_block%ib
@@ -408,7 +410,8 @@
 
       SQ  = c1000*SQ
 #ifdef CCSMCOUPLED
-      call shr_vmath_sqrt(SQ, SQR, nx_block*ny_block)
+      !call shr_vmath_sqrt(SQ, SQR, nx_block*ny_block)
+      SQR = sqrt(SQ) 
 #else
       SQR = sqrt(SQ)
 #endif

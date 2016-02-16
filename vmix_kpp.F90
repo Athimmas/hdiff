@@ -3035,6 +3035,7 @@
 ! !IROUTINE: smooth_hblt
 ! !INTERFACE:
 
+ !dir$ attributes offload:mic :: smooth_hblt 
  subroutine smooth_hblt (overwrite_hblt, use_hmxl, &
                          bid, HBLT, KBL, SMOOTH_OUT)
 
@@ -3104,22 +3105,26 @@
    if ( overwrite_hblt  .and.  ( .not.present(KBL)  .or.        &
                                  .not.present(HBLT) ) ) then      
      message = 'incorrect subroutine arguments for smooth_hblt, error # 1'
-     call exit_POP (sigAbort, trim(message))
+     print *,message
+     !call exit_POP (sigAbort, trim(message))
    endif
 
    if ( .not.overwrite_hblt  .and.  .not.present(SMOOTH_OUT) ) then 
+     print *,message 
      message = 'incorrect subroutine arguments for smooth_hblt, error # 2'
-     call exit_POP (sigAbort, trim(message))
+     !call exit_POP (sigAbort, trim(message))
    endif
 
    if ( use_hmxl .and. .not.present(SMOOTH_OUT) ) then          
      message = 'incorrect subroutine arguments for smooth_hblt, error # 3'
-     call exit_POP (sigAbort, trim(message))
+     print *,message
+     !call exit_POP (sigAbort, trim(message))
    endif
 
    if ( overwrite_hblt  .and.  use_hmxl ) then                  
      message = 'incorrect subroutine arguments for smooth_hblt, error # 4'
-     call exit_POP (sigAbort, trim(message))
+     print *,message 
+     !call exit_POP (sigAbort, trim(message))
    endif
 
 !-----------------------------------------------------------------------

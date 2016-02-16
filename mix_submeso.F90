@@ -321,6 +321,7 @@
 ! !IROUTINE: submeso_sf 
 ! !INTERFACE:
 
+   !dir$ attributes offload:mic :: submeso_sf
    subroutine submeso_sf ( TMIX, this_block )
 
 ! !DESCRIPTION:
@@ -471,7 +472,7 @@
 
 #ifdef CCSMCOUPLED
    if ( any(CONTINUE_INTEGRAL) ) then
-     call shr_sys_abort ('Incorrect mixed layer depth in submeso subroutine (I)')
+     print *,'Incorrect mixed layer depth in submeso subroutine (I)'
    endif
 #endif
 
@@ -571,7 +572,7 @@
 
 #ifdef CCSMCOUPLED
      if ( any(CONTINUE_INTEGRAL) ) then
-       call shr_sys_abort ('Incorrect mixed layer depth in submeso subroutine (II)')
+       print *,'Incorrect mixed layer depth in submeso subroutine (II)'
      endif
 #endif
 
@@ -734,12 +735,12 @@
      if ( mix_pass /= 1 ) then
 
        if ( k == 1 ) then
-         call accumulate_tavg_field (HLS, tavg_HLS_SUBM, bid, 1)  
+         !call accumulate_tavg_field (HLS, tavg_HLS_SUBM, bid, 1)  
        endif
 
-       call accumulate_tavg_field (U_SUBM, tavg_USUBM, bid, k)
-       call accumulate_tavg_field (V_SUBM, tavg_VSUBM, bid, k)
-       call accumulate_tavg_field (WTOP_SUBM, tavg_WSUBM, bid, k) 
+       !call accumulate_tavg_field (U_SUBM, tavg_USUBM, bid, k)
+       !call accumulate_tavg_field (V_SUBM, tavg_VSUBM, bid, k)
+       !call accumulate_tavg_field (WTOP_SUBM, tavg_WSUBM, bid, k) 
 
        if (accumulate_tavg_now(tavg_ADVT_SUBM) ) then
 
@@ -762,7 +763,7 @@
            enddo
          enddo
 
-         call accumulate_tavg_field (WORK1, tavg_ADVT_SUBM, bid, k)
+         !call accumulate_tavg_field (WORK1, tavg_ADVT_SUBM, bid, k)
 
        endif
 
@@ -787,7 +788,7 @@
            enddo
          enddo
 
-         call accumulate_tavg_field (WORK1, tavg_ADVS_SUBM, bid, k)
+         !call accumulate_tavg_field (WORK1, tavg_ADVS_SUBM, bid, k)
 
        endif
 
@@ -801,7 +802,7 @@
            WORK2 = WORK1 * (    TMIX(:,:,k,1)  &
                       + eoshift(TMIX(:,:,k,1), dim=2, shift=1) )
 
-           call accumulate_tavg_field (WORK2, tavg_VNT_SUBM, bid, k)
+       !   call accumulate_tavg_field (WORK2, tavg_VNT_SUBM, bid, k)
 
          endif
 
@@ -810,7 +811,7 @@
            WORK2 = WORK1 * (    TMIX(:,:,k,2)  &
                       + eoshift(TMIX(:,:,k,2), dim=2, shift=1) )
 
-           call accumulate_tavg_field (WORK2, tavg_VNS_SUBM, bid, k)
+       !    call accumulate_tavg_field (WORK2, tavg_VNS_SUBM, bid, k)
 
          endif
 
@@ -841,6 +842,7 @@
 ! !IROUTINE: submeso_flux
 ! !INTERFACE:
 
+   !dir$ attributes offload:mic :: submeso_flux
    subroutine submeso_flux (k, GTK, TMIX, tavg_HDIFE_TRACER, &
                      tavg_HDIFN_TRACER, tavg_HDIFB_TRACER, this_block)
 
@@ -922,7 +924,7 @@
           do j=1,ny_block
             do i=1,nx_block-1
               FX(i,j,n) = CX(i,j)                          &
-               * ( SF_SUBM_X(i  ,j,ieast,ktp,k,bid) * TZ(i,j,k,n,bid)                        &
+               * ( SF_SUBM_X(i  ,j,ieast,ktp,k,bid) * TZ(i,j,k,n,bid)                      &
                  + SF_SUBM_X(i  ,j,ieast,kbt,k,bid) * TZ(i,j,kp1,n,bid)                    &
                  + SF_SUBM_X(i+1,j,iwest,ktp,k,bid) * TZ(i+1,j,k,n,bid)                    &
                  + SF_SUBM_X(i+1,j,iwest,kbt,k,bid) * TZ(i+1,j,kp1,n,bid) )
@@ -936,7 +938,7 @@
           do j=1,ny_block-1
             do i=1,nx_block
               FY(i,j,n) =  CY(i,j)                          &
-               * ( SF_SUBM_Y(i,j  ,jnorth,ktp,k,bid) * TZ(i,j,k,n,bid)                        &
+               * ( SF_SUBM_Y(i,j  ,jnorth,ktp,k,bid) * TZ(i,j,k,n,bid)                      &
                  + SF_SUBM_Y(i,j  ,jnorth,kbt,k,bid) * TZ(i,j,kp1,n,bid)                    &
                  + SF_SUBM_Y(i,j+1,jsouth,ktp,k,bid) * TZ(i,j+1,k,n,bid)                    &
                  + SF_SUBM_Y(i,j+1,jsouth,kbt,k,bid) * TZ(i,j+1,kp1,n,bid) )
@@ -1035,7 +1037,7 @@
               WORK1(i,j) = FX(i,j,n)*dzr(k)*TAREA_R(i,j,bid)
             enddo
             enddo
-            call accumulate_tavg_field(WORK1,tavg_HDIFE_TRACER(n),bid,k)
+            !call accumulate_tavg_field(WORK1,tavg_HDIFE_TRACER(n),bid,k)
           endif
 
           if (accumulate_tavg_now(tavg_HDIFN_TRACER(n))) then
@@ -1044,7 +1046,7 @@
               WORK1(i,j) = FY(i,j,n)*dzr(k)*TAREA_R(i,j,bid)
             enddo
             enddo
-            call accumulate_tavg_field(WORK1,tavg_HDIFN_TRACER(n),bid,k)
+            !call accumulate_tavg_field(WORK1,tavg_HDIFN_TRACER(n),bid,k)
           endif
 
           if (accumulate_tavg_now(tavg_HDIFB_TRACER(n))) then
@@ -1053,7 +1055,7 @@
               WORK1(i,j) = FZTOP_SUBM(i,j,n,bid)*dzr(k)*TAREA_R(i,j,bid)
             enddo
             enddo
-            call accumulate_tavg_field(WORK1,tavg_HDIFB_TRACER(n),bid,k)
+            !call accumulate_tavg_field(WORK1,tavg_HDIFB_TRACER(n),bid,k)
           endif
       endif   ! mix_pass ne 1
 

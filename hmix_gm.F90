@@ -1229,7 +1229,7 @@
       WORK3  = c0
       WORK4  = c0
 
-      if ( .not. implicit_vertical_mix )  print "Error in hmix_gm if ( .not. implicit_vertical_mix )"
+      if ( .not. implicit_vertical_mix )  print *, "Error in hmix_gm if ( .not. implicit_vertical_mix )"
         !call exit_POP (sigAbort, &
          !'implicit vertical mixing must be used with GM horiz mixing')
 
@@ -2477,6 +2477,7 @@
 ! !IROUTINE: kappa_lon_lat_vmhs 
 ! !INTERFACE:
 
+      !dir$ attributes offload:mic :: kappa_lon_lat_vmhs
       subroutine kappa_lon_lat_vmhs (TMIX, UMIX, VMIX, this_block)
 
 ! !DESCRIPTION:
@@ -2714,6 +2715,7 @@
 
 ! !INTERFACE:
 
+      !dir$ attributes offload:mic :: kappa_eg
       subroutine kappa_eg (TMIX, UMIX, VMIX, this_block)
 
 ! !DESCRIPTION:
@@ -2916,7 +2918,7 @@
 !BOP
 ! !IROUTINE: kappa_lon_lat_hdgr 
 ! !INTERFACE:
-
+      !dir$ attributes offload:mic :: kappa_lon_lat_hdgr
       subroutine kappa_lon_lat_hdgr (TMIX, this_block)
 
 ! !DESCRIPTION:
@@ -3143,6 +3145,7 @@
 ! !IROUTINE: kappa_lon_lat_dradius 
 ! !INTERFACE:
 
+      !dir$ attributes offload:mic :: kappa_lon_lat_dradius
       subroutine kappa_lon_lat_dradius (this_block)
 
 ! !DESCRIPTION:
@@ -3262,6 +3265,7 @@
 ! !IROUTINE: buoyancy_frequency_dependent_profile 
 ! !INTERFACE:
 
+      !dir$ attributes offload:mic :: buoyancy_frequency_dependent_profile
       subroutine buoyancy_frequency_dependent_profile (TMIX, this_block)
 
 ! !DESCRIPTION:
@@ -3465,6 +3469,7 @@
 ! !IROUTINE: transition_layer 
 ! !INTERFACE:
 
+      !dir$ attributes offload:mic :: transition_layer
       subroutine transition_layer ( this_block )
 
 ! !DESCRIPTION:
@@ -3571,8 +3576,9 @@
 #ifdef CCSMCOUPLED
 #ifndef _HIRES
       if ( any(COMPUTE_TLT) ) then
-        call shr_sys_abort ('Incorrect DIABATIC_DEPTH value in TLT'  &
-                        //  ' computation')
+        !call shr_sys_abort ('Incorrect DIABATIC_DEPTH value in TLT'  &
+        !                //  ' computation')
+        print *,"Incorrect DIABATIC_DEPTH value in TLT computation"
       endif
 #endif
 #endif
@@ -3727,7 +3733,7 @@
 #ifdef CCSMCOUPLED
 #ifndef _HIRES
       if ( any(COMPUTE_TLT) ) then
-        call shr_sys_abort ('Incorrect TLT computations')
+        print *,'Incorrect TLT computations'
       endif
 #endif
 #endif
@@ -3789,7 +3795,7 @@
 #ifdef CCSMCOUPLED
 #ifndef _HIRES
       if ( any(COMPUTE_TLT) ) then
-        call shr_sys_abort ('Incorrect TLT%INTERIOR_DEPTH computation')
+        print *,'Incorrect TLT%INTERIOR_DEPTH computation'
       endif
 #endif
 #endif
@@ -3811,6 +3817,7 @@
 ! !IROUTINE: merged_streamfunction 
 ! !INTERFACE:
 
+      !dir$ attributes offload:mic :: merged_streamfunction
       subroutine merged_streamfunction ( this_block )
 
 ! !DESCRIPTION:
@@ -4216,6 +4223,7 @@
 ! !IROUTINE: apply_vertical_profile_to_isop_hor_diff 
 ! !INTERFACE:
 
+      !dir$ attributes offload:mic :: apply_vertical_profile_to_isop_hor_diff   
       subroutine apply_vertical_profile_to_isop_hor_diff ( this_block ) 
 
 ! !DESCRIPTION:

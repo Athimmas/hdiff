@@ -374,27 +374,30 @@
    logical (log_kind) :: &
       laccel              ! flag for acceleration
 
+   !dir$ attributes offload : mic :: dtu
    real (r8) ::          &
       dt_count          ,&! input count to determine dtt
       dtt               ,&! tracer timestep (sec)
       dtt_input         ,&! tracer timestep (sec) as specified in namelist
                           !   input; may be different from restart value
-      dtu               ,&! momentum timestep (sec)
       dtp               ,&! barotropic timestep (sec)
       c2dtu             ,&!
       c2dtp             ,&!
       c2dtq             ,&!
       dtuxcel           ,&! factor to multiply MOMENTUM timestep
       stepsize          ,&! size of present timestep (sec)
-      stepsize_next       ! size of next timestep (sec)
+      stepsize_next     ,&! size of next timestep (sec)
+      dtu               ! momentum timestep (sec)
 
    real (r8), dimension(km) :: &
       dttxcel           ,&! array for depth-dependent acceleration
-      dt                ,&! time step at each level
       c2dtt             ,&
       dztxcel           ,&
-      dzwxcel
+      dzwxcel           !,&
+      !dt                ! time step at each level
 
+   !dir$ attributes offload:mic :: dt
+   real (r8), public, dimension(km) :: dt
 !-----------------------------------------------------------------------
 !
 !  time-centering and mixing variables

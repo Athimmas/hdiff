@@ -59,13 +59,18 @@
 
 ! !PUBLIC VARIABLES
 
+  !dir$ attributes offload:mic :: hmix_tracer_itype
   integer (POP_i4) , public :: hmix_tracer_itype !users choice for type of mixing
 
+  !dir$ attributes offload:mic :: tavg_HDIFE_TRACER
+  !dir$ attributes offload:mic :: tavg_HDIFN_TRACER
+  !dir$ attributes offload:mic :: tavg_HDIFB_TRACER
   integer (POP_i4) ,public ,dimension(nt) :: &
       tavg_HDIFE_TRACER,            &! tavg id for east face diffusive flux of tracer
       tavg_HDIFN_TRACER,            &! tavg id for north face diffusive flux of tracer
       tavg_HDIFB_TRACER              ! tavg id for bottom face diffusive flux of tracer
 
+   !dir$ attributes offload:mic :: lsubmesoscale_mixing
    logical (log_kind) ,public ::    &
       lsubmesoscale_mixing           ! if true, submesoscale mixing is on
   
@@ -588,25 +593,25 @@
 !
 !-----------------------------------------------------------------------
 
-   !if (accumulate_tavg_now(tavg_HDIFT)) then
-   !  WORK = c0
-   !  if (partial_bottom_cells) then
-   !     where (k <= KMT(:,:,bid)) WORK = DZT(:,:,k,bid)*HDTK(:,:,1)
-   !  else
-   !     where (k <= KMT(:,:,bid)) WORK = dz(k)*HDTK(:,:,1)
-   !  endif
-   !  call accumulate_tavg_field(WORK,tavg_HDIFT,bid,k)
-   !endif
+   if (accumulate_tavg_now(tavg_HDIFT)) then
+     WORK = c0
+     if (partial_bottom_cells) then
+        where (k <= KMT(:,:,bid)) WORK = DZT(:,:,k,bid)*HDTK(:,:,1)
+     else
+        where (k <= KMT(:,:,bid)) WORK = dz(k)*HDTK(:,:,1)
+     endif
+     !call accumulate_tavg_field(WORK,tavg_HDIFT,bid,k)
+   endif
 
-   !if (accumulate_tavg_now(tavg_HDIFS)) then
-   !  WORK = c0
-   !  if (partial_bottom_cells) then
-   !     where (k <= KMT(:,:,bid)) WORK = DZT(:,:,k,bid)*HDTK(:,:,2)
-   !  else
-   !     where (k <= KMT(:,:,bid)) WORK = dz(k)*HDTK(:,:,2)
-   !  endif
+   if (accumulate_tavg_now(tavg_HDIFS)) then
+     WORK = c0
+     if (partial_bottom_cells) then
+        where (k <= KMT(:,:,bid)) WORK = DZT(:,:,k,bid)*HDTK(:,:,2)
+     else
+        where (k <= KMT(:,:,bid)) WORK = dz(k)*HDTK(:,:,2)
+     endif
    !  call accumulate_tavg_field(WORK,tavg_HDIFS,bid,k)
-   !endif
+   endif
 
 !-----------------------------------------------------------------------
 !EOC

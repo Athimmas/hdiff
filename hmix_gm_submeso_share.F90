@@ -145,7 +145,8 @@
 
 ! !IROUTINE: tracer_diffs_and_isopyc_slopes
 ! !INTERFACE:
-   !dir$ offload attributes : mic :: tracer_diffs_and_isopyc_slopes
+
+   !dir$ attributes offload : mic :: tracer_diffs_and_isopyc_slopes
    subroutine tracer_diffs_and_isopyc_slopes (TMIX, this_block)
 
 ! !DESCRIPTION:

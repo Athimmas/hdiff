@@ -2974,6 +2974,7 @@
 ! !IROUTINE: accumulate_tavg_now
 ! !INTERFACE:
 
+ !dir$ attributes offload:mic :: accumulate_tavg_now 
  function accumulate_tavg_now(field_id)
 
 ! !DESCRIPTION:
@@ -3627,6 +3628,7 @@
 ! !IROUTINE: tavg_requested
 ! !INTERFACE:
 
+ !dir$ attributes offload : mic :: tavg_requested
  function tavg_requested(id)
 
 ! !DESCRIPTION:
@@ -3660,10 +3662,11 @@
 !-----------------------------------------------------------------------
 
    if (id < 1 .or. id > num_avail_tavg_fields) then
-      write(stdout,*) '(tavg_requested) id = ', id; call POP_IOUnitsFlush(stdout)
-      exit_string = 'FATAL ERROR: invalid tavg id'
-      call document ('tavg_requested', exit_string)
-      call exit_POP (sigAbort,exit_string,out_unit=stdout)
+      !write(stdout,*) '(tavg_requested) id = ', id; call POP_IOUnitsFlush(stdout)
+      !exit_string = 'FATAL ERROR: invalid tavg id'
+      !call document ('tavg_requested', exit_string)
+      !call exit_POP (sigAbort,exit_string,out_unit=stdout)
+      print *, "error at tavg_requested" 
    endif
 
    if (avail_tavg_fields(id)%buf_loc > 0) then
@@ -3739,6 +3742,7 @@
 ! !IROUTINE: tavg_in_which_stream(id)
 ! !INTERFACE:
 
+ !dir$ attributes offload:mic :: tavg_in_which_stream 
  function tavg_in_which_stream(id)
 
 ! !DESCRIPTION:
@@ -3773,11 +3777,12 @@
    stream_number = avail_tavg_fields(id)%stream_number
 
    if (stream_number <= 0 .or. stream_number > max_avail_tavg_streams) then
-     call document ('tavg_in_which_stream', 'id', id)
-     write(stdout,*) '(tavg_in_which_stream) stream_number = ', stream_number
-     exit_string = 'FATAL ERROR: not in any stream'
-     call document ('tavg_in_which_stream', exit_string)
-     call exit_POP (sigAbort,exit_string,out_unit=stdout)
+     !call document ('tavg_in_which_stream', 'id', id)
+     !write(stdout,*) '(tavg_in_which_stream) stream_number = ', stream_number
+     !exit_string = 'FATAL ERROR: not in any stream'
+     !call document ('tavg_in_which_stream', exit_string)
+     !call exit_POP (sigAbort,exit_string,out_unit=stdout)
+     print *,"FATAL ERROR: not in any stream"
    endif
 
    tavg_in_which_stream = stream_number
