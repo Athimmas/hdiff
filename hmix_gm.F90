@@ -65,15 +65,24 @@
          kappa_depth          ! depth dependence for KAPPA 
 
       !dir$ attributes offload:mic :: WTOP_ISOP
-      !dir$ attributes offload:mic :: WBOT_ISOP 
-      real (r8), dimension(:,:,:), allocatable :: &
+      !dir$ attributes offload:mic :: WBOT_ISOP
+      !dir$ attributes offload:mic :: HXYS
+      !dir$ attributes offload:mic :: HYXW
+      !dir$ attributes offload:mic :: RB
+      !dir$ attributes offload:mic :: RBR
+      !dir$ attributes offload:mic :: BTP
+      !dir$ attributes offload:mic :: BL_DEPTH
+      !dir$ attributes offload:mic :: UIT
+      !dir$ attributes offload:mic :: VIT   
+      real (r8), dimension(:,:,:), allocatable ,public :: &
          HYXW, HXYS, &        ! west and south-shifted values of above
          RB,         &        ! Rossby radius
          RBR,        &        ! inverse of Rossby radius
          BTP,        &        ! beta plane approximation
          BL_DEPTH,   &        ! boundary layer depth
-         UIT, VIT,   &        ! work arrays for isopycnal mixing velocities
-         WTOP_ISOP, WBOT_ISOP ! vertical component of isopycnal velocities
+         UIT, VIT             ! work arrays for isopycnal mixing velocities
+
+      real (r8), dimension(:,:,:), allocatable, public :: WTOP_ISOP, WBOT_ISOP !vertical component of isopycnal velocities
 
       real (r8), dimension(:,:,:,:,:,:), allocatable :: &
          SF_SLX, SF_SLY       ! components of the merged streamfunction
@@ -112,19 +121,25 @@
 !     coefficients in cm^2/s and KAPPA_LATERAL is not used!
 !
 !-----------------------------------------------------------------------
+      !dir$ attributes offload:mic :: KAPPA_ISOP
+      !dir$ attributes offload:mic :: KAPPA_THIC
+      real (r8), dimension(:,:,:,:,:), allocatable, public :: &
+       KAPPA_ISOP, &      ! 3D isopycnal diffusion coefficient
+                            !  for top and bottom half of a grid cell
+       KAPPA_THIC           ! 3D thickness diffusion coefficient
+                            !  for top and bottom half of a grid cell
 
-      real (r8), dimension(:,:,:,:,:), allocatable :: &
-         KAPPA_ISOP, &      ! 3D isopycnal diffusion coefficient
-                            !  for top and bottom half of a grid cell
-         KAPPA_THIC, &      ! 3D thickness diffusion coefficient
-                            !  for top and bottom half of a grid cell
+      !dir$ attributes offload:mic :: HOR_DIFF
+      real (r8), dimension(:,:,:,:,:), public ,allocatable :: &
          HOR_DIFF           ! 3D horizontal diffusion coefficient
                             !  for top and bottom half of a grid cell
-
-      real (r8), dimension(:,:,:), allocatable :: &
+      
+      !dir$ attributes offload:mic :: KAPPA_LATERAL
+      real (r8), dimension(:,:,:), allocatable ,public :: &
          KAPPA_LATERAL      ! horizontal variation of KAPPA in cm^2/s
 
-      real (r8), dimension(:,:,:,:), allocatable :: &
+      !dir$ attributes offload:mic :: KAPPA_VERTICAL 
+      real (r8), dimension(:,:,:,:), allocatable ,public :: &
          KAPPA_VERTICAL     ! vertical variation of KAPPA (unitless),
                             !  e.g. normalized buoyancy frequency dependent 
                             !  profiles at the tracer grid points
@@ -238,6 +253,7 @@
                                 !  ( = 1 for zt, = 2 for zw )
       end type tlt_info
 
+      !dir$ attributes offload:mic :: TLT
       type (tlt_info) :: &
          TLT                    ! transition layer thickness related fields 
 
