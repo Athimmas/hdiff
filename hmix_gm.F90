@@ -84,10 +84,13 @@
 
       real (r8), dimension(:,:,:), allocatable, public :: WTOP_ISOP, WBOT_ISOP !vertical component of isopycnal velocities
 
-      real (r8), dimension(:,:,:,:,:,:), allocatable :: &
+      !dir$ attributes offload:mic :: SF_SLX
+      !dir$ attributes offload:mic :: SF_SLY
+      real (r8), dimension(:,:,:,:,:,:), allocatable ,public :: &
          SF_SLX, SF_SLY       ! components of the merged streamfunction
 
-      real (r8), dimension(:,:,:,:,:), allocatable :: &
+      !dir$ attributes offload:mic :: SLA_SAVE
+      real (r8), dimension(:,:,:,:,:), allocatable , public :: &
          SLA_SAVE             ! isopycnal slopes
 
       real (r8), dimension(:,:,:,:), allocatable :: &
@@ -184,7 +187,11 @@
          kappa_freq_every_time_step = 2, &
          kappa_freq_once_a_day      = 3  
 
-      integer (int_kind) :: &
+      !dir$ attributes offload:mic :: kappa_thic_type
+      !dir$ attributes offload:mic :: kappa_isop_type
+      !dir$ attributes offload:mic :: kappa_freq
+      !dir$ attributes offload:mic :: slope_control  
+      integer (int_kind), public :: &
          kappa_isop_type,   &   ! choice of KAPPA_ISOP
          kappa_thic_type,   &   ! choice of KAPPA_THIC
          kappa_freq,        &   ! frequency of KAPPA computations

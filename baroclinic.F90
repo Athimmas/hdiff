@@ -68,7 +68,8 @@
        set_interior_passive_tracers_3D
    use hmix_gm_submeso_share, only: HYX,HXY,SLX,SLY,RZ_SAVE,RX,RY,TX,TY,TZ
    use hmix_gm, only: WTOP_ISOP,WBOT_ISOP,HYXW,HXYS,UIT,VIT,RB,RBR,BL_DEPTH, &
-                      KAPPA_ISOP,KAPPA_THIC,HOR_DIFF,KAPPA_VERTICAL,KAPPA_LATERAL
+                      KAPPA_ISOP,KAPPA_THIC,HOR_DIFF,KAPPA_VERTICAL,KAPPA_LATERAL, &
+                      kappa_isop_type,kappa_thic_type, kappa_freq,slope_control,SLA_SAVE   
    use exit_mod, only: sigAbort, exit_pop, flushm
    use overflows
    use overflow_type
@@ -1733,7 +1734,8 @@
 
    !dir$ offload begin target(mic:0)in(kk,TMIX,UMIX,VMIX,this_block,hmix_tracer_itype,tavg_HDIFE_TRACER,tavg_HDIFN_TRACER,tavg_HDIFB_TRACER) &
    !dir$ in(lsubmesoscale_mixing,dt,dtu,HYX,HXY,SLX,SLY,RZ_SAVE,RX,RY,TX,TY,TZ,KMT,KMTE,KMTN,implicit_vertical_mix,vmix_itype,KPP_HBLT)      &
-   !dir$ in(VDC_GM,WTOP_ISOP,WBOT_ISOP,HYXW,HXYS,UIT,VIT,RB,RBR,BL_DEPTH,KAPPA_ISOP,KAPPA_THIC,HOR_DIFF,KAPPA_VERTICAL,KAPPA_LATERAL)out(WORKN_PHI)
+   !dir$ in(VDC_GM,WTOP_ISOP,WBOT_ISOP,HYXW,HXYS,UIT,VIT,RB,RBR,BL_DEPTH,KAPPA_ISOP,KAPPA_THIC,HOR_DIFF,KAPPA_VERTICAL,KAPPA_LATERAL) &
+   !dir$ in(kappa_isop_type,kappa_thic_type, kappa_freq,slope_control,SLA_SAVE) out(WORKN_PHI) 
 
    do kk=1,km
    call hdifft(kk, WORKN_PHI(:,:,:,kk), TMIX, UMIX, VMIX, this_block)
