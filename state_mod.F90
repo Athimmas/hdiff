@@ -206,12 +206,17 @@
 !
 !-----------------------------------------------------------------------
 
-   real (r8), dimension(:), allocatable :: &
+   !dir$ attributes offload:mic :: to
+   !dir$ attributes offload:mic :: so
+   real (r8), dimension(:), allocatable, public :: &
       to,                &! reference temperature for level k
-      so,                &! reference salinity    for level k
-      sigo                ! reference density     for level k
+      so                
+   !dir$ attributes offload:mic :: sigo
+   real (r8), dimension(:), allocatable, public   :: &
+      sigo
 
-   real (r8), dimension(:,:), allocatable :: & 
+   !dir$ attributes offload:mic :: state_coeffs
+   real (r8), dimension(:,:), allocatable, public :: & 
       state_coeffs        ! coefficients for polynomial eos
 
 !-----------------------------------------------------------------------
@@ -362,7 +367,7 @@
                                k <= KMT(ib:ie,jb:je,bid))
 
          if (out_of_range /= 0)                                      &
-            write(stdout,'(a9,i6,a44,i3)') 'WARNING: ',out_of_range, &
+            write (*,'(a9,i6,a44,i3)'), 'WARNING: ',out_of_range, &
                   'points outside of valid temp range at level ',kk
 
          out_of_range = count((SALTK(ib:ie,jb:je) < smin(kk) .or.   &
@@ -370,7 +375,7 @@
                                k <= KMT(ib:ie,jb:je,bid))
 
          if (out_of_range /= 0)                                      &
-            write(stdout,'(a9,i6,a44,i3)') 'WARNING: ',out_of_range, &
+            write (*,'(a9,i6,a44,i3)'), 'WARNING: ',out_of_range, &
                   'points outside of valid salt range at level ',kk
 
 !***  endif

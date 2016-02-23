@@ -27,14 +27,15 @@
    use domain, only: nblocks_clinic, blocks_clinic, POP_haloClinic
    use constants, only: delim_fmt, blank_fmt, p5, field_loc_center,          &
        field_type_scalar, c0, c1, c2, grav, ndelim_fmt,                      &
-       hflux_factor, salinity_factor, salt_to_ppt,pi
+       hflux_factor, salinity_factor, salt_to_ppt,pi,radian
    use prognostic, only: TRACER, UVEL, VVEL, max_blocks_clinic, km, mixtime, &
        RHO, newtime, oldtime, curtime, PSURF, nt
    use broadcast, only: broadcast_scalar
    use communicate, only: my_task, master_task
    use grid, only: FCOR, DZU, HUR, KMU, KMT, sfc_layer_type,                 &
        sfc_layer_varthick, partial_bottom_cells, dz, DZT, CALCT, dzw,        &
-       dzr,KMTE,KMTN,dzwr,zw,DYT,DXT,HUW,HUS,TAREA_R,HTN,HTE,zt
+       dzr,KMTE,KMTN,dzwr,zw,DYT,DXT,HUW,HUS,TAREA_R,HTN,HTE,zt,partial_bottom_cells, &
+       FCORT,TLAT
    use advection, only: advu, advt, comp_flux_vel_ghost
    use pressure_grad, only: lpressure_avg, gradp
    use horizontal_mix, only: hdiffu, hdifft, iso_impvmixt_tavg , hmix_tracer_itype, &
@@ -43,19 +44,19 @@
    use vertical_mix, only: vmix_coeffs, implicit_vertical_mix, vdiffu,       &
        vdifft, impvmixt, impvmixu, impvmixt_correct, convad, impvmixt_tavg,  &
        vmix_itype,VDC_GM,VDC 
-   use vmix_kpp, only: add_kpp_sources,KPP_HBLT,HMXL
+   use vmix_kpp, only: add_kpp_sources,KPP_HBLT,HMXL,zgrid,linertial
    use diagnostics, only: ldiag_cfl, cfl_check, ldiag_global,                &
        DIAG_KE_ADV_2D, DIAG_KE_PRESS_2D, DIAG_KE_HMIX_2D, DIAG_KE_VMIX_2D,   &
        DIAG_TRACER_HDIFF_2D, DIAG_PE_2D, DIAG_TRACER_ADV_2D,                 &
        DIAG_TRACER_SFC_FLX, DIAG_TRACER_VDIFF_2D, DIAG_TRACER_SOURCE_2D
    use movie, only: define_movie_field, movie_requested, update_movie_field
-   use state_mod, only: state
+   use state_mod, only: state,sigo,state_coeffs,to,so
    use ice, only: liceform, ice_formation, increment_tlast_ice
    use time_management, only: mix_pass, leapfrogts, impcor, c2dtu, beta,     &
-       gamma, c2dtt,dt,dtu , nsteps_total
+       gamma, c2dtt,dt,dtu , nsteps_total,eod_last
    use io_types, only: nml_in, nml_filename, stdout
    use tavg, only: define_tavg_field, accumulate_tavg_field, accumulate_tavg_now, &
-       tavg_method_max, tavg_method_min
+       tavg_method_max, tavg_method_min,ltavg_on,num_avail_tavg_fields
    use forcing_fields, only: STF, SMF, lsmft_avail, SMFT, TFW
    use forcing_shf, only: SHF_QSW
    use forcing_sfwf, only: lfw_as_salt_flx
@@ -1742,7 +1743,8 @@
    !dir$ in(kappa_isop_type,kappa_thic_type, kappa_freq,slope_control,SLA_SAVE,nsteps_total, ah,ah_bolus, ah_bkg_bottom,ah_bkg_srfbl) &
    !dir$ in(slm_r,slm_b,BUOY_FREQ_SQ,SIGMA_TOPO_MASK,VDC,dz,dzw,dzwr,zw,dzr,DYT,DXT,HUW,HUS,TAREA_R,HTN,HTE,pi) &
    !dir$ in(SF_SUBM_X,SF_SUBM_Y,luse_const_horiz_len_scale,hor_length_scale,TIME_SCALE,efficiency_factor) & 
-   !dir$ in(max_hor_grid_scale,FZTOP_SUBM,mix_pass,grav)out(WORKN_PHI) 
+   !dir$ in(max_hor_grid_scale,FZTOP_SUBM,mix_pass,grav,zgrid,DZT,partial_bottom_cells,FCORT,linertial,ldiag_cfl,radian,TLAT,eod_last) &
+   !dir$ in(ltavg_on,num_avail_tavg_fields,sigo,state_coeffs,to,so)out(WORKN_PHI) 
 
    do kk=1,km
    call hdifft(kk, WORKN_PHI(:,:,:,kk), TMIX, UMIX, VMIX, this_block)

@@ -132,8 +132,12 @@
       ice_ts              ,&!   an ice-formation timestep
       sample_qflux_ts       !   time to sample qflux for time avg 
 
+   !dir$ attributes offload:mic :: eod_last
+   logical (log_kind), public :: &! the last timestep was:
+      eod_last              !   at the end of the day
+
+
    logical (log_kind)   :: &! the last timestep was:
-      eod_last            ,&!   at the end of the day
       eom_last            ,&!   at the end of the month
       eoy_last            ,&!   at the end of the year
       midnight_last       ,&!   at midnight

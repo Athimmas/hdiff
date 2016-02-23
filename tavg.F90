@@ -128,8 +128,11 @@
    type (tavg_field_desc_ccsm), dimension(max_avail_tavg_fields) :: &
       avail_tavg_fields
 
-   integer (int_kind) ::                &
-      num_avail_tavg_fields      = 0,   &! current number of defined fields
+   !dir$ attributes offload:mic :: num_avail_tavg_fields
+   integer (int_kind) ,public ::        &
+      num_avail_tavg_fields      = 0    ! current number of defined fields
+
+   integer (int_kind) ::                &! current number of defined fields
       tavg_num_requested_fields,        &! number of fields requested
       tavg_num_contents_lines            ! number of lines in tavg_contents file
 
@@ -137,8 +140,8 @@
 !
 !  tavg stream information (support for separate tavg output "streams")
 !
-!-----------------------------------------------------------------------
-
+!----------------------------------------------------------------------
+   !dir$ attributes offload:mic :: ltavg_on
    type, public :: tavg_stream
       character (char_len) :: infile
       character (char_len) :: outfile
@@ -155,7 +158,7 @@
       integer (int_kind)   :: tavg_offset_month
       integer (int_kind)   :: tavg_offset_day
       integer (int_kind)   :: tavg_num_time_slices
-      logical (log_kind)   :: ltavg_on
+      logical (log_kind),public :: ltavg_on
       logical (log_kind)   :: ltavg_file_is_open
       logical (log_kind)   :: ltavg_fmt_in_nc
       logical (log_kind)   :: ltavg_fmt_out_nc

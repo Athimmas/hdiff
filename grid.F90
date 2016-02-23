@@ -70,6 +70,7 @@
       sfc_layer_rigid    = 2,  &! rigid lid surface layer
       sfc_layer_oldfree  = 3    ! old free surface form
 
+   !dir$ attributes offload:mic :: partial_bottom_cells
    logical (POP_logical), public ::    &
       partial_bottom_cells   ! flag for partial bottom cells
 
@@ -120,6 +121,8 @@
    !dir$ attributes offload:mic :: HUS  
    !dir$ attributes offload:mic :: HTN
    !dir$ attributes offload:mic :: HTE
+   !dir$ attributes offload:mic :: FCORT
+   !dir$ attributes offload:mic :: TLAT
    real (POP_r8), dimension(nx_block,ny_block,max_blocks_clinic), public :: &
       DXU, DYU            ,&! {x,y} spacing centered at U points
       DXT, DYT            ,&! {x,y} spacing centered at T points
@@ -140,6 +143,7 @@
 
    !*** 3d depth fields for partial bottom cells
 
+   !dir$ attributes offload:mic :: DZT
    real (POP_r8), dimension(:,:,:,:), allocatable, public :: &
       DZU, DZT               ! thickness of U,T cell for pbc
 

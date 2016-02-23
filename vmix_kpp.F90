@@ -79,6 +79,7 @@
       bckgrnd_vvc,    &! background value for viscosity
       bckgrnd_vdc      ! background value for diffusivity
 
+   !dir$ attributes offload:mic :: linertial
    logical (log_kind) :: &
       lrich,             &! flag for computing Ri-dependent mixing
       ldbl_diff,         &! flag for computing double-diffusive mixing
@@ -189,8 +190,13 @@
 !
 !-----------------------------------------------------------------------
 
+   !dir$ attributes offload : mic :: zgrid
+
+   real (r8), dimension(:), allocatable, public :: &
+      zgrid                 ! depth at cell interfaces
+
+
    real (r8), dimension(:), allocatable :: & 
-      zgrid,               &! depth at cell interfaces
       hwide                 ! layer thickness at interfaces
 
 !-----------------------------------------------------------------------
@@ -3137,6 +3143,7 @@
 !
 !-----------------------------------------------------------------------
 
+
    if ( use_hmxl ) then
      WORK2 = HMXL(:,:,bid)
    else
@@ -3177,6 +3184,7 @@
        endif
      enddo
    enddo
+
 
    do k=1,km
      !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(ztmp,j,i)NUM_THREADS(16)
@@ -3229,7 +3237,7 @@
      SMOOTH_OUT = WORK2
 
    endif
-  
+ 
 
 !-----------------------------------------------------------------------
 

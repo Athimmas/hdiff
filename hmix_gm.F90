@@ -1254,6 +1254,7 @@
 
       !start_time = omp_get_wtime() 
 
+
       bid = this_block%local_id
 
       U_ISOP = c0
@@ -1292,6 +1293,7 @@
       CY = merge(HXY(:,:,bid)*p25, c0, (k <= KMT (:,:,bid))   &
                                  .and. (k <= KMTN(:,:,bid)))
 
+
       if ( k == 1 ) then
 
         if ( transition_layer_on ) then
@@ -1302,6 +1304,7 @@
  
             call smooth_hblt ( .false., .true., bid,  &
                                SMOOTH_OUT=TLT%DIABATIC_DEPTH(:,:,bid) )
+
 
             !end_time = omp_get_wtime()
  
@@ -1334,6 +1337,7 @@
             enddo
           enddo
           !$OMP END PARALLEL DO
+
 
           !end_time = omp_get_wtime()
 
@@ -1383,6 +1387,7 @@
            ( ( kappa_freq == kappa_freq_every_time_step )           &
         .or. ( kappa_freq == kappa_freq_once_a_day .and. eod_last ) &
         .or. ( nsteps_total == 1 ) ) )  compute_kappa(bid) = .true.
+
 
         if ( compute_kappa(bid) ) then
 
@@ -1516,6 +1521,7 @@
         !close(10)
 
         !endif 
+
 !-----------------------------------------------------------------------
 !
 !     control slope of isopycnal surfaces or KAPPA
@@ -1885,7 +1891,7 @@
 !
 !-----------------------------------------------------------------------
 
-      start_time = omp_get_wtime()
+      !start_time = omp_get_wtime()
       
       if ( k < km ) then
 

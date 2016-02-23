@@ -118,6 +118,7 @@
    !  CSM shared constants to over-ride
 
    !dir$ attributes offload:mic :: grav
+   !dir$ attributes offload:mic :: rho_sw
    real (r8), public ::      &
       grav                  ,&! gravit. accel. (cm/s^2)
       omega                 ,&! angular vel. of Earth 1/s
@@ -138,6 +139,7 @@
       sea_ice_salinity      ,&! salinity of sea ice formed (psu)
       ocn_ref_salinity        ! ocean reference salinity (psu)
 
+   !dir$ attributes offload:mic :: radian
    real (r8), public :: &
       radian                           ! degree-radian conversion
 

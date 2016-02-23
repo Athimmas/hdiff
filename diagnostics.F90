@@ -60,6 +60,7 @@
 
 ! !PUBLIC DATA MEMBERS:
 
+   !dir$ attributes offload:mic :: ldiag_cfl
    logical (log_kind), public :: &
       ldiag_global,          &! time to compute global diagnostics
       ldiag_cfl,             &! time to compute cfl diagnostics
