@@ -93,6 +93,7 @@
       runid               ,&! an identifier for the run
       dt_option             ! method to determine tracer timestep size
 
+   !dir$ attributes offload : mic :: nsteps_total 
    integer (int_kind) :: &
       stop_count        ,&! num of stop_option intervals before stop
                           !   OR date (yyyymmdd) at which model stops
@@ -418,6 +419,7 @@
                           !  (or interval) to coincide with the end of 
                           !  a timestep
 
+   !dir$ attributes offload:mic :: mix_pass
    integer (int_kind) :: &
       tmix_iopt,         &! option for which time mixing to use
       time_mix_freq,     &! frequency of mixing

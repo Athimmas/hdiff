@@ -69,6 +69,7 @@
    integer (int_kind), parameter, public ::   &
       undefined_nf_int = NF90_FILL_INT
 
+   !dir$ attributes offload:mic :: pi
    real (r8), public :: &
       pi, pih, pi2            ! pi, pi/2 and 2pi
 
@@ -116,6 +117,7 @@
    ! these constants are defined in an init routine to allow
    !  CSM shared constants to over-ride
 
+   !dir$ attributes offload:mic :: grav
    real (r8), public ::      &
       grav                  ,&! gravit. accel. (cm/s^2)
       omega                 ,&! angular vel. of Earth 1/s

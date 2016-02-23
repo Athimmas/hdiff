@@ -61,10 +61,15 @@
    integer (int_kind), parameter :: &
       ktp = 1, kbt = 2      ! refer to the top and bottom halves of a
                                !  grid cell, respectively
+
+   !dir$ attributes offload:mic :: SF_SUBM_X
+   !dir$ attributes offload:mic :: SF_SUBM_Y
    real (r8), dimension(:,:,:,:,:,:), allocatable, public :: &
       SF_SUBM_X,  &       ! components of the submesoscale 
       SF_SUBM_Y           !  streamfunction
-   real (r8), dimension(:,:,:,:), allocatable :: &
+
+   !dir$ attributes offload:mic :: FZTOP_SUBM
+   real (r8), dimension(:,:,:,:), allocatable, public :: &
          FZTOP_SUBM 
 
 !-----------------------------------------------------------------------
@@ -89,11 +94,13 @@
       tavg_HLS_SUBM          ! horizontal length scale used in horizontal
                              !  buoyancy gradient scaling in submeso
 
-   real (r8), dimension(:,:,:), allocatable :: &
+   !dir$ attributes offload:mic :: TIME_SCALE
+   real (r8), dimension(:,:,:), allocatable, public :: &
       TIME_SCALE             ! time scale used in horizontal length scale
                              !  calculation
-
-   real (r8) :: &
+   
+   !dir$ attributes offload:mic :: max_hor_grid_scale
+   real (r8), public :: &
       max_hor_grid_scale     ! maximum horizontal grid scale allowed
 
 !-----------------------------------------------------------------------
@@ -102,7 +109,8 @@
 !
 !-----------------------------------------------------------------------
 
-   logical (log_kind) :: &
+   !dir$ attributes offload:mic :: luse_const_horiz_len_scale
+   logical (log_kind) ,public :: &
       luse_const_horiz_len_scale     ! if .true., then use a constant
                                      !  horizontal length scale given by
                                      !  hor_length_scale, otherwise the
@@ -110,8 +118,12 @@
                                      !  in space and time
 
    real (r8) :: &
+      time_scale_constant            ! 1 day <= time scale constant <= 1 week
+
+   !dir$ attributes offload:mic :: hor_length_scale
+   !dir$ attributes offload:mic :: efficiency_factor
+   real (r8),public :: &
       efficiency_factor,   &         ! 0.06 <= efficiency factor <= 0.08
-      time_scale_constant, &         ! 1 day <= time scale constant <= 1 week
       hor_length_scale               ! constant horizontal length scale used
                                      !  if luse_const_horiz_len_scale is true.
                                      !  if luse_const_horiz_len_scale is false,

@@ -27,14 +27,14 @@
    use domain, only: nblocks_clinic, blocks_clinic, POP_haloClinic
    use constants, only: delim_fmt, blank_fmt, p5, field_loc_center,          &
        field_type_scalar, c0, c1, c2, grav, ndelim_fmt,                      &
-       hflux_factor, salinity_factor, salt_to_ppt
+       hflux_factor, salinity_factor, salt_to_ppt,pi
    use prognostic, only: TRACER, UVEL, VVEL, max_blocks_clinic, km, mixtime, &
        RHO, newtime, oldtime, curtime, PSURF, nt
    use broadcast, only: broadcast_scalar
    use communicate, only: my_task, master_task
    use grid, only: FCOR, DZU, HUR, KMU, KMT, sfc_layer_type,                 &
        sfc_layer_varthick, partial_bottom_cells, dz, DZT, CALCT, dzw,        &
-       dzr,KMTE,KMTN
+       dzr,KMTE,KMTN,dzwr,zw,DYT,DXT,HUW,HUS,TAREA_R,HTN,HTE,zt
    use advection, only: advu, advt, comp_flux_vel_ghost
    use pressure_grad, only: lpressure_avg, gradp
    use horizontal_mix, only: hdiffu, hdifft, iso_impvmixt_tavg , hmix_tracer_itype, &
@@ -42,8 +42,8 @@
                              lsubmesoscale_mixing
    use vertical_mix, only: vmix_coeffs, implicit_vertical_mix, vdiffu,       &
        vdifft, impvmixt, impvmixu, impvmixt_correct, convad, impvmixt_tavg,  &
-       vmix_itype,VDC_GM 
-   use vmix_kpp, only: add_kpp_sources,KPP_HBLT
+       vmix_itype,VDC_GM,VDC 
+   use vmix_kpp, only: add_kpp_sources,KPP_HBLT,HMXL
    use diagnostics, only: ldiag_cfl, cfl_check, ldiag_global,                &
        DIAG_KE_ADV_2D, DIAG_KE_PRESS_2D, DIAG_KE_HMIX_2D, DIAG_KE_VMIX_2D,   &
        DIAG_TRACER_HDIFF_2D, DIAG_PE_2D, DIAG_TRACER_ADV_2D,                 &
@@ -52,7 +52,7 @@
    use state_mod, only: state
    use ice, only: liceform, ice_formation, increment_tlast_ice
    use time_management, only: mix_pass, leapfrogts, impcor, c2dtu, beta,     &
-       gamma, c2dtt,dt,dtu
+       gamma, c2dtt,dt,dtu , nsteps_total
    use io_types, only: nml_in, nml_filename, stdout
    use tavg, only: define_tavg_field, accumulate_tavg_field, accumulate_tavg_now, &
        tavg_method_max, tavg_method_min
@@ -67,12 +67,16 @@
        tavg_passive_tracers_baroclinic_correct, &
        set_interior_passive_tracers_3D
    use hmix_gm_submeso_share, only: HYX,HXY,SLX,SLY,RZ_SAVE,RX,RY,TX,TY,TZ
-   use hmix_gm, only: WTOP_ISOP,WBOT_ISOP,HYXW,HXYS,UIT,VIT,RB,RBR,BL_DEPTH, &
-                      KAPPA_ISOP,KAPPA_THIC,HOR_DIFF,KAPPA_VERTICAL,KAPPA_LATERAL, &
-                      kappa_isop_type,kappa_thic_type, kappa_freq,slope_control,SLA_SAVE   
+   use hmix_gm, only: WTOP_ISOP,WBOT_ISOP,HYXW,HXYS,UIT,VIT,RB,RBR,BL_DEPTH,              &
+                      KAPPA_ISOP,KAPPA_THIC,HOR_DIFF,KAPPA_VERTICAL,KAPPA_LATERAL,        &
+                      kappa_isop_type,kappa_thic_type, kappa_freq,slope_control,SLA_SAVE, &
+                      slm_r,slm_b,ah,ah_bolus,ah_bkg_bottom,ah_bkg_srfbl,BUOY_FREQ_SQ,    &
+                       SIGMA_TOPO_MASK
    use exit_mod, only: sigAbort, exit_pop, flushm
    use overflows
    use overflow_type
+   use mix_submeso, only: SF_SUBM_X,SF_SUBM_Y,luse_const_horiz_len_scale,hor_length_scale, &
+                    TIME_SCALE,efficiency_factor,max_hor_grid_scale,FZTOP_SUBM
 
    implicit none
    private
@@ -1733,9 +1737,12 @@
    if(k==1)then
 
    !dir$ offload begin target(mic:0)in(kk,TMIX,UMIX,VMIX,this_block,hmix_tracer_itype,tavg_HDIFE_TRACER,tavg_HDIFN_TRACER,tavg_HDIFB_TRACER) &
-   !dir$ in(lsubmesoscale_mixing,dt,dtu,HYX,HXY,SLX,SLY,RZ_SAVE,RX,RY,TX,TY,TZ,KMT,KMTE,KMTN,implicit_vertical_mix,vmix_itype,KPP_HBLT)      &
+   !dir$ in(lsubmesoscale_mixing,dt,dtu,HYX,HXY,SLX,SLY,RZ_SAVE,RX,RY,TX,TY,TZ,KMT,KMTE,KMTN,implicit_vertical_mix,vmix_itype,KPP_HBLT,HMXL) &
    !dir$ in(VDC_GM,WTOP_ISOP,WBOT_ISOP,HYXW,HXYS,UIT,VIT,RB,RBR,BL_DEPTH,KAPPA_ISOP,KAPPA_THIC,HOR_DIFF,KAPPA_VERTICAL,KAPPA_LATERAL) &
-   !dir$ in(kappa_isop_type,kappa_thic_type, kappa_freq,slope_control,SLA_SAVE) out(WORKN_PHI) 
+   !dir$ in(kappa_isop_type,kappa_thic_type, kappa_freq,slope_control,SLA_SAVE,nsteps_total, ah,ah_bolus, ah_bkg_bottom,ah_bkg_srfbl) &
+   !dir$ in(slm_r,slm_b,BUOY_FREQ_SQ,SIGMA_TOPO_MASK,VDC,dz,dzw,dzwr,zw,dzr,DYT,DXT,HUW,HUS,TAREA_R,HTN,HTE,pi) &
+   !dir$ in(SF_SUBM_X,SF_SUBM_Y,luse_const_horiz_len_scale,hor_length_scale,TIME_SCALE,efficiency_factor) & 
+   !dir$ in(max_hor_grid_scale,FZTOP_SUBM,mix_pass,grav)out(WORKN_PHI) 
 
    do kk=1,km
    call hdifft(kk, WORKN_PHI(:,:,:,kk), TMIX, UMIX, VMIX, this_block)

@@ -93,10 +93,12 @@
       real (r8), dimension(:,:,:,:,:), allocatable , public :: &
          SLA_SAVE             ! isopycnal slopes
 
-      real (r8), dimension(:,:,:,:), allocatable :: &
+      !dir$ attributes offload:mic :: FZTOP
+      real (r8), dimension(:,:,:,:), allocatable,public :: &
          FZTOP                ! vertical flux
 
-      logical (log_kind), dimension(:), allocatable :: &
+      !dir$ attributes offload:mic :: compute_kappa
+      logical (log_kind), dimension(:), allocatable, public :: &
          compute_kappa        ! compute spatially varying coefficients
                               !  this time step?
 
@@ -148,8 +150,9 @@
                             !  profiles at the tracer grid points
                             !  ( = N^2 / N_ref^2 ) OR a time-independent
                             !  user-specified function
-
-      real (r8), dimension(:,:,:,:), allocatable :: &
+      !dir$ attributes offload:mic :: BUOY_FREQ_SQ
+      !dir$ attributes offload:mic :: SIGMA_TOPO_MASK 
+      real (r8), dimension(:,:,:,:), allocatable, public :: &
          BUOY_FREQ_SQ,    & ! N^2 defined at level interfaces
          SIGMA_TOPO_MASK    ! bottom topography mask used with kappa_type_eg
 
@@ -212,8 +215,14 @@
       logical (log_kind) ::      &
          use_const_ah_bkg_srfbl, & ! see above 
          transition_layer_on       ! control for transition layer parameterization
-                               
-      real (r8) ::      &
+         
+      !dir$ attributes offload:mic :: ah
+      !dir$ attributes offload:mic :: ah_bolus
+      !dir$ attributes offload:mic :: ah_bkg_bottom
+      !dir$ attributes offload:mic :: ah_bkg_srfbl                       
+      !dir$ attributes offload:mic :: slm_r
+      !dir$ attributes offload:mic :: slm_b 
+      real (r8), public ::      &
          ah,            &       ! isopycnal diffusivity
          ah_bolus,      &       ! thickness (GM bolus) diffusivity
          ah_bkg_bottom, &       ! backgroud horizontal diffusivity at k = KMT

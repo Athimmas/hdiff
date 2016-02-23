@@ -191,6 +191,7 @@
         !DRDT, DRDS              ! expansion coefficients d(rho)/dT,S
       real (r8), dimension(nx_block,ny_block,2) :: &
          TXP, TYP, TZP , TEMP
+
       real (r8), dimension(nx_block,ny_block) :: & 
          RZ                  ! Dz(rho)
       integer (int_kind), parameter :: &

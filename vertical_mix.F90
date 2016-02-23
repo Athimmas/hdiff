@@ -54,7 +54,8 @@
              convad, impvmixt_tavg
 
 ! !PUBLIC DATA MEMBERS:
-
+   
+   !dir$ attributes offload : mic :: VDC
    real (r8), dimension(:,:,:,:,:), allocatable, public, target :: &
       VDC                 ! tracer diffusivity - public to allow
                           ! possible modification by Gent-McWilliams
