@@ -534,6 +534,12 @@
 !
 !-----------------------------------------------------------------------
 
+   !if(my_task == master_task)then
+   !call flush(6)
+   !print *,"hi"
+   !call flush(6)
+   !endif   
+
    bid = this_block%local_id
 
 

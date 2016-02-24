@@ -212,7 +212,11 @@
 !
 !-----------------------------------------------------------------------
   
-      logical (log_kind) ::      &
+
+      !dir$ attributes offload:mic :: transition_layer_on
+      !dir$ attributes offload:mic :: use_const_ah_bkg_srfbl
+
+      logical (log_kind),public ::      &
          use_const_ah_bkg_srfbl, & ! see above 
          transition_layer_on       ! control for transition layer parameterization
          
@@ -270,7 +274,7 @@
       end type tlt_info
 
       !dir$ attributes offload:mic :: TLT
-      type (tlt_info) :: &
+      type (tlt_info),public :: &
          TLT                    ! transition layer thickness related fields 
 
 !-----------------------------------------------------------------------
@@ -1301,10 +1305,9 @@
           if ( vmix_itype == vmix_type_kpp ) then
 
             !start_time = omp_get_wtime()
- 
+
             call smooth_hblt ( .false., .true., bid,  &
                                SMOOTH_OUT=TLT%DIABATIC_DEPTH(:,:,bid) )
-
 
             !end_time = omp_get_wtime()
  
@@ -1316,8 +1319,8 @@
 
           !start_time = omp_get_wtime()
 
-         !$OMP PARALLEL DO &
-         !$OMP DEFAULT(SHARED)PRIVATE(kid,i,j,kk_sub,kk)NUM_THREADS(16)COLLAPSE(3) 
+          !$OMP PARALLEL DO &
+          !$OMP DEFAULT(SHARED)PRIVATE(kid,i,j,kk_sub,kk)NUM_THREADS(16)COLLAPSE(3)
           do kk=1,km
             do kk_sub = ktp,kbt
                   do j=1,ny_block
@@ -1367,7 +1370,8 @@
 !     they depend on the model fields
 !
 !-----------------------------------------------------------------------
-        
+       
+ 
 	if ( ( kappa_isop_type == kappa_type_vmhs           .or.    &
                kappa_thic_type == kappa_type_vmhs           .or.    &
                kappa_isop_type == kappa_type_hdgr           .or.    &
@@ -1521,6 +1525,7 @@
         !close(10)
 
         !endif 
+
 
 !-----------------------------------------------------------------------
 !
@@ -1797,6 +1802,7 @@
  
         enddo              ! end of kk-loop
 
+
         !end_time = omp_get_wtime()
         !print *,"Time at big loop is",end_time - start_time
          
@@ -1818,19 +1824,24 @@
 
         FZTOP(:,:,:,bid) = c0        ! zero flux B.C. at the surface
 
+
         if ( transition_layer_on ) then
 
           !start_time = omp_get_wtime()
 
+
           call merged_streamfunction ( this_block )
+
 
           !end_time = omp_get_wtime()
 
           !print *,"Time taken at function1 is ",end_time - start_time
 
           !start_time = omp_get_wtime()
+
  
           call apply_vertical_profile_to_isop_hor_diff ( this_block ) 
+ 
 
           !end_time = omp_get_wtime()
  
@@ -1929,7 +1940,12 @@
        !close(10)
 
       !endif 
-
+   
+      !if(my_task == master_task) then
+      !call flush(6)
+      !print *,"in here ar big work1 loop"
+      !call flush(6)
+      !endif 
 !-----------------------------------------------------------------------
 !
 !     check if some horizontal diffusion needs to be added to the
@@ -2175,20 +2191,40 @@
 
                enddo
              enddo
+        
+            if(my_task ==  master_task) then
+            call flush(6)
+            print *,"what can go wrong here"
+            call flush(6)
+            endif
+               
+            !do j=this_block%jb,this_block%je
+              !do i=this_block%ib,this_block%ie
 
-            do j=this_block%jb,this_block%je
-              do i=this_block%ib,this_block%ie
+                !if(my_task ==  master_task) then
+                !call flush(6)
+                !print *,i,j,n
+                !call flush(6)
+                !endif
 
-                fz = -KMASK(i,j) * p25 * WORK3(i,j)
 
-                GTK(i,j,n) = ( FX(i,j,n) - FX(i-1,j,n)  &
-                             + FY(i,j,n) - FY(i,j-1,n)  &
-                      + FZTOP(i,j,n,bid) - fz )*dzr(k)*TAREA_R(i,j,bid)
+                !fz = -KMASK(i,j) * p25 * WORK3(i,j)
 
-                FZTOP(i,j,n,bid) = fz
+                !GTK(i,j,n) = ( FX(i,j,n) - FX(i-1,j,n)  &
+                !             + FY(i,j,n) - FY(i,j-1,n)  &
+                !      + FZTOP(i,j,n,bid) - fz )*dzr(k)*TAREA_R(i,j,bid)
 
-              enddo
-            enddo
+                !FZTOP(i,j,n,bid) = fz
+
+              !enddo
+            !enddo
+
+            !if(my_task ==  master_task) then
+            !call flush(6)
+            !print *,"after what can go wrong here"
+            !call flush(6)
+            !endif
+  
 
           else
 
@@ -2246,17 +2282,17 @@
 
         else                 ! k = km
 
-          do j=this_block%jb,this_block%je
-            do i=this_block%ib,this_block%ie
+          !do j=this_block%jb,this_block%je
+            !do i=this_block%ib,this_block%ie
 
-              GTK(i,j,n) = ( FX(i,j,n) - FX(i-1,j,n)  &
-                           + FY(i,j,n) - FY(i,j-1,n)  &
-                    + FZTOP(i,j,n,bid) )*dzr(k)*TAREA_R(i,j,bid)
+              !GTK(i,j,n) = ( FX(i,j,n) - FX(i-1,j,n)  &
+              !             + FY(i,j,n) - FY(i,j-1,n)  &
+              !      + FZTOP(i,j,n,bid) )*dzr(k)*TAREA_R(i,j,bid)
 
-              FZTOP(i,j,n,bid) = c0 
+              !FZTOP(i,j,n,bid) = c0 
 
-            enddo
-          enddo
+            !enddo
+          !enddo
 
         endif
 
@@ -3911,6 +3947,7 @@
 !
 !-----------------------------------------------------------------------
 
+
       !start_time = omp_get_wtime() 
       bid = this_block%local_id
 
@@ -3919,8 +3956,8 @@
         do kk=1,2
            do temp=1,2 
               do j=1,ny_block
-                 !dir$ vector aligned
-                 !dir$ ivdep
+                 !!dir$ vector aligned
+                 !!dir$ ivdep
                  do i=1,nx_block
  
                     SF_SLX(i,j,temp,kk,k,bid) = c0
@@ -3969,9 +4006,9 @@
 
         do kk=1,2
  
-          !$OMP PARALLEL PRIVATE(I)DEFAULT(SHARED)num_threads(16)
+          !!$OMP PARALLEL PRIVATE(I)DEFAULT(SHARED)num_threads(16)
  
-          !$omp do  
+          !!$omp do  
           do j=1,ny_block
            do i=1,nx_block
  
@@ -4068,13 +4105,14 @@
 
              enddo
           enddo
-          !$omp end do nowait 
+          !!$omp end do 
 
-          !$OMP END PARALLEL
+          !!$OMP END PARALLEL
         enddo
 
       enddo
    
+
       !if(my_task==master_task)then
 
        !open(unit=10,file="/home/aketh/ocn_correctness_data/changed.txt",status="unknown",position="append",action="write",form="formatted")

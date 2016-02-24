@@ -3204,8 +3204,8 @@
 
        enddo
      enddo
+     !$OMP END PARALLEL DO
    enddo
-
 
    if ( overwrite_hblt  .and.  .not.use_hmxl ) then
 
