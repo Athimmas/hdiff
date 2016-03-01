@@ -362,7 +362,7 @@
    integer (int_kind) :: &
       i, j, k, kk,       &  ! dummy loop counters
       kp1,               &
-      bid                   ! local block address for this sub block
+      bid,temp              ! local block address for this sub block
 
    real (r8), dimension(nx_block,ny_block) :: &
       ML_DEPTH,          &  ! mixed layer depth
@@ -400,7 +400,6 @@
          
    bid = this_block%local_id
    
-   
 
    WORK1     = c0
    WORK2     = c0
@@ -418,8 +417,24 @@
    BX_VERT_AVG = c0
    BY_VERT_AVG = c0
 
-   SF_SUBM_X(:,:,:,:,:,bid) = c0
-   SF_SUBM_Y(:,:,:,:,:,bid) = c0
+
+     !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(k,kk,temp,j,i)num_threads(60)collapse(4)
+     do k=1,km
+        do kk=1,2
+           do temp=1,2
+              do j=1,ny_block
+                 do i=1,nx_block
+
+                    SF_SUBM_X(i,j,temp,kk,k,bid) = c0
+                    SF_SUBM_Y(i,j,temp,kk,k,bid) = c0
+
+                 enddo
+              enddo
+            enddo
+          enddo
+      enddo
+
+   !print *,"base time is",end_time - start_time
 
    ML_DEPTH = zw(1)
    if ( vmix_itype == vmix_type_kpp )  &
@@ -441,13 +456,13 @@
 !
 !-----------------------------------------------------------------------
 
-!   start_time = omp_get_wtime()
+   !start_time = omp_get_wtime()
    do k=1,km
    
      zw_top = c0
      if ( k > 1 )  zw_top = zw(k-1)
 
-    !$OMP PARALLEL DO SHARED(CONTINUE_INTEGRAL,BX_VERT_AVG,RX,RY,ML_DEPTH)PRIVATE(i,WORK3)num_threads(16)SCHEDULE(dynamic,16)
+    !$OMP PARALLEL DO SHARED(CONTINUE_INTEGRAL,BX_VERT_AVG,RX,RY,ML_DEPTH)PRIVATE(i,WORK3)num_threads(60)SCHEDULE(dynamic,16)
     do j=1,ny_block
         do i=1,nx_block
 
@@ -501,15 +516,15 @@
         enddo
      enddo
     
-!     end_time = omp_get_wtime()
-!     print *,"Time at part1 is ",end_time - start_time
+    !end_time = omp_get_wtime()
+    ! print *,"Time at part1 is ",end_time - start_time
 
 !-----------------------------------------------------------------------
 !
 !  compute horizontal length scale if necessary
 !
 !-----------------------------------------------------------------------
-!   start_time = omp_get_wtime()
+   !start_time = omp_get_wtime()
 
    if ( luse_const_horiz_len_scale ) then
 
@@ -554,7 +569,7 @@
 
           
      do k=2,km
-        !$OMP PARALLEL DO SHARED(WORK3,CONTINUE_INTEGRAL,WORK2,k,bid,dzw,zt,dzwr,RZ_SAVE,ML_DEPTH)PRIVATE(i,j)DEFAULT(NONE)num_threads(16)
+        !$OMP PARALLEL DO SHARED(WORK3,CONTINUE_INTEGRAL,WORK2,k,bid,dzw,zt,dzwr,RZ_SAVE,ML_DEPTH)PRIVATE(i,j)DEFAULT(NONE)num_threads(60)
         do j=1,ny_block
            do i=1,nx_block
 
@@ -632,7 +647,7 @@
      do kk=ktp,kbt
 
        !$OMP PARALLEL DO DEFAULT(NONE)PRIVATE(i,j)SHARED(reference_depth,ML_DEPTH,KMT,WORK3,WORK2,WORK1,TIME_SCALE,HLS,SF_SUBM_X,SF_SUBM_Y) &
-       !$OMP SHARED(BX_VERT_AVG,BY_VERT_AVG,DXT,DYT,max_hor_grid_scale,efficiency_factor,kk,k,bid)num_threads(16)  
+       !$OMP SHARED(BX_VERT_AVG,BY_VERT_AVG,DXT,DYT,max_hor_grid_scale,efficiency_factor,kk,k,bid)num_threads(60)  
        do j=1,ny_block
            do i=1,nx_block
 
@@ -676,6 +691,8 @@
 
    USMT = c0
    VSMT = c0
+
+   !start_time = omp_get_wtime()
 
    do k=1,km
 
@@ -843,6 +860,10 @@
      WTOP_SUBM = WBOT_SUBM
 
    enddo
+  
+   !end_time = omp_get_wtime()
+   !print *,"Part 4 timings is",end_time - start_time
+
 
 !-----------------------------------------------------------------------
 !EOC

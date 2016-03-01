@@ -554,16 +554,16 @@
       !call hdifft_del4(k, HDTK, TMIX, tavg_HDIFE_TRACER, tavg_HDIFN_TRACER, this_block)
    case (hmix_tracer_type_gm)
       if (k == 1) then
-        !start_time = omp_get_wtime() 
+        start_time = omp_get_wtime() 
         call tracer_diffs_and_isopyc_slopes(TMIX, this_block)
-        !end_time = omp_get_wtime()
-        !print *,"time at tracer_diffs 1 is ",end_time - start_time   
+        end_time = omp_get_wtime()
+        print *,"time at tracer_diffs 1 is ",end_time - start_time   
       endif
-       !start_time = omp_get_wtime() 
+       start_time = omp_get_wtime() 
       call hdifft_gm(k, HDTK, TMIX, UMIX, VMIX, tavg_HDIFE_TRACER, &
                      tavg_HDIFN_TRACER, tavg_HDIFB_TRACER, this_block)
-       !end_time = omp_get_wtime() 
-       !print *,"time at hdifft_gm is ",end_time - start_time
+       end_time = omp_get_wtime() 
+       print *,"time at hdifft_gm is ",end_time - start_time
    end select
    
   
@@ -578,10 +578,10 @@
          endif
         endif
         if (k == 1) then
-         !start_time = omp_get_wtime()
+         start_time = omp_get_wtime()
          call submeso_sf(TMIX, this_block)
-         !end_time = omp_get_wtime()
-         !print *,"time at submeso_sf is ",end_time - start_time
+         end_time = omp_get_wtime()
+         print *,"time at submeso_sf is ",end_time - start_time
         endif
         !start_time = omp_get_wtime()
         call submeso_flux(k, TDTK, TMIX, tavg_HDIFE_TRACER, &

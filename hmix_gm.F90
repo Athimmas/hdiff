@@ -1320,7 +1320,7 @@
           !start_time = omp_get_wtime()
 
           !$OMP PARALLEL DO &
-          !$OMP DEFAULT(SHARED)PRIVATE(kid,i,j,kk_sub,kk)NUM_THREADS(16)COLLAPSE(3)
+          !$OMP DEFAULT(SHARED)PRIVATE(kid,i,j,kk_sub,kk)NUM_THREADS(60)COLLAPSE(3)
           do kk=1,km
             do kk_sub = ktp,kbt
                   do j=1,ny_block
@@ -1463,7 +1463,7 @@
             enddo
           enddo
         else
-          !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(kk_sub,kk,j,i)NUM_THREADS(16)
+          !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(kk_sub,kk,j,i)NUM_THREADS(60)
           do kk_sub=ktp,kbt
             do kk=1,km
                do j=1,ny_block
@@ -1489,7 +1489,7 @@
                   kappa_thic_type == kappa_type_bfreq ) then
 
           !start_time = omp_get_wtime()
-          !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(kk_sub,kk,j,i)NUM_THREADS(16)collapse(3)schedule(dynamic,4)      
+          !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(kk_sub,kk,j,i)NUM_THREADS(60)collapse(3)schedule(dynamic,4)      
            do kk_sub=ktp,kbt
             do kk=1,km
              do j=1,ny_block
@@ -1556,7 +1556,7 @@
 !
 !-----------------------------------------------------------------------
 
-             !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(j,i,dzw,dz_bottom,zt)NUM_THREADS(16)
+             !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(j,i,dzw,dz_bottom,zt)NUM_THREADS(60)
              do j=1,ny_block
                    do i=1,nx_block
 
@@ -1902,7 +1902,6 @@
 !
 !-----------------------------------------------------------------------
 
-      !start_time = omp_get_wtime()
       
       if ( k < km ) then
 
@@ -2004,6 +2003,8 @@
 !     start loop over tracers
 !
 !-----------------------------------------------------------------------
+
+     start_time = omp_get_wtime() 
 
       kp1 = k + 1
       if ( k == km )  kp1 = k
@@ -2192,11 +2193,11 @@
                enddo
              enddo
         
-            if(my_task ==  master_task) then
-            call flush(6)
-            print *,"what can go wrong here"
-            call flush(6)
-            endif
+            !if(my_task ==  master_task) then
+            !call flush(6)
+            !print *,"what can go wrong here"
+            !call flush(6)
+            !endif
                
             !do j=this_block%jb,this_block%je
               !do i=this_block%ib,this_block%ie
@@ -2303,7 +2304,9 @@
 !-----------------------------------------------------------------------
 
       enddo
-
+       
+      end_time = omp_get_wtime()
+      print *,"tiem at tracer loop is",end_time - start_time 
 
 !-----------------------------------------------------------------------
 !
@@ -3615,7 +3618,7 @@
       
       do k=1,km
 
-              !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(j,i)NUM_THREADS(16) 
+              !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(j,i)NUM_THREADS(60) 
               do j=1,ny_block
                    do i=1,nx_block
 
@@ -3669,7 +3672,7 @@
 !
 !-----------------------------------------------------------------------
 
-             !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(j,i)NUM_THREADS(16)
+             !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(j,i)NUM_THREADS(60)
              do j=1,ny_block
                    do i=1,nx_block
 
@@ -3686,7 +3689,7 @@
 
              do k=1,km-1
 
-             !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(j,i)NUM_THREADS(16)
+             !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(j,i)NUM_THREADS(60)
              do j=1,ny_block
                    do i=1,nx_block
 
@@ -3741,7 +3744,7 @@
 
         do kk=ktp,kbt
 
-              !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(j,i)NUM_THREADS(16)SCHEDULE(DYNAMIC,16)
+              !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(j,i)NUM_THREADS(60)SCHEDULE(DYNAMIC,16)
               do j=1,ny_block
                    do i=1,nx_block
                       if (kk == ktp) then
@@ -3822,7 +3825,7 @@
 
       do k=1,km
 
-             !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(j,i)NUM_THREADS(16)
+             !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(j,i)NUM_THREADS(60)
              do j=1,ny_block
                    do i=1,nx_block
 
@@ -3844,7 +3847,7 @@
               enddo
       enddo
 
-             !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(j,i)NUM_THREADS(16)
+             !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(j,i)NUM_THREADS(60)
              do j=1,ny_block
                    do i=1,nx_block
 
@@ -3951,7 +3954,7 @@
       !start_time = omp_get_wtime() 
       bid = this_block%local_id
 
-     !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(k,kk,temp,j,i)num_threads(16)collapse(4)
+     !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(k,kk,temp,j,i)num_threads(60)collapse(4)
      do k=1,km
         do kk=1,2
            do temp=1,2 
@@ -4006,13 +4009,13 @@
 
         do kk=1,2
  
-          !!$OMP PARALLEL PRIVATE(I)DEFAULT(SHARED)num_threads(16)
- 
-          !!$omp do  
+          !$OMP PARALLEL DO PRIVATE(I,J)DEFAULT(SHARED)NUM_THREADS(60) 
           do j=1,ny_block
+           !dir$ novector
            do i=1,nx_block
+
  
-          LMASK(i,j) = TLT%K_LEVEL(i,j,bid) == k  .and.            &
+            LMASK(i,j) = TLT%K_LEVEL(i,j,bid) == k  .and.            &
                        TLT%K_LEVEL(i,j,bid) < KMT(i,j,bid)  .and.  &
                        TLT%ZTW(i,j,bid) == 1
 
@@ -4105,9 +4108,7 @@
 
              enddo
           enddo
-          !!$omp end do 
-
-          !!$OMP END PARALLEL
+          !$OMP END PARALLEL DO
         enddo
 
       enddo
@@ -4161,7 +4162,7 @@
 !-----------------------------------------------------------------------
 
       !start_time = omp_get_wtime()
-      !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(i,j,k,kk,reference_depth)num_threads(16)SCHEDULE(DYNAMIC,6) 
+      !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(i,j,k,kk,reference_depth)num_threads(60)SCHEDULE(DYNAMIC,6) 
       do k=1,km
 
         reference_depth(ktp) = zt(k) - p25 * dz(k)
@@ -4339,7 +4340,7 @@
 !     start of tapering
 !
 !-----------------------------------------------------------------------
-      !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(i,j,k,kk,reference_depth)num_threads(16)
+      !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(i,j,k,kk,reference_depth)num_threads(60)
       do k=1,km
 
         reference_depth(ktp) = zt(k) - p25 * dz(k)
