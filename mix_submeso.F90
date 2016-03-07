@@ -928,6 +928,8 @@
       real (r8), dimension(nx_block,ny_block,nt)  :: &
          FX, FY                    ! fluxes across east, north faces
 
+      logical :: reg_init_gm
+
      bid = this_block%local_id
 
      if ( k == 1) FZTOP_SUBM(:,:,:,bid) = c0        ! zero flux B.C. at the surface
@@ -947,12 +949,21 @@
       else
         factor    = c0
       endif
-      
-      do n = 1,nt
-          if (.not.registry_match('init_gm')) then
-           if (n > 2 .and. k < km)  &
-             TZ(:,:,k+1,n,bid) = TMIX(:,:,k  ,n) - TMIX(:,:,k+1,n)
-          endif
+     
+      reg_init_gm = registry_match('init_gm')
+
+     if(k==1 .and. .not. reg_init_gm )then
+     !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(k,n)num_threads(60)
+      do k=1,km-1
+       do n=3,nt      
+        do j=1,ny_block
+         do i=1,nx_block  
+             TZ(i,j,k+1,n,bid) = TMIX(i,j,k  ,n) - TMIX(i,j,k+1,n)
+         enddo
+        enddo
+       enddo 
+      enddo
+      endif 
 
           do j=1,ny_block
             do i=1,nx_block-1
