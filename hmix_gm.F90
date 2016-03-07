@@ -2004,7 +2004,6 @@
 !
 !-----------------------------------------------------------------------
 
-     start_time = omp_get_wtime() 
 
       kp1 = k + 1
       if ( k == km )  kp1 = k
@@ -2305,8 +2304,6 @@
 
       enddo
        
-      end_time = omp_get_wtime()
-      print *,"tiem at tracer loop is",end_time - start_time 
 
 !-----------------------------------------------------------------------
 !

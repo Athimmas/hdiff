@@ -915,7 +915,7 @@
       integer (int_kind)  :: &
          i,j,n,                &!dummy loop counters
          bid,                  &! local block address for this sub block
-         kp1
+         kp1,kk
       
       real (r8) :: &
          fz, factor 
@@ -928,7 +928,6 @@
       real (r8), dimension(nx_block,ny_block,nt)  :: &
          FX, FY                    ! fluxes across east, north faces
 
-      logical :: reg_init_gm
 
      bid = this_block%local_id
 
@@ -950,51 +949,55 @@
         factor    = c0
       endif
      
-      reg_init_gm = registry_match('init_gm')
 
-     if(k==1 .and. .not. reg_init_gm )then
-     !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(k,n)num_threads(60)
-      do k=1,km-1
+     if(k==1 )then
+     !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(kk,n)num_threads(60)
+      do kk=1,km-1
        do n=3,nt      
         do j=1,ny_block
          do i=1,nx_block  
-             TZ(i,j,k+1,n,bid) = TMIX(i,j,k  ,n) - TMIX(i,j,k+1,n)
+            if( .not. registry_match('init_gm') ) &
+             TZ(i,j,kk+1,n,bid) = TMIX(i,j,kk  ,n) - TMIX(i,j,kk+1,n)
          enddo
         enddo
        enddo 
       enddo
       endif 
 
+      do n = 1,nt
           do j=1,ny_block
-            do i=1,nx_block-1
-              FX(i,j,n) = CX(i,j)                          &
-               * ( SF_SUBM_X(i  ,j,ieast,ktp,k,bid) * TZ(i,j,k,n,bid)                      &
-                 + SF_SUBM_X(i  ,j,ieast,kbt,k,bid) * TZ(i,j,kp1,n,bid)                    &
-                 + SF_SUBM_X(i+1,j,iwest,ktp,k,bid) * TZ(i+1,j,k,n,bid)                    &
-                 + SF_SUBM_X(i+1,j,iwest,kbt,k,bid) * TZ(i+1,j,kp1,n,bid) )
-            enddo
-          enddo
-
-        end do
-
-       do n = 1,nt
-
-          do j=1,ny_block-1
             do i=1,nx_block
+
+              if(i <= nx_block-1) then
+
+              FX(i,j,n) = CX(i,j)                          &
+               * ( SF_SUBM_X(i  ,j,ieast,ktp,k,bid) * TZ(i,j,k,n,bid)&
+                 + SF_SUBM_X(i  ,j,ieast,kbt,k,bid) * TZ(i,j,kp1,n,bid)&
+                 + SF_SUBM_X(i+1,j,iwest,ktp,k,bid) * TZ(i+1,j,k,n,bid)&
+                 + SF_SUBM_X(i+1,j,iwest,kbt,k,bid) * TZ(i+1,j,kp1,n,bid) )
+
+              endif
+
+              if(j <= ny_block -1 )then
+
               FY(i,j,n) =  CY(i,j)                          &
-               * ( SF_SUBM_Y(i,j  ,jnorth,ktp,k,bid) * TZ(i,j,k,n,bid)                      &
-                 + SF_SUBM_Y(i,j  ,jnorth,kbt,k,bid) * TZ(i,j,kp1,n,bid)                    &
-                 + SF_SUBM_Y(i,j+1,jsouth,ktp,k,bid) * TZ(i,j+1,k,n,bid)                    &
+               * ( SF_SUBM_Y(i,j  ,jnorth,ktp,k,bid) * TZ(i,j,k,n,bid)&
+                 + SF_SUBM_Y(i,j  ,jnorth,kbt,k,bid) * TZ(i,j,kp1,n,bid)&
+                 + SF_SUBM_Y(i,j+1,jsouth,ktp,k,bid) * TZ(i,j+1,k,n,bid)&
                  + SF_SUBM_Y(i,j+1,jsouth,kbt,k,bid) * TZ(i,j+1,kp1,n,bid) )
+
+              endif
+
+              WORK1(i,j) = c0 ! zero halo regions so accumulate_tavg_field calls do not trap
+              WORK2(i,j) = c0
+              GTK(i,j,n) = c0
+
+
             enddo
           enddo
+       enddo
 
-       end do
-
-      ! zero halo regions so accumulate_tavg_field calls do not trap
-      WORK1 = c0
-      WORK2 = c0
-
+ 
       do n = 1,nt
 
 !-----------------------------------------------------------------------
@@ -1003,13 +1006,13 @@
 !
 !-----------------------------------------------------------------------
  
-        GTK(:,:,n) = c0
 
-        if ( k < km ) then
 
-              do j=this_block%jb,this_block%je
-                do i=this_block%ib,this_block%ie
-               
+        do j=this_block%jb,this_block%je
+            do i=this_block%ib,this_block%ie
+              
+               if ( k < km ) then
+
                   WORK1(i,j) = SF_SUBM_X(i  ,j  ,ieast ,kbt,k  ,bid)     &
                              * HYX(i  ,j  ,bid) * TX(i  ,j  ,k  ,n,bid)  &
                              + SF_SUBM_Y(i  ,j  ,jnorth,kbt,k  ,bid)     &
@@ -1018,11 +1021,8 @@
                              * HYX(i-1,j  ,bid) * TX(i-1,j  ,k  ,n,bid)  &
                              + SF_SUBM_Y(i  ,j  ,jsouth,kbt,k  ,bid)     &
                              * HXY(i  ,j-1,bid) * TY(i  ,j-1,k  ,n,bid)
-                enddo
-              enddo
 
-              do j=this_block%jb,this_block%je
-                do i=this_block%ib,this_block%ie
+
                   WORK2(i,j) = factor                                    &
                            * ( SF_SUBM_X(i  ,j  ,ieast ,ktp,kp1,bid)     &
                              * HYX(i  ,j  ,bid) * TX(i  ,j  ,kp1,n,bid)  &
@@ -1032,41 +1032,30 @@
                              * HYX(i-1,j  ,bid) * TX(i-1,j  ,kp1,n,bid)  &
                              + SF_SUBM_Y(i  ,j  ,jsouth,ktp,kp1,bid)     &
                              * HXY(i  ,j-1,bid) * TY(i  ,j-1,kp1,n,bid) ) 
-                enddo
-              enddo
-
-    
-          do j=this_block%jb,this_block%je
-              do i=this_block%ib,this_block%ie
-
-                fz = -KMASK(i,j) * p25                                &
-                     * (WORK1(i,j) + WORK2(i,j))
-
-                GTK(i,j,n) = ( FX(i,j,n) - FX(i-1,j,n)  &
-                             + FY(i,j,n) - FY(i,j-1,n)  &
-                      + FZTOP_SUBM(i,j,n,bid) - fz )*dzr(k)*TAREA_R(i,j,bid)
-
-                FZTOP_SUBM(i,j,n,bid) = fz
-
-              enddo
-          enddo
+                   
+                  fz = -KMASK(i,j) * p25    &
+                      * (WORK1(i,j) + WORK2(i,j))
 
 
-         else                 ! k = km
+                  GTK(i,j,n) = ( FX(i,j,n) - FX(i-1,j,n)  &
+                               + FY(i,j,n) - FY(i,j-1,n)  &
+                        + FZTOP_SUBM(i,j,n,bid) - fz )*dzr(k)*TAREA_R(i,j,bid)
 
-          do j=this_block%jb,this_block%je
-            do i=this_block%ib,this_block%ie
+                  FZTOP_SUBM(i,j,n,bid) = fz
 
-              GTK(i,j,n) = ( FX(i,j,n) - FX(i-1,j,n)  &
-                           + FY(i,j,n) - FY(i,j-1,n)  &
-                    + FZTOP_SUBM(i,j,n,bid) )*dzr(k)*TAREA_R(i,j,bid)
+               else  
 
-              FZTOP_SUBM(i,j,n,bid) = c0 
+                  GTK(i,j,n) = ( FX(i,j,n) - FX(i-1,j,n)  &
+                               + FY(i,j,n) - FY(i,j-1,n)  &
+                     + FZTOP_SUBM(i,j,n,bid) )*dzr(k)*TAREA_R(i,j,bid)
+
+                   FZTOP_SUBM(i,j,n,bid) = c0
+              
+               endif   
 
             enddo
           enddo
 
-        endif
 
 !-----------------------------------------------------------------------
 !
@@ -1101,16 +1090,15 @@
             enddo
             !call accumulate_tavg_field(WORK1,tavg_HDIFB_TRACER(n),bid,k)
           endif
-      endif   ! mix_pass ne 1
+      endif   ! mix_pass ne 1  
 
-   
 !-----------------------------------------------------------------------
 !
 !     end of tracer loop
 !
 !-----------------------------------------------------------------------
 
-      enddo !ends the do n loop 
+      enddo !ends the do n loop       
 
 !-----------------------------------------------------------------------
 
