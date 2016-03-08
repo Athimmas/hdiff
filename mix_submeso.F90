@@ -918,7 +918,7 @@
          kp1,kk
       
       real (r8) :: &
-         fz, factor 
+         fz, factor,work1array,work2array 
  
       real (r8), dimension(nx_block,ny_block) :: &
          CX, CY,                  &
@@ -928,17 +928,33 @@
       real (r8), dimension(nx_block,ny_block,nt)  :: &
          FX, FY                    ! fluxes across east, north faces
 
+      logical :: reg_match_init_gm
 
      bid = this_block%local_id
 
-     if ( k == 1) FZTOP_SUBM(:,:,:,bid) = c0        ! zero flux B.C. at the surface
+     if ( k == 1) then
+     do n=1,nt
+      !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(j,i)num_threads(60)
+      do j=1,ny_block
+       do i=1,nx_block  
+        FZTOP_SUBM(i,j,n,bid) = c0        ! zero flux B.C. at the surface
+       enddo
+      enddo
+     enddo
+
+     endif
      
-      CX = merge(HYX(:,:,bid)*p25, c0, (k <= KMT (:,:,bid))   &
-                                 .and. (k <= KMTE(:,:,bid)))
-      CY = merge(HXY(:,:,bid)*p25, c0, (k <= KMT (:,:,bid))   &
-                                 .and. (k <= KMTN(:,:,bid)))
+      do j=1,ny_block
+       do i=1,nx_block
+        CX(i,j) = merge(HYX(i,j,bid)*p25, c0, (k <= KMT (i,j,bid))   &
+                                 .and. (k <= KMTE(i,j,bid)))
+
+        CY(i,j) = merge(HXY(i,j,bid)*p25, c0, (k <= KMT (i,j,bid))   &
+                                 .and. (k <= KMTN(i,j,bid)))
       
-      KMASK = merge(c1, c0, k < KMT(:,:,bid))
+        KMASK(i,j) = merge(c1, c0, k < KMT(i,j,bid))
+       enddo
+      enddo
             
       kp1 = k + 1
       if ( k == km )  kp1 = k
@@ -949,21 +965,7 @@
         factor    = c0
       endif
      
-
-     if(k==1 )then
-     !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(kk,n)num_threads(60)
-      do kk=1,km-1
-       do n=3,nt      
-        do j=1,ny_block
-         do i=1,nx_block  
-            if( .not. registry_match('init_gm') ) &
-             TZ(i,j,kk+1,n,bid) = TMIX(i,j,kk  ,n) - TMIX(i,j,kk+1,n)
-         enddo
-        enddo
-       enddo 
-      enddo
-      endif 
-
+ 
       do n = 1,nt
           do j=1,ny_block
             do i=1,nx_block
@@ -971,19 +973,19 @@
               if(i <= nx_block-1) then
 
               FX(i,j,n) = CX(i,j)                          &
-               * ( SF_SUBM_X(i  ,j,ieast,ktp,k,bid) * TZ(i,j,k,n,bid)&
-                 + SF_SUBM_X(i  ,j,ieast,kbt,k,bid) * TZ(i,j,kp1,n,bid)&
-                 + SF_SUBM_X(i+1,j,iwest,ktp,k,bid) * TZ(i+1,j,k,n,bid)&
+               * ( SF_SUBM_X(i  ,j,ieast,ktp,k,bid) * TZ(i,j,k,n,bid)                        &
+                 + SF_SUBM_X(i  ,j,ieast,kbt,k,bid) * TZ(i,j,kp1,n,bid)                    &
+                 + SF_SUBM_X(i+1,j,iwest,ktp,k,bid) * TZ(i+1,j,k,n,bid)                    &
                  + SF_SUBM_X(i+1,j,iwest,kbt,k,bid) * TZ(i+1,j,kp1,n,bid) )
 
-              endif
+              endif  
 
               if(j <= ny_block -1 )then
 
               FY(i,j,n) =  CY(i,j)                          &
-               * ( SF_SUBM_Y(i,j  ,jnorth,ktp,k,bid) * TZ(i,j,k,n,bid)&
-                 + SF_SUBM_Y(i,j  ,jnorth,kbt,k,bid) * TZ(i,j,kp1,n,bid)&
-                 + SF_SUBM_Y(i,j+1,jsouth,ktp,k,bid) * TZ(i,j+1,k,n,bid)&
+               * ( SF_SUBM_Y(i,j  ,jnorth,ktp,k,bid) * TZ(i,j,k,n,bid)                        &
+                 + SF_SUBM_Y(i,j  ,jnorth,kbt,k,bid) * TZ(i,j,kp1,n,bid)                    &
+                 + SF_SUBM_Y(i,j+1,jsouth,ktp,k,bid) * TZ(i,j+1,k,n,bid)                    &
                  + SF_SUBM_Y(i,j+1,jsouth,kbt,k,bid) * TZ(i,j+1,kp1,n,bid) )
 
               endif
@@ -991,13 +993,14 @@
               WORK1(i,j) = c0 ! zero halo regions so accumulate_tavg_field calls do not trap
               WORK2(i,j) = c0
               GTK(i,j,n) = c0
-
+              
 
             enddo
           enddo
-       enddo
 
- 
+       end do
+
+
       do n = 1,nt
 
 !-----------------------------------------------------------------------
@@ -1005,13 +1008,11 @@
 !     calculate vertical submesoscale fluxes thru horizontal faces of T-cell
 !
 !-----------------------------------------------------------------------
- 
-
 
         do j=this_block%jb,this_block%je
             do i=this_block%ib,this_block%ie
               
-               if ( k < km ) then
+                 if ( k < km ) then 
 
                   WORK1(i,j) = SF_SUBM_X(i  ,j  ,ieast ,kbt,k  ,bid)     &
                              * HYX(i  ,j  ,bid) * TX(i  ,j  ,k  ,n,bid)  &
@@ -1032,10 +1033,10 @@
                              * HYX(i-1,j  ,bid) * TX(i-1,j  ,kp1,n,bid)  &
                              + SF_SUBM_Y(i  ,j  ,jsouth,ktp,kp1,bid)     &
                              * HXY(i  ,j-1,bid) * TY(i  ,j-1,kp1,n,bid) ) 
-                   
-                  fz = -KMASK(i,j) * p25    &
-                      * (WORK1(i,j) + WORK2(i,j))
+    
 
+                  fz = -KMASK(i,j) * p25                                &
+                      * (WORK1(i,j) + WORK2(i,j))
 
                   GTK(i,j,n) = ( FX(i,j,n) - FX(i-1,j,n)  &
                                + FY(i,j,n) - FY(i,j-1,n)  &
@@ -1043,19 +1044,19 @@
 
                   FZTOP_SUBM(i,j,n,bid) = fz
 
-               else  
+                else    
+
 
                   GTK(i,j,n) = ( FX(i,j,n) - FX(i-1,j,n)  &
                                + FY(i,j,n) - FY(i,j-1,n)  &
                      + FZTOP_SUBM(i,j,n,bid) )*dzr(k)*TAREA_R(i,j,bid)
 
                    FZTOP_SUBM(i,j,n,bid) = c0
-              
-               endif   
 
+                endif 
+              
             enddo
           enddo
-
 
 !-----------------------------------------------------------------------
 !
@@ -1077,7 +1078,7 @@
             do j=this_block%jb,this_block%je
             do i=this_block%ib,this_block%ie
               WORK1(i,j) = FY(i,j,n)*dzr(k)*TAREA_R(i,j,bid)
-            enddo
+           enddo
             enddo
             !call accumulate_tavg_field(WORK1,tavg_HDIFN_TRACER(n),bid,k)
           endif
@@ -1098,7 +1099,7 @@
 !
 !-----------------------------------------------------------------------
 
-      enddo !ends the do n loop       
+      enddo !ends the do n loop 
 
 !-----------------------------------------------------------------------
 

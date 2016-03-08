@@ -517,11 +517,11 @@
 !-----------------------------------------------------------------------
 
    integer (POP_i4) :: &
-      bid                 ! local block id
+      bid,kk              ! local block id
 
    real (POP_r8), dimension(nx_block,ny_block) :: &
      WORK                 ! temporary to hold tavg field
-   real (POP_r8), dimension(nx_block,ny_block,nt) :: &
+   real (POP_r8), dimension(nx_block,ny_block,nt,km) :: &
       TDTK                ! Hdiff(T) for nth tracer at level k from submeso_flux code
 
    real (POP_r8) :: &
@@ -583,12 +583,16 @@
          !end_time = omp_get_wtime()
          !print *,"time at submeso_sf is ",end_time - start_time
         endif
-        start_time = omp_get_wtime()
-        call submeso_flux(k, TDTK, TMIX, tavg_HDIFE_TRACER, &
-                     tavg_HDIFN_TRACER, tavg_HDIFB_TRACER, this_block)
-        end_time = omp_get_wtime() 
+        if(k==1) then
+        do kk=1,km
+         start_time = omp_get_wtime()
+         call submeso_flux(kk, TDTK(:,:,:,kk), TMIX, tavg_HDIFE_TRACER, &
+                       tavg_HDIFN_TRACER, tavg_HDIFB_TRACER, this_block)
+         end_time = omp_get_wtime() 
         print *,"time at submeso_flux is ",end_time - start_time
-        HDTK=HDTK+TDTK
+        enddo
+        endif
+        HDTK=HDTK+TDTK(:,:,:,k)
    endif
    
   
