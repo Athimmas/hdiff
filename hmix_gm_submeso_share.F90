@@ -511,9 +511,9 @@
 
         if(k==1)then
           if(.not. registry_match('init_gm')) then
+          do n=3,nt 
            !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(kk,n,j,i)collapse(3)num_threads(60)
            do kk=1,km-1
-            do n=3,nt
              do j=1,ny_block
                 do i=1,nx_block
                    TZ(i,j,kk+1,n,bid) = TMIX(i,j,kk  ,n) - TMIX(i,j,kk+1,n)

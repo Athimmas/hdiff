@@ -932,8 +932,8 @@
 
      bid = this_block%local_id
 
-     if ( k == 1) then
-     do n=1,nt
+     if ( k == 1)then
+      do n=1,nt
       !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(j,i)num_threads(60)
       do j=1,ny_block
        do i=1,nx_block  
@@ -1011,7 +1011,7 @@
               
                  if ( k < km ) then 
 
-                  WORK1(i,j) = SF_SUBM_X(i  ,j  ,ieast ,kbt,k  ,bid)     &
+                  WORK1array = SF_SUBM_X(i  ,j  ,ieast ,kbt,k  ,bid)     &
                              * HYX(i  ,j  ,bid) * TX(i  ,j  ,k  ,n,bid)  &
                              + SF_SUBM_Y(i  ,j  ,jnorth,kbt,k  ,bid)     &
                              * HXY(i  ,j  ,bid) * TY(i  ,j  ,k  ,n,bid)  &
@@ -1021,7 +1021,7 @@
                              * HXY(i  ,j-1,bid) * TY(i  ,j-1,k  ,n,bid)
 
 
-                  WORK2(i,j) = factor                                    &
+                  WORK2array = factor                                    &
                            * ( SF_SUBM_X(i  ,j  ,ieast ,ktp,kp1,bid)     &
                              * HYX(i  ,j  ,bid) * TX(i  ,j  ,kp1,n,bid)  &
                              + SF_SUBM_Y(i  ,j  ,jnorth,ktp,kp1,bid)     &
@@ -1033,7 +1033,7 @@
     
 
                   fz = -KMASK(i,j) * p25                                &
-                      * (WORK1(i,j) + WORK2(i,j))
+                      * (WORK1array + WORK2array)
 
                   GTK(i,j,n) = ( FX(i,j,n) - FX(i-1,j,n)  &
                                + FY(i,j,n) - FY(i,j-1,n)  &

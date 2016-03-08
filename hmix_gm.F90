@@ -2053,10 +2053,6 @@
         enddo
 
         do n = 1,nt
-
-          if (n > 2 .and. k < km)  &
-            TZ(:,:,k+1,n,bid) = TMIX(:,:,k  ,n) - TMIX(:,:,k+1,n)
-
           do j=1,ny_block
             do i=1,nx_block-1
               FX(i,j,n) = FX(i,j,n) - CX(i,j)                          &
@@ -2192,40 +2188,6 @@
                enddo
              enddo
         
-            !if(my_task ==  master_task) then
-            !call flush(6)
-            !print *,"what can go wrong here"
-            !call flush(6)
-            !endif
-               
-            !do j=this_block%jb,this_block%je
-              !do i=this_block%ib,this_block%ie
-
-                !if(my_task ==  master_task) then
-                !call flush(6)
-                !print *,i,j,n
-                !call flush(6)
-                !endif
-
-
-                !fz = -KMASK(i,j) * p25 * WORK3(i,j)
-
-                !GTK(i,j,n) = ( FX(i,j,n) - FX(i-1,j,n)  &
-                !             + FY(i,j,n) - FY(i,j-1,n)  &
-                !      + FZTOP(i,j,n,bid) - fz )*dzr(k)*TAREA_R(i,j,bid)
-
-                !FZTOP(i,j,n,bid) = fz
-
-              !enddo
-            !enddo
-
-            !if(my_task ==  master_task) then
-            !call flush(6)
-            !print *,"after what can go wrong here"
-            !call flush(6)
-            !endif
-  
-
           else
 
 !pw loop split to improve performance
