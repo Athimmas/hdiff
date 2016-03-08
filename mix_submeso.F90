@@ -970,7 +970,7 @@
           do j=1,ny_block
             do i=1,nx_block
 
-              if(i <= nx_block-1) then
+              if(i <= nx_block-1 .and. j <= ny_block -1) then
 
               FX(i,j,n) = CX(i,j)                          &
                * ( SF_SUBM_X(i  ,j,ieast,ktp,k,bid) * TZ(i,j,k,n,bid)                        &
@@ -978,9 +978,6 @@
                  + SF_SUBM_X(i+1,j,iwest,ktp,k,bid) * TZ(i+1,j,k,n,bid)                    &
                  + SF_SUBM_X(i+1,j,iwest,kbt,k,bid) * TZ(i+1,j,kp1,n,bid) )
 
-              endif  
-
-              if(j <= ny_block -1 )then
 
               FY(i,j,n) =  CY(i,j)                          &
                * ( SF_SUBM_Y(i,j  ,jnorth,ktp,k,bid) * TZ(i,j,k,n,bid)                        &
