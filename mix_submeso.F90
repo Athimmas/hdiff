@@ -918,7 +918,7 @@
          kp1,kk
       
       real (r8) :: &
-         fz, factor,work1array,work2array 
+         fz, factor 
  
       real (r8), dimension(nx_block,ny_block) :: &
          CX, CY,                  &
@@ -930,31 +930,18 @@
 
       logical :: reg_match_init_gm
 
+      real (r8) :: WORK1prev,WORK2prev,KMASKprev,fzprev,GTKmy
+
      bid = this_block%local_id
 
-     if ( k == 1)then
-      do n=1,nt
-      !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(j,i)num_threads(60)
-      do j=1,ny_block
-       do i=1,nx_block  
-        FZTOP_SUBM(i,j,n,bid) = c0        ! zero flux B.C. at the surface
-       enddo
-      enddo
-     enddo
-
-     endif
+     !if ( k == 1) FZTOP_SUBM(:,:,:,bid) = c0        ! zero flux B.C. at the surface
      
-      do j=1,ny_block
-       do i=1,nx_block
-        CX(i,j) = merge(HYX(i,j,bid)*p25, c0, (k <= KMT (i,j,bid))   &
-                                 .and. (k <= KMTE(i,j,bid)))
-
-        CY(i,j) = merge(HXY(i,j,bid)*p25, c0, (k <= KMT (i,j,bid))   &
-                                 .and. (k <= KMTN(i,j,bid)))
+      CX = merge(HYX(:,:,bid)*p25, c0, (k <= KMT (:,:,bid))   &
+                                 .and. (k <= KMTE(:,:,bid)))
+      CY = merge(HXY(:,:,bid)*p25, c0, (k <= KMT (:,:,bid))   &
+                                 .and. (k <= KMTN(:,:,bid)))
       
-        KMASK(i,j) = merge(c1, c0, k < KMT(i,j,bid))
-       enddo
-      enddo
+      KMASK = merge(c1, c0, k < KMT(:,:,bid))
             
       kp1 = k + 1
       if ( k == km )  kp1 = k
@@ -970,7 +957,7 @@
           do j=1,ny_block
             do i=1,nx_block
 
-              if(i <= nx_block-1 .and. j <= ny_block -1) then
+              if(i <= nx_block-1 ) then
 
               FX(i,j,n) = CX(i,j)                          &
                * ( SF_SUBM_X(i  ,j,ieast,ktp,k,bid) * TZ(i,j,k,n,bid)                        &
@@ -978,6 +965,9 @@
                  + SF_SUBM_X(i+1,j,iwest,ktp,k,bid) * TZ(i+1,j,k,n,bid)                    &
                  + SF_SUBM_X(i+1,j,iwest,kbt,k,bid) * TZ(i+1,j,kp1,n,bid) )
 
+              endif  
+
+              if(j <= ny_block -1 )then
 
               FY(i,j,n) =  CY(i,j)                          &
                * ( SF_SUBM_Y(i,j  ,jnorth,ktp,k,bid) * TZ(i,j,k,n,bid)                        &
@@ -997,7 +987,6 @@
 
        end do
 
-
       do n = 1,nt
 
 !-----------------------------------------------------------------------
@@ -1005,13 +994,15 @@
 !     calculate vertical submesoscale fluxes thru horizontal faces of T-cell
 !
 !-----------------------------------------------------------------------
+ 
+
 
         do j=this_block%jb,this_block%je
             do i=this_block%ib,this_block%ie
               
-                 if ( k < km ) then 
+               if ( k < km ) then
 
-                  WORK1array = SF_SUBM_X(i  ,j  ,ieast ,kbt,k  ,bid)     &
+                  WORK1(i,j) = SF_SUBM_X(i  ,j  ,ieast ,kbt,k  ,bid)     &
                              * HYX(i  ,j  ,bid) * TX(i  ,j  ,k  ,n,bid)  &
                              + SF_SUBM_Y(i  ,j  ,jnorth,kbt,k  ,bid)     &
                              * HXY(i  ,j  ,bid) * TY(i  ,j  ,k  ,n,bid)  &
@@ -1021,7 +1012,7 @@
                              * HXY(i  ,j-1,bid) * TY(i  ,j-1,k  ,n,bid)
 
 
-                  WORK2array = factor                                    &
+                  WORK2(i,j) = factor                                    &
                            * ( SF_SUBM_X(i  ,j  ,ieast ,ktp,kp1,bid)     &
                              * HYX(i  ,j  ,bid) * TX(i  ,j  ,kp1,n,bid)  &
                              + SF_SUBM_Y(i  ,j  ,jnorth,ktp,kp1,bid)     &
@@ -1030,30 +1021,95 @@
                              * HYX(i-1,j  ,bid) * TX(i-1,j  ,kp1,n,bid)  &
                              + SF_SUBM_Y(i  ,j  ,jsouth,ktp,kp1,bid)     &
                              * HXY(i  ,j-1,bid) * TY(i  ,j-1,kp1,n,bid) ) 
+                   
+                  if(k==1) then
+ 
+                  fzprev = 0
     
+                  else    
 
-                  fz = -KMASK(i,j) * p25                                &
-                      * (WORK1array + WORK2array)
+    
+                  WORK1prev = SF_SUBM_X(i  ,j  ,ieast ,kbt,k-1 ,bid)     &
+                             * HYX(i  ,j  ,bid) * TX(i  ,j  ,k-1,n,bid)  &
+                             + SF_SUBM_Y(i  ,j  ,jnorth,kbt,k-1,bid)     &
+                             * HXY(i  ,j  ,bid) * TY(i  ,j  ,k-1,n,bid)  &
+                             + SF_SUBM_X(i  ,j  ,iwest ,kbt,k-1,bid)     &
+                             * HYX(i-1,j  ,bid) * TX(i-1,j  ,k-1,n,bid)  &
+                             + SF_SUBM_Y(i  ,j  ,jsouth,kbt,k-1,bid)     &
+                             * HXY(i  ,j-1,bid) * TY(i  ,j-1,k-1,n,bid)
+
+                  WORK2prev = factor &
+                           * ( SF_SUBM_X(i  ,j  ,ieast ,ktp,kp1-1,bid)     &
+                             * HYX(i  ,j  ,bid) * TX(i  ,j  ,kp1-1,n,bid)  &
+                             + SF_SUBM_Y(i  ,j  ,jnorth,ktp,kp1-1,bid)     &
+                             * HXY(i  ,j  ,bid) * TY(i  ,j  ,kp1-1,n,bid)  &
+                             + SF_SUBM_X(i  ,j  ,iwest ,ktp,kp1-1,bid)     &
+                             * HYX(i-1,j  ,bid) * TX(i-1,j  ,kp1-1,n,bid)  &
+                             + SF_SUBM_Y(i  ,j  ,jsouth,ktp,kp1-1,bid)     &
+                             * HXY(i  ,j-1,bid) * TY(i  ,j-1,kp1-1,n,bid) )
+
+                  KMASKprev = merge(c1, c0, k-1 < KMT(i,j,bid))
+
+
+                  fzprev = -KMASKprev * p25 &
+                            * (WORK1prev + WORK2prev)
+
+                  endif 
+
+                  !if(fzprev /= FZTOP_SUBM(i,j,n,bid)) then 
+                  !   print *,"wrong value OH NO",k
+                  !else
+                  !   print *,"its okay Yeah",k
+                  !endif    
+
+                  fz = -KMASK(i,j) * p25    &
+                      * (WORK1(i,j) + WORK2(i,j))
+
 
                   GTK(i,j,n) = ( FX(i,j,n) - FX(i-1,j,n)  &
                                + FY(i,j,n) - FY(i,j-1,n)  &
-                        + FZTOP_SUBM(i,j,n,bid) - fz )*dzr(k)*TAREA_R(i,j,bid)
+                        + fzprev - fz )*dzr(k)*TAREA_R(i,j,bid)
 
-                  FZTOP_SUBM(i,j,n,bid) = fz
+                  !FZTOP_SUBM(i,j,n,bid) = fz
 
-                else    
+               else  
 
+                  WORK1prev = SF_SUBM_X(i  ,j  ,ieast ,kbt,k-1 ,bid)     &
+                             * HYX(i  ,j  ,bid) * TX(i  ,j  ,k-1,n,bid)  &
+                             + SF_SUBM_Y(i  ,j  ,jnorth,kbt,k-1,bid)     &
+                             * HXY(i  ,j  ,bid) * TY(i  ,j  ,k-1,n,bid)  &
+                             + SF_SUBM_X(i  ,j  ,iwest ,kbt,k-1,bid)     &
+                             * HYX(i-1,j  ,bid) * TX(i-1,j  ,k-1,n,bid)  &
+                             + SF_SUBM_Y(i  ,j  ,jsouth,kbt,k-1,bid)     &
+                             * HXY(i  ,j-1,bid) * TY(i  ,j-1,k-1,n,bid)
+
+                  WORK2prev = factor &
+                           * ( SF_SUBM_X(i  ,j  ,ieast ,ktp,km,bid)     &
+                             * HYX(i  ,j  ,bid) * TX(i  ,j  ,km,n,bid)  &
+                             + SF_SUBM_Y(i  ,j  ,jnorth,ktp,km,bid)     &
+                             * HXY(i  ,j  ,bid) * TY(i  ,j  ,km,n,bid)  &
+                             + SF_SUBM_X(i  ,j  ,iwest ,ktp,km,bid)     &
+                             * HYX(i-1,j  ,bid) * TX(i-1,j  ,km,n,bid)  &
+                             + SF_SUBM_Y(i  ,j  ,jsouth,ktp,km,bid)     &
+                             * HXY(i  ,j-1,bid) * TY(i  ,j-1,km,n,bid) )
+
+                  KMASKprev = merge(c1, c0, k-1 < KMT(i,j,bid))
+
+
+                  fzprev = -KMASKprev * p25 &
+                            * (WORK1prev + WORK2prev)
 
                   GTK(i,j,n) = ( FX(i,j,n) - FX(i-1,j,n)  &
                                + FY(i,j,n) - FY(i,j-1,n)  &
-                     + FZTOP_SUBM(i,j,n,bid) )*dzr(k)*TAREA_R(i,j,bid)
+                     + fzprev )*dzr(k)*TAREA_R(i,j,bid)
 
-                   FZTOP_SUBM(i,j,n,bid) = c0
-
-                endif 
+                   !FZTOP_SUBM(i,j,n,bid) = c0
               
+               endif   
+
             enddo
           enddo
+
 
 !-----------------------------------------------------------------------
 !
@@ -1075,7 +1131,7 @@
             do j=this_block%jb,this_block%je
             do i=this_block%ib,this_block%ie
               WORK1(i,j) = FY(i,j,n)*dzr(k)*TAREA_R(i,j,bid)
-           enddo
+            enddo
             enddo
             !call accumulate_tavg_field(WORK1,tavg_HDIFN_TRACER(n),bid,k)
           endif
@@ -1106,4 +1162,3 @@
 
  end module mix_submeso
 
-!|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
