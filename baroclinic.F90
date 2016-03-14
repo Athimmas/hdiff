@@ -73,12 +73,13 @@
                       kappa_isop_type,kappa_thic_type, kappa_freq,slope_control,SLA_SAVE, &
                       slm_r,slm_b,ah,ah_bolus,ah_bkg_bottom,ah_bkg_srfbl,BUOY_FREQ_SQ,    &
                       SIGMA_TOPO_MASK,use_const_ah_bkg_srfbl,transition_layer_on,compute_kappa,&
-                      SF_SLX,SF_SLY,TLT 
+                      SF_SLX,SF_SLY,TLT,FZTOP 
    use exit_mod, only: sigAbort, exit_pop, flushm
    use overflows
    use overflow_type
    use mix_submeso, only: SF_SUBM_X,SF_SUBM_Y,luse_const_horiz_len_scale,hor_length_scale, &
                     TIME_SCALE,efficiency_factor,max_hor_grid_scale,FZTOP_SUBM
+   use omp_lib
 
    implicit none
    private
@@ -1723,6 +1724,8 @@
       WORKN_PHI_TEMP 
 
   integer , save :: itsdone=0
+
+  real (r8) start_time , end_time
 !-----------------------------------------------------------------------
 !
 !  initialize some arrays
@@ -1740,14 +1743,14 @@
 !
 !-----------------------------------------------------------------------
 
+   start_time = omp_get_wtime()
    if(k==1)then
    
    !if(itsdone == 0) then   
    !!dir$ offload_transfer target(mic:0) nocopy(SLX,SLY : alloc_if(.true.) free_if(.false.) )  
    !itsdone = itsdone + 1
    !endif
-
-
+ 
    !dir$ offload begin target(mic:0)in(kk,TMIX,UMIX,VMIX,this_block,hmix_tracer_itype,tavg_HDIFE_TRACER,tavg_HDIFN_TRACER,tavg_HDIFB_TRACER) &
    !dir$ in(SLX,SLY,lsubmesoscale_mixing,dt,dtu,HYX,HXY,RZ_SAVE,RX,RY,TX,TY,TZ,KMT,KMTE,KMTN,implicit_vertical_mix,vmix_itype,KPP_HBLT,HMXL) &
    !dir$ in(VDC_GM,WTOP_ISOP,WBOT_ISOP,HYXW,HXYS,UIT,VIT,RB,RBR,BL_DEPTH,KAPPA_ISOP,KAPPA_THIC,HOR_DIFF,KAPPA_VERTICAL,KAPPA_LATERAL) &
@@ -1758,19 +1761,16 @@
    !dir$ in(ltavg_on,num_avail_tavg_fields,sigo,state_coeffs,to,so,use_const_ah_bkg_srfbl,transition_layer_on)inout(WORKN_PHI)
 
    do kk=1,km
-
-   !if(my_task == master_task) then
-   !call flush(6)
-   !print *,"kk is",kk
-   !call flush(6)
-   !endif
-
    call hdifft(kk, WORKN_PHI(:,:,:,kk), TMIX, UMIX, VMIX, this_block)
    enddo
 
    !dir$ end offload
 
    endif
+
+   end_time = omp_get_wtime()
+
+   print *,"time taken at async offload is",end_time - start_time
 
    WORKN = WORKN_PHI(:,:,:,k)
 

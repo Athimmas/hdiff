@@ -522,7 +522,7 @@
    real (POP_r8), dimension(nx_block,ny_block) :: &
      WORK                 ! temporary to hold tavg field
    real (POP_r8), dimension(nx_block,ny_block,nt,km) :: &
-      TDTK                ! Hdiff(T) for nth tracer at level k from submeso_flux code
+      TDTK,HDTK_BUF       ! Hdiff(T) for nth tracer at level k from submeso_flux code
 
    real (POP_r8) :: &
       start_time,end_time ! Timers
@@ -559,11 +559,31 @@
         end_time = omp_get_wtime()
         print *,"time at tracer_diffs 1 is ",end_time - start_time   
       endif
-      start_time = omp_get_wtime()
-      call hdifft_gm(k, HDTK, TMIX, UMIX, VMIX, tavg_HDIFE_TRACER, &
-                     tavg_HDIFN_TRACER, tavg_HDIFB_TRACER, this_block)
-       end_time = omp_get_wtime() 
-       print *,"time at hdifft_gm is ",end_time - start_time
+
+      if (k == 1) then
+         start_time = omp_get_wtime()
+
+         call hdifft_gm(1, HDTK_BUF(:,:,:,1), TMIX, UMIX, VMIX, tavg_HDIFE_TRACER, &
+                         tavg_HDIFN_TRACER, tavg_HDIFB_TRACER, this_block)
+
+         !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(kk)num_threads(59) 
+         do kk=2,km
+         call hdifft_gm(kk , HDTK_BUF(:,:,:,kk) , TMIX, UMIX,VMIX,tavg_HDIFE_TRACER, &
+                                 tavg_HDIFN_TRACER,tavg_HDIFB_TRACER,this_block)
+         enddo
+
+         end_time = omp_get_wtime()
+
+         print *,"time at hdifft_gm combined is ",end_time - start_time 
+                    
+      endif
+
+      start_time = omp_get_wtime()  
+      HDTK = HDTK_BUF(:,:,:,k)
+      end_time = omp_get_wtime()
+
+      print *,"time at hdifft_gm is ",end_time - start_time
+ 
    end select
    
   
@@ -592,7 +612,7 @@
         enddo
         end_time = omp_get_wtime()
         !print *,"time at submeso_flux is ",end_time - start_time
-        !endif
+        endif
         HDTK=HDTK+TDTK(:,:,:,k)
    endif
    
