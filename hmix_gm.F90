@@ -285,7 +285,8 @@
 !
 !-----------------------------------------------------------------------
 
-      integer (int_kind) :: &
+      !dir$ attributes offload:mic :: tavg_ADVS_ISOP
+      integer (int_kind), public :: &
          tavg_UISOP,        &   ! zonal      isopycnal velocity
          tavg_VISOP,        &   ! meridional isopycnal velocity
          tavg_WISOP,        &   ! vertical   isopycnal velocity
@@ -3700,6 +3701,8 @@
 
       COMPUTE_TLT = merge(.true., .false., KMT(:,:,bid) /= 0)
 
+      
+
 !-----------------------------------------------------------------------
 !
 !     initial pass to determine the minimum transition layer thickness.
@@ -3745,12 +3748,38 @@
                    enddo
               enddo
       enddo
+  
+      if(my_task == master_task)then
+
+      do i=1,ny_block
+       do j=1,nx_block
+
+          if( COMPUTE_TLT(i,j) ) print *,i,j
+
+       enddo
+      enddo
+
+     endif
+
+ 
 
 #ifdef CCSMCOUPLED
 #ifndef _HIRES
+
+      if(my_task == master_task)then
+
+      do i=1,ny_block
+       do j=1,nx_block
+
+          if( COMPUTE_TLT(i,j) ) print *,"At DEPTH comp",i,j
+
+       enddo
+      enddo
+
+     endif
+
+
       if ( any(COMPUTE_TLT) ) then
-        !call shr_sys_abort ('Incorrect DIABATIC_DEPTH value in TLT'  &
-        !                //  ' computation')
         print *,"Incorrect DIABATIC_DEPTH value in TLT computation"
       endif
 #endif
@@ -3964,6 +3993,7 @@
 
                    enddo
               enddo
+  
 
 #ifdef CCSMCOUPLED
 #ifndef _HIRES

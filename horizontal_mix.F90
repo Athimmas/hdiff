@@ -70,6 +70,14 @@
       tavg_HDIFN_TRACER,            &! tavg id for north face diffusive flux of tracer
       tavg_HDIFB_TRACER              ! tavg id for bottom face diffusive flux of tracer
 
+   !dir$ attributes offload:mic :: tavg_HDIFS
+   !dir$ attributes offload:mic :: tavg_HDIFT
+   integer (POP_i4),public ::            &
+      hmix_momentum_itype,          &! users choice for type of mixing
+      tavg_HDIFT,                   &! tavg id for horizontal diffusion
+      tavg_HDIFS                     ! tavg id for horizontal diffusion
+
+
    !dir$ attributes offload:mic :: lsubmesoscale_mixing
    logical (log_kind) ,public ::    &
       lsubmesoscale_mixing           ! if true, submesoscale mixing is on
@@ -88,11 +96,10 @@
       hmix_tracer_type_del4 = 2,    &
       hmix_tracer_type_gm   = 3
 
-
-   integer (POP_i4) ::            &
-      hmix_momentum_itype,          &! users choice for type of mixing
-      tavg_HDIFT,                   &! tavg id for horizontal diffusion
-      tavg_HDIFS                     ! tavg id for horizontal diffusion
+   !integer (POP_i4) ::            &
+      !hmix_momentum_itype,          &! users choice for type of mixing
+      !tavg_HDIFT,                   &! tavg id for horizontal diffusion
+      !tavg_HDIFS                     ! tavg id for horizontal diffusion
 
 !   integer (POP_i4), dimension(nt) :: &
 !      tavg_HDIFE_TRACER,            &! tavg id for east face diffusive flux of tracer
@@ -554,14 +561,14 @@
       !call hdifft_del4(k, HDTK, TMIX, tavg_HDIFE_TRACER, tavg_HDIFN_TRACER, this_block)
    case (hmix_tracer_type_gm)
       if (k == 1) then
-        start_time = omp_get_wtime() 
+        !start_time = omp_get_wtime() 
         call tracer_diffs_and_isopyc_slopes(TMIX, this_block)
-        end_time = omp_get_wtime()
-        print *,"time at tracer_diffs 1 is ",end_time - start_time   
+        !end_time = omp_get_wtime()
+        !print *,"time at tracer_diffs 1 is ",end_time - start_time   
       endif
 
       if (k == 1) then
-         start_time = omp_get_wtime()
+         !start_time = omp_get_wtime()
 
          call hdifft_gm(1, HDTK_BUF(:,:,:,1), TMIX, UMIX, VMIX, tavg_HDIFE_TRACER, &
                          tavg_HDIFN_TRACER, tavg_HDIFB_TRACER, this_block)
@@ -572,17 +579,17 @@
                                  tavg_HDIFN_TRACER,tavg_HDIFB_TRACER,this_block)
          enddo
 
-         end_time = omp_get_wtime()
+         !end_time = omp_get_wtime()
 
-         print *,"time at hdifft_gm combined is ",end_time - start_time 
+         !print *,"time at hdifft_gm combined is ",end_time - start_time 
                     
       endif
 
-      start_time = omp_get_wtime()  
+      !start_time = omp_get_wtime()  
       HDTK = HDTK_BUF(:,:,:,k)
-      end_time = omp_get_wtime()
+      !end_time = omp_get_wtime()
 
-      print *,"time at hdifft_gm is ",end_time - start_time
+      !print *,"time at hdifft_gm is ",end_time - start_time
  
    end select
    
@@ -625,25 +632,25 @@
 !
 !-----------------------------------------------------------------------
 
-   if (accumulate_tavg_now(tavg_HDIFT)) then
-     WORK = c0
-     if (partial_bottom_cells) then
-        where (k <= KMT(:,:,bid)) WORK = DZT(:,:,k,bid)*HDTK(:,:,1)
-     else
-        where (k <= KMT(:,:,bid)) WORK = dz(k)*HDTK(:,:,1)
-     endif
+   !if (accumulate_tavg_now(tavg_HDIFT)) then
+     !WORK = c0
+     !if (partial_bottom_cells) then
+        !where (k <= KMT(:,:,bid)) WORK = DZT(:,:,k,bid)*HDTK(:,:,1)
+     !else
+        !where (k <= KMT(:,:,bid)) WORK = dz(k)*HDTK(:,:,1)
+     !endif
      !call accumulate_tavg_field(WORK,tavg_HDIFT,bid,k)
-   endif
+   !endif
 
-   if (accumulate_tavg_now(tavg_HDIFS)) then
-     WORK = c0
-     if (partial_bottom_cells) then
-        where (k <= KMT(:,:,bid)) WORK = DZT(:,:,k,bid)*HDTK(:,:,2)
-     else
-        where (k <= KMT(:,:,bid)) WORK = dz(k)*HDTK(:,:,2)
-     endif
+   !if (accumulate_tavg_now(tavg_HDIFS)) then
+     !WORK = c0
+     !if (partial_bottom_cells) then
+        !where (k <= KMT(:,:,bid)) WORK = DZT(:,:,k,bid)*HDTK(:,:,2)
+     !else
+        !where (k <= KMT(:,:,bid)) WORK = dz(k)*HDTK(:,:,2)
+     !endif
    !  call accumulate_tavg_field(WORK,tavg_HDIFS,bid,k)
-   endif
+   !endif
 
 !-----------------------------------------------------------------------
 !EOC

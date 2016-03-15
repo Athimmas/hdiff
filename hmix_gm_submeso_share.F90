@@ -175,7 +175,7 @@
 !-----------------------------------------------------------------------
 !
 !      local variables
-!
+!/TXP,
 !-----------------------------------------------------------------------
 
       integer (int_kind), parameter :: &
@@ -256,6 +256,7 @@
 
         kk=1
 
+            !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(j,i,KMASKE,KMASKN,tempi,tempip1,tempj,tempjp1)num_threads(60)
             do j=1,ny_block
               do i=1,nx_block
 
