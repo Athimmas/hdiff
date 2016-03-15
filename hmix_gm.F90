@@ -3534,7 +3534,8 @@
 
           call state( k, k+1, TMIX(:,:,k,1), TMIX(:,:,k,2), &
                       this_block, DRHODT=RHOT, DRHODS=RHOS )
- 
+
+          !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(i,j)NUM_THREADS(60) 
           do j=1,ny_block
              do i=1,nx_block
 
@@ -3567,6 +3568,7 @@
 !-----------------------------------------------------------------------
 
       do k=1,km-1
+       !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(i,j)NUM_THREADS(60)
        do j=1,ny_block
         do i=1,nx_block 
 
@@ -3600,6 +3602,7 @@
       enddo
 
       do k=1,km-1
+       !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(i,j)NUM_THREADS(60)
        do j=1,ny_block
         do i=1,nx_block
   
@@ -3621,6 +3624,7 @@
 !-----------------------------------------------------------------------
 
       do k=2,km
+       !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(i,j)NUM_THREADS(60)
        do j=1,ny_block
         do i=1,nx_block
  
