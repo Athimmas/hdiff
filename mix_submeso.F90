@@ -692,7 +692,7 @@
    USMT = c0
    VSMT = c0
 
-   !start_time = omp_get_wtime()
+   start_time = omp_get_wtime()
 
    do k=1,km
 
@@ -709,8 +709,11 @@
        factor = c0
      endif
 
-     do j=1,ny_block-1
-       do i=1,nx_block-1
+     !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(j,i)NUM_THREADS(60)
+     do j=1,ny_block
+       do i=1,nx_block
+
+         if(j<=ny_block-1 .and. i<=nx_block-1) then
 
          WORK1(i,j) = (   SF_SUBM_X(i  ,j,1,kbt,k,  bid)    &
                + factor * SF_SUBM_X(i  ,j,1,ktp,kp1,bid)    &
@@ -724,20 +727,27 @@
                + factor * SF_SUBM_Y(i,j+1,2,ktp,kp1,bid) )  &
                * p25 * HXY(i,j,bid)
 
+         endif
+
+
+           USMB(i,j) = merge( WORK1(i,j), c0, k < KMT(i,j,bid) .and. k < KMTE(i,j,bid) )
+           VSMB(i,j) = merge( WORK2(i,j), c0, k < KMT(i,j,bid) .and. k < KMTN(i,j,bid) )
+
+            WORK1(i,j) = merge( USMT(i,j) - USMB(i,j), c0, k <= KMT(i,j,bid)  &
+                                      .and. k <= KMTE(i,j,bid) )
+
+            WORK2(i,j) = merge( VSMT(i,j) - VSMB(i,j), c0, k <= KMT(i,j,bid)  &
+                                      .and. k <= KMTN(i,j,bid) )
+
+            U_SUBM(i,j) = WORK1(i,j) * dzr(k) / HTE(i,j,bid)
+            V_SUBM(i,j) = WORK2(i,j) * dzr(k) / HTN(i,j,bid)
+
        enddo
      enddo
 
-     USMB = merge( WORK1, c0, k < KMT(:,:,bid) .and. k < KMTE(:,:,bid) )
-     VSMB = merge( WORK2, c0, k < KMT(:,:,bid) .and. k < KMTN(:,:,bid) )
 
-     WORK1 = merge( USMT - USMB, c0, k <= KMT(:,:,bid)  &
-                               .and. k <= KMTE(:,:,bid) )
-     WORK2 = merge( VSMT - VSMB, c0, k <= KMT(:,:,bid)  &
-                               .and. k <= KMTN(:,:,bid) )
 
-     U_SUBM = WORK1 * dzr(k) / HTE(:,:,bid)
-     V_SUBM = WORK2 * dzr(k) / HTN(:,:,bid)
-
+     !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(j,i)NUM_THREADS(60)
      do j=this_block%jb,this_block%je
        do i=this_block%ib,this_block%ie
 
@@ -861,8 +871,8 @@
 
    enddo
   
-   !end_time = omp_get_wtime()
-   !print *,"Part 4 timings is",end_time - start_time
+   end_time = omp_get_wtime()
+   print *,"Part 4 timings is",end_time - start_time
 
 
 !-----------------------------------------------------------------------
