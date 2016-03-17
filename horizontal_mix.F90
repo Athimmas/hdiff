@@ -620,6 +620,7 @@
         end_time = omp_get_wtime()
         !print *,"time at submeso_flux is ",end_time - start_time
         endif
+
         HDTK=HDTK+TDTK(:,:,:,k)
    endif
    
