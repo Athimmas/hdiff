@@ -1759,11 +1759,9 @@
 
    if(k==1)then
 
-   print *,nsteps_run
-
    if(nsteps_run > 1 ) then 
-        WORKN_HOST = WORKN_PHI
         !dir$ offload_wait target(mic:1)wait(off_sig)
+        WORKN_HOST = WORKN_PHI
    endif
 
    
@@ -1781,7 +1779,7 @@
    !dir$ in(luse_const_horiz_len_scale,hor_length_scale,TIME_SCALE,efficiency_factor,TLT,my_task,master_task) & 
    !dir$ in(max_hor_grid_scale,mix_pass,grav,zgrid,DZT,partial_bottom_cells,FCORT,linertial,ldiag_cfl,radian,TLAT,eod_last) &
    !dir$ in(ltavg_on,num_avail_tavg_fields,sigo,state_coeffs,to,so,use_const_ah_bkg_srfbl,transition_layer_on,tavg_HDIFS,tavg_HDIFT) &
-   !dir$ out(WORKN_PHI:alloc_if(.false.) free_if(.false.)) inout(VDC , VDC_GM) &
+   !dir$ out(WORKN_PHI:alloc_if(.false.) free_if(.false.)) inout(VDC,VDC_GM) &
    !dir$ nocopy(SLX,SLY,SF_SUBM_X,SF_SUBM_Y,KAPPA_ISOP,KAPPA_THIC,HOR_DIFF,KAPPA_VERTICAL,KAPPA_LATERAL,SF_SLX,SF_SLY : alloc_if(.false.) free_if(.false.) ) signal(off_sig)
 
    do kk=1,km
