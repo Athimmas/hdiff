@@ -43,7 +43,7 @@
                              lsubmesoscale_mixing,tavg_HDIFS,tavg_HDIFT
    use vertical_mix, only: vmix_coeffs, implicit_vertical_mix, vdiffu,       &
        vdifft, impvmixt, impvmixu, impvmixt_correct, convad, impvmixt_tavg,  &
-       vmix_itype,VDC_GM,VDC 
+       vmix_itype,VDC_GM,VDC,VDC_GM_HOST 
    use vmix_kpp, only: add_kpp_sources,KPP_HBLT,HMXL,zgrid,linertial
    use diagnostics, only: ldiag_cfl, cfl_check, ldiag_global,                &
        DIAG_KE_ADV_2D, DIAG_KE_PRESS_2D, DIAG_KE_HMIX_2D, DIAG_KE_VMIX_2D,   &
@@ -1005,7 +1005,7 @@
 
       enddo ! vertical (k) loop
 
-     !!dir$ offload_wait target(mic:1)wait(off_sig)
+     !!dir$ offload_wait target(mic:0)wait(off_sig)
          
 !-----------------------------------------------------------------------
 !
@@ -1760,18 +1760,19 @@
    if(k==1)then
 
    if(nsteps_run > 1 ) then 
-        !dir$ offload_wait target(mic:1)wait(off_sig)
+        !dir$ offload_wait target(mic:0)wait(off_sig)
         WORKN_HOST = WORKN_PHI
+        VDC_GM_HOST = VDC_GM_HOST
    endif
 
    
    if(itsdone == 0) then   
-   !dir$ offload_transfer target(mic:1)  nocopy(SLX,SLY,SF_SUBM_X,SF_SUBM_Y,SF_SLX,SF_SLY : alloc_if(.true.) free_if(.false.)) &
+   !dir$ offload_transfer target(mic:0)  nocopy(SLX,SLY,SF_SUBM_X,SF_SUBM_Y,SF_SLX,SF_SLY : alloc_if(.true.) free_if(.false.)) &
    !dir$ in(KAPPA_ISOP,KAPPA_THIC,HOR_DIFF,KAPPA_VERTICAL,KAPPA_LATERAL,WORKN_PHI: alloc_if(.true.) free_if(.false.) )  
    itsdone = itsdone + 1
    endif
  
-   !dir$ offload begin target(mic:1)in(kk,TMIX,UMIX,VMIX,this_block,hmix_tracer_itype,tavg_HDIFE_TRACER,tavg_HDIFN_TRACER,tavg_HDIFB_TRACER) &
+   !dir$ offload begin target(mic:0)in(kk,TMIX,UMIX,VMIX,this_block,hmix_tracer_itype,tavg_HDIFE_TRACER,tavg_HDIFN_TRACER,tavg_HDIFB_TRACER) &
    !dir$ in(lsubmesoscale_mixing,dt,dtu,HYX,HXY,RZ_SAVE,RX,RY,TX,TY,TZ,KMT,KMTE,KMTN,implicit_vertical_mix,vmix_itype,KPP_HBLT,HMXL) &
    !dir$ in(WTOP_ISOP,WBOT_ISOP,HYXW,HXYS,UIT,VIT,RB,RBR,BL_DEPTH) &
    !dir$ in(kappa_isop_type,kappa_thic_type, kappa_freq,slope_control,SLA_SAVE,nsteps_total, ah,ah_bolus, ah_bkg_bottom,ah_bkg_srfbl) &
@@ -1795,6 +1796,7 @@
 
                 do kk=1,km
                 call hdifft(kk, WORKN_HOST(:,:,:,kk), TMIX, UMIX, VMIX, this_block)
+                VDC_GM_HOST = VDC_GM
                 enddo
 
         endif

@@ -63,7 +63,9 @@
 
    !dir$ attributes offload:mic :: VDC_GM
    real (r8), dimension(:,:,:,:), allocatable, public, target :: &
-      VDC_GM              ! Gent-McWilliams contribution to VDC
+      VDC_GM,VDC_GM_HOST     ! Gent-McWilliams contribution to VDC
+
+
 
    integer (int_kind), parameter, public :: &
       vmix_type_const = 1,  & ! integer identifiers for desired
@@ -1258,8 +1260,8 @@
       mt2 = min(n,size(VDC,DIM=4))
       if (accumulate_tavg_now(tavg_DIA_IMPVF_TRACER(n))) then
          do k=1,km-1
-            if (allocated(VDC_GM)) then
-               WORK1 = VDC(:,:,k,mt2,bid) - VDC_GM(:,:,k,bid)
+            if (allocated(VDC_GM_HOST)) then
+               WORK1 = VDC(:,:,k,mt2,bid) - VDC_GM_HOST(:,:,k,bid)
             else
                WORK1 = VDC(:,:,k,mt2,bid)
             endif
