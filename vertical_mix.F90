@@ -61,9 +61,18 @@
                           ! possible modification by Gent-McWilliams
                           ! horizontal mixing parameterization
 
+  real (r8), dimension(:,:,:,:,:), allocatable, public :: &
+      VDC_HOST                 
+
+  real (r8), dimension(:,:,:,:,:), allocatable, public :: &
+      VDC_PHI
+
    !dir$ attributes offload:mic :: VDC_GM
    real (r8), dimension(:,:,:,:), allocatable, public, target :: &
-      VDC_GM,VDC_GM_HOST     ! Gent-McWilliams contribution to VDC
+      VDC_GM              ! Gent-McWilliams contribution to VDC
+
+  real (r8), dimension(:,:,:,:), allocatable, public :: &
+      VDC_GM_HOST     ! Gent-McWilliams contribution to VDC
 
 
 
@@ -404,6 +413,10 @@
    case(vmix_type_kpp)
       allocate (VDC(nx_block,ny_block,0:km+1,2,nblocks_clinic), &
                 VVC(nx_block,ny_block,km,      nblocks_clinic))
+
+      allocate (VDC_HOST(nx_block,ny_block,0:km+1,2,nblocks_clinic), &
+                VDC_PHI (nx_block,ny_block,0:km+1,2,nblocks_clinic))
+
       call init_vmix_kpp(VDC,VVC)
       call get_timer(timer_vmix_coeffs,'VMIX_COEFFICIENTS_KPP', &
                                   nblocks_clinic, distrb_clinic%nprocs)
