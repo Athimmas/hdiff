@@ -589,11 +589,9 @@
 !        compute vertical viscosity and diffusion coeffs
 !
 !-----------------------------------------------------------------------
-        if(k==1)then
+        if(k==1 .and. nsteps_run > 1 ) then
 
-           !dir$ offload_wait target(mic:1)wait(off_sig)
-
-           if(nsteps_run > 1 ) then
+              !dir$ offload_wait target(mic:1)wait(off_sig)
 
               WORKN_HOST = WORKN_PHI
 
