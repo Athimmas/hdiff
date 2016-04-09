@@ -1779,6 +1779,19 @@
 !
 !-----------------------------------------------------------------------
    
+   if(nsteps_run == 1)then
+        if(k==1)then
+
+                do kk=1,km
+                call hdifft(kk, WORKN_HOST(:,:,:,kk), TMIX, UMIX, VMIX,this_block)
+                VDC_GM_HOST = VDC_GM
+                VDC_HOST = VDC
+                enddo
+
+        endif
+   endif
+
+
 
    if(k==1)then
 
@@ -1808,18 +1821,6 @@
    !dir$ end offload
 
    endif
-
-   if(nsteps_run == 1)then 
-        if(k==1)then
-
-                do kk=1,km
-                call hdifft(kk, WORKN_HOST(:,:,:,kk), TMIX, UMIX, VMIX, this_block)
-                VDC_GM_HOST = VDC_GM
-                VDC_HOST = VDC
-                enddo
-
-        endif
-   endif 
 
    WORKN = WORKN_HOST(:,:,:,k)
 
