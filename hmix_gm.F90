@@ -3876,9 +3876,11 @@
               !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(j,i)NUM_THREADS(60)SCHEDULE(DYNAMIC,16)
               do j=1,ny_block
                    do i=1,nx_block
+
+                      WORK(i,j) = c0
+ 
                       if (kk == ktp) then
                    
-                         WORK(i,j) = c0 
                          if ( COMPUTE_TLT(i,j)  .and.  K_START(i,j) <= KMT(i,j,bid)  .and. &
                          K_START(i,j) == k ) then
                          WORK(i,j) = max(SLA_SAVE(i,j,ktp,k,bid), &
