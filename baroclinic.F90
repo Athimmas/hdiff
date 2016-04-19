@@ -80,6 +80,7 @@
    use overflow_type
    use mix_submeso, only: SF_SUBM_X,SF_SUBM_Y,luse_const_horiz_len_scale,hor_length_scale, &
                     TIME_SCALE,efficiency_factor,max_hor_grid_scale,FZTOP_SUBM
+   use registry, only: registry_storage
    use omp_lib
 
    implicit none

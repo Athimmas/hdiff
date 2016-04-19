@@ -39,7 +39,8 @@
    integer (int_kind) ::  &
       registry_failure_count, &
       registry_size
- 
+
+   !dir$ attributes offload:mic :: WORKN_PHI 
    character (char_len), dimension (max_registry_size) ::  &
       registry_storage
  
