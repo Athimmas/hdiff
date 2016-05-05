@@ -375,7 +375,7 @@
                  RZ(i,j) = min(RZ(i,j),-eps2)
 
          
-                 if (match) then 
+                 !if (match) then 
 
 
                     SLX(i,j,ieast ,kbt,kk,bid) = KMASK * RX(i,j,ieast ,kk,bid) / RZ(i,j)
@@ -384,7 +384,7 @@
                     SLY(i,j,jsouth,kbt,kk,bid) = KMASK * RY(i,j,jsouth,kk,bid) / RZ(i,j)
 
 
-                 endif
+                 !endif
 
 !-----------------------------------------------------------------------
 !
@@ -474,7 +474,7 @@
                  RZ(i,j) = min(RZ(i,j),-eps2)
 
 
-            if (match) then
+            !if (match) then
 
 !-----------------------------------------------------------------------
 !
@@ -490,7 +490,7 @@
               endif
 
 
-           endif 
+           !endif 
 
               enddo
             enddo
@@ -511,7 +511,7 @@
         enddo   ! end of kk-loop
 
         if(k==1)then
-          if(.not. registry_match('init_gm')) then
+          !if(.not. registry_match('init_gm')) then
           do n=3,nt 
            !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(kk,n,j,i)collapse(3)num_threads(60)
            do kk=1,km-1
@@ -522,7 +522,7 @@
              enddo
             enddo
            enddo
-          endif
+          !endif
          endif
 
 
