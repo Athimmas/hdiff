@@ -327,6 +327,7 @@
 
        !start_time = omp_get_wtime()
        match = registry_match('init_gm')
+       match = .true.
 !-------------------------------------------------------------------------
 !
 !
@@ -375,7 +376,7 @@
                  RZ(i,j) = min(RZ(i,j),-eps2)
 
          
-                 !if (match) then 
+                 if (match) then 
 
 
                     SLX(i,j,ieast ,kbt,kk,bid) = KMASK * RX(i,j,ieast ,kk,bid) / RZ(i,j)
@@ -384,7 +385,7 @@
                     SLY(i,j,jsouth,kbt,kk,bid) = KMASK * RY(i,j,jsouth,kk,bid) / RZ(i,j)
 
 
-                 !endif
+                 endif
 
 !-----------------------------------------------------------------------
 !
@@ -474,7 +475,7 @@
                  RZ(i,j) = min(RZ(i,j),-eps2)
 
 
-            !if (match) then
+            if (match) then
 
 !-----------------------------------------------------------------------
 !
@@ -490,7 +491,7 @@
               endif
 
 
-           !endif 
+           endif 
 
               enddo
             enddo
@@ -510,20 +511,16 @@
 
         enddo   ! end of kk-loop
 
-        if(k==1)then
-          !if(.not. registry_match('init_gm')) then
           do n=3,nt 
-           !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(kk,n,j,i)collapse(3)num_threads(60)
+           !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(kk,j,i)collapse(3)num_threads(60)
            do kk=1,km-1
              do j=1,ny_block
                 do i=1,nx_block
-                   TZ(i,j,kk+1,n,bid) = TMIX(i,j,kk  ,n) - TMIX(i,j,kk+1,n)
+                   TZ(i,j,kk+1,n,bid) = TMIX(i,j,kk,n) - TMIX(i,j,kk+1,n)
                 enddo
              enddo
             enddo
            enddo
-          !endif
-         endif
 
 
 

@@ -25,7 +25,7 @@
    use domain, only: nblocks_clinic, distrb_clinic
    use constants, only: c0, blank_fmt, delim_fmt, ndelim_fmt
    use communicate, only: my_task, master_task
-   use time_management, only: km, nt, mix_pass
+   use time_management, only: km, nt, mix_pass,nsteps_run
    use broadcast, only: broadcast_scalar
    use grid, only: KMT, dz, partial_bottom_cells, DZT, dzr, dzwr
    use io_types, only: nml_in, nml_filename, stdout
@@ -585,6 +585,14 @@
                     
       endif
 
+     if(my_task == master_task .and. k == 45 .and. nsteps_run == 1) then
+
+             print *,"HDTK cont is",HDTK_BUF(45,45,1,45),nsteps_run
+
+     endif
+
+
+
       !start_time = omp_get_wtime()  
       HDTK = HDTK_BUF(:,:,:,k)
       !end_time = omp_get_wtime()
@@ -620,6 +628,14 @@
         end_time = omp_get_wtime()
         !print *,"time at submeso_flux is ",end_time - start_time
         endif
+
+        if(my_task == master_task .and. k == 45 .and. nsteps_run == 1) then
+
+             print *,"TDTK cont is",TDTK(45,45,1,45),nsteps_run
+
+         endif
+ 
+
         HDTK=HDTK+TDTK(:,:,:,k)
    endif
    

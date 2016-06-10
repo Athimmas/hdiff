@@ -39,9 +39,8 @@
    integer (int_kind) ::  &
       registry_failure_count, &
       registry_size
-
-   !dir$ attributes offload:mic :: registry_storage
-   character (char_len), dimension (max_registry_size), public ::  &
+ 
+   character (char_len), dimension (max_registry_size) ::  &
       registry_storage
  
 !EOC

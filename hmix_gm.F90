@@ -101,8 +101,11 @@
       logical (log_kind), dimension(:), allocatable, public :: &
          compute_kappa        ! compute spatially varying coefficients
                               !  this time step?
-
-      logical (log_kind) ::   &
+       
+      !dir$ attributes offload:mic :: diff_tapering
+      !dir$ attributes offload:mic :: cancellation_occurs
+      !dir$ attributes offload:mic :: read_n2_data 
+      logical (log_kind), public ::   &
          diff_tapering,       &   ! different tapering for two diffusivities
          cancellation_occurs, &   ! specified choices for the isopycnal and
                                   !  thickness diffusion coefficients result in 
@@ -846,6 +849,8 @@
 
     allocate (VDC_GM(nx_block,ny_block,km,nblocks_clinic))
 
+    allocate (VDC_GM_HOST(nx_block,ny_block,km,nblocks_clinic))
+
     allocate (compute_kappa(nblocks_clinic))
 
    HYXW     = c0
@@ -1363,7 +1368,7 @@
 
         endif
 
-	
+
 
 !-----------------------------------------------------------------------
 !
@@ -1373,7 +1378,7 @@
 !-----------------------------------------------------------------------
        
  
-	if ( ( kappa_isop_type == kappa_type_vmhs           .or.    &
+        if ( ( kappa_isop_type == kappa_type_vmhs           .or.    &
                kappa_thic_type == kappa_type_vmhs           .or.    &
                kappa_isop_type == kappa_type_hdgr           .or.    &
                kappa_thic_type == kappa_type_hdgr           .or.    &
@@ -1455,6 +1460,13 @@
 !-----------------------------------------------------------------------
         !start_time = omp_get_wtime()
 
+        !if(my_task == master_task .and. nsteps_run == 1) then
+
+              !print *,"KAPPA_ISOP(i,j,ktp,k,bid) is",KAPPA_ISOP(45,45,ktp,45,bid)
+
+           !endif
+
+
         if ( kappa_isop_type == kappa_type_const ) then
           KAPPA_ISOP(:,:,:,:,bid) = ah
         elseif ( kappa_isop_type == kappa_type_eg ) then
@@ -1471,6 +1483,16 @@
                    do i=1,nx_block
                        KAPPA_ISOP(i,j,kk_sub,kk,bid) =  KAPPA_LATERAL(i,j,bid)  &
                                                      * KAPPA_VERTICAL(i,j,kk,bid)
+
+                    if(my_task == master_task .and. kk == 45 .and. i == 45 .and. j==45 .and. nsteps_run == 1) then
+
+                     print *,kk_sub
+                     print *,"KAPPA_ISOP IS",KAPPA_ISOP(i,j,kk_sub,kk,bid)
+                     print *,"KAPPA_LATERAL is",KAPPA_LATERAL(i,j,bid)
+                     print *,"KAPPA_VERTICAL is",KAPPA_VERTICAL(i,j,kk,bid)              
+
+                    endif
+
                    enddo
                enddo  
             enddo
@@ -1526,6 +1548,11 @@
         !close(10)
 
         !endif 
+
+         !if(my_task == master_task .and. nsteps_run == 1) then
+              !print *,"Before loop"
+              !print *,"KAPPA_ISOP(i,j,ktp,k,bid) is",KAPPA_ISOP(45,45,ktp,45,bid)           
+           !endif
 
 
 !-----------------------------------------------------------------------
@@ -1840,8 +1867,18 @@
 
           !start_time = omp_get_wtime()
 
+          !if(my_task == master_task .and. nsteps_run == 1) then  
+              !print *,"KAPPA_ISOP(45,45,1,45,bid) before is",KAPPA_ISOP(45,45,1,45,bid)
+          !endif
+
  
           call apply_vertical_profile_to_isop_hor_diff ( this_block ) 
+
+
+          !if(my_task == master_task .and. nsteps_run == 1) then
+             !print *,"KAPPA_ISOP(45,45,1,45,bid) after is",KAPPA_ISOP(45,45,1,45,bid)
+          !endif
+
  
 
           !end_time = omp_get_wtime()
@@ -1983,6 +2020,23 @@
                      + HOR_DIFF  (i+1,j,ktp,k,bid)  &
                      + KAPPA_ISOP(i+1,j,kbt,k,bid)  &
                      + HOR_DIFF  (i+1,j,kbt,k,bid)
+
+              
+           !if(my_task == master_task .and. k == 45 .and. i == 45 .and. j==45 .and. nsteps_run == 1) then
+
+              !print *,"WORK3 is",WORK3(i,j) 
+              !print *,"KAPPA_ISOP(i,j,ktp,k,bid) is",KAPPA_ISOP(i,j,ktp,k,bid)
+              !print *,"HOR_DIFF  (i,j,ktp,k,bid) is",HOR_DIFF  (i,j,ktp,k,bid)                          
+              !print *,"KAPPA_ISOP(i,j,kbt,k,bid) is",KAPPA_ISOP(i,j,kbt,k,bid)
+              !print *,"HOR_DIFF  (i,j,kbt,k,bid) is",HOR_DIFF  (i,j,kbt,k,bid) 
+              !print *,"KAPPA_ISOP(i+1,j,ktp,k,bid)is",KAPPA_ISOP(i+1,j,ktp,k,bid)
+              !print *,"HOR_DIFF  (i+1,j,ktp,k,bid) is",HOR_DIFF  (i+1,j,ktp,k,bid)  
+              !print *,"KAPPA_ISOP(i+1,j,kbt,k,bid) is",KAPPA_ISOP(i+1,j,kbt,k,bid)
+              !print *,"HOR_DIFF  (i+1,j,kbt,k,bid) is",HOR_DIFF  (i+1,j,kbt,k,bid) 
+ 
+ 
+           !endif
+
         enddo
       enddo
       
@@ -2032,6 +2086,18 @@
         FX(:,:,n) = dz(k) * CX * TX(:,:,k,n,bid) * WORK3
         FY(:,:,n) = dz(k) * CY * TY(:,:,k,n,bid) * WORK4 
 
+        !if(my_task == master_task .and. k == 45 .and. n==1 .and. nsteps_run == 1) then
+
+                     !print *,"FX is",FX(45,45,1),nsteps_run
+                     !print *,"WORK3 is",WORK3(45,45)
+                     !print *,"WORK4 is",WORK4(45,45)
+                     !print *,"CX is",CX(45,45)
+                     !print *,"TX is",TX(45,45,45,n,bid)
+                     !print *,"dz is",dz(k)
+
+        !endif
+
+
       end do
 
       if ( .not. cancellation_occurs ) then
@@ -2056,6 +2122,21 @@
         do n = 1,nt
           do j=1,ny_block
             do i=1,nx_block-1
+
+                 !if(my_task == master_task .and. k == 45 .and. i == 45 .and. j==45 .and. n==1 .and. nsteps_run == 1) then
+
+                     !print *,"FX is",FX(i,j,n)
+                     !print *,"CX is",CX(i,j)
+                     !print *,"WORK1 is",WORK1(i,j)
+                     !print *,"WORK2 is",WORK2(i,j)
+                     !print *,"WORK3 is",WORK3(i,j)
+                     !print *,"WORK4 is",WORK4(i,j)
+                     !print *,"TZ(i,j,kp1,n,bid) is",TZ(i,j,kp1,n,bid)
+                     !print *,"TZ(i+1,j,k,n,bid) is",TZ(i+1,j,k,n,bid)
+                     !print *,"TZ(i+1,j,kp1,n,bid)",TZ(i+1,j,kp1,n,bid)
+
+                 !endif
+
               FX(i,j,n) = FX(i,j,n) - CX(i,j)                          &
                * ( WORK1(i,j) * TZ(i,j,k,n,bid)                        &
                    + WORK2(i,j) * TZ(i,j,kp1,n,bid)                    &
@@ -2262,6 +2343,21 @@
 
 
                 fz = -KMASK(i,j) * p25 * WORK3(i,j)
+
+                 !if(my_task == master_task .and. k == 45 .and. i == 45 .and. j==45 .and. n==1 .and. nsteps_run == 1) then
+
+                     !print *,"GTK is",GTK(45,45,1),nsteps_run
+                     !print *,"FX  is",FX(45,45,1)
+                     !print *,"FX(i-1) is",FX(i-1,j,n)
+                     !print *,"FY is",FY(i,j,n)
+                     !print *,"FY(j-1) is",FY(i,j-1,n)
+                     !print *,"fzprev is",fzprev
+                     !print *,"fz is",fz
+                     !print *,"dzr is",dzr(k)
+                     !print *,"TAREA_R(i,j,bid) is",TAREA_R(i,j,bid) 
+
+                 !endif
+         
 
 
                 GTK(i,j,n) = ( FX(i,j,n) - FX(i-1,j,n)  &
@@ -3528,14 +3624,9 @@
          
         do k=1,km-1
 
-          !if ( k == 1 ) TEMP_K = max( -c2, TMIX(:,:,k,1) )
-
-          !TEMP_KP1 = max( -c2, TMIX(:,:,k+1,1) )
-
           call state( k, k+1, TMIX(:,:,k,1), TMIX(:,:,k,2), &
                       this_block, DRHODT=RHOT, DRHODS=RHOS )
 
-          !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(i,j)NUM_THREADS(60) 
           do j=1,ny_block
              do i=1,nx_block
 
@@ -3568,7 +3659,6 @@
 !-----------------------------------------------------------------------
 
       do k=1,km-1
-       !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(i,j)NUM_THREADS(60)
        do j=1,ny_block
         do i=1,nx_block 
 
@@ -3602,7 +3692,6 @@
       enddo
 
       do k=1,km-1
-       !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(i,j)NUM_THREADS(60)
        do j=1,ny_block
         do i=1,nx_block
   
@@ -3624,7 +3713,6 @@
 !-----------------------------------------------------------------------
 
       do k=2,km
-       !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(i,j)NUM_THREADS(60)
        do j=1,ny_block
         do i=1,nx_block
  
