@@ -84,9 +84,11 @@
       state_type_polynomial = 3,    &
       state_type_linear     = 4
 
+   !dir$ attributes offload:mic :: state_itype
    integer (int_kind), public ::    &
       state_itype           ! input state type chosen
 
+   !dir$ attributes offload:mic :: state_range_iopt
    integer (int_kind), public ::    &
       state_range_iopt,     &! option for checking valid T,S range
       state_range_freq       ! freq (in steps) for checking T,S range

@@ -186,9 +186,11 @@
          ktmp,              &! array indices
          kn, ks,            &! cyclic pointers for 2-level local arrays
          bid                 ! local block address for this sub block
+
       !real (r8), dimension(nx_block,ny_block) :: &
       !   KMASKE, KMASKN    ! ocean mask
         !DRDT, DRDS              ! expansion coefficients d(rho)/dT,S
+
       real (r8), dimension(nx_block,ny_block,2) :: &
          TXP, TYP, TZP , TEMP
 
@@ -203,7 +205,7 @@
 
       real (r8) :: tempi,tempip1,tempj,tempjp1
  
-      real (r8) :: temp_ksi,temp_ksip1,temp_ksj,temp_ksjp1,kmask,kmaske,kmaskn
+      real (r8) :: temp_ksi,temp_ksip1,temp_ksj,temp_ksjp1,KMASK,KMASKE,KMASKN
 
       real (r8) :: txpim1,kmaskeim1,temp_ksim1,txim1
 
@@ -256,7 +258,7 @@
 
         kk=1
 
-            !!$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(j,i,KMASKE,KMASKN,tempi,tempip1,tempj,tempjp1)num_threads(60)
+            !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(j,i,KMASKE,KMASKN,tempi,tempip1,tempj,tempjp1)num_threads(60)
             do j=1,ny_block
               do i=1,nx_block
 
@@ -340,8 +342,8 @@
 
             if ( kk < km ) then
 
-            !!$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(j,i,temp_ksi,temp_ksip1,temp_ksj,temp_ksjp1,KMASK,KMASKE,KMASKN,temp_ksim1,kmaskeim1) &
-            !!$OMP PRIVATE(txpim1,txim1,temp_ksjm1,kmasknjm1,typjm1,tyjm1)NUM_THREADS(60)
+            !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(j,i,temp_ksi,temp_ksip1,temp_ksj,temp_ksjp1,KMASK,KMASKE,KMASKN,temp_ksim1,kmaskeim1) &
+            !$OMP PRIVATE(txpim1,txim1,temp_ksjm1,kmasknjm1,typjm1,tyjm1)NUM_THREADS(60)
             do j=1,ny_block
               do i=1,nx_block
                  KMASK = merge(c1, c0, kk < KMT(i,j,bid))
