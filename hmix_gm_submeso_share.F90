@@ -256,7 +256,7 @@
 
         kk=1
 
-            !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(j,i,KMASKE,KMASKN,tempi,tempip1,tempj,tempjp1)num_threads(60)
+            !!$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(j,i,KMASKE,KMASKN,tempi,tempip1,tempj,tempjp1)num_threads(60)
             do j=1,ny_block
               do i=1,nx_block
 
@@ -340,8 +340,8 @@
 
             if ( kk < km ) then
 
-            !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(j,i,temp_ksi,temp_ksip1,temp_ksj,temp_ksjp1,kmask,kmaske,kmaskn,temp_ksim1,kmaskeim1) &
-            !$OMP PRIVATE(txpim1,txim1,temp_ksjm1,kmasknjm1,typjm1,tyjm1)NUM_THREADS(60)
+            !!$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(j,i,temp_ksi,temp_ksip1,temp_ksj,temp_ksjp1,KMASK,KMASKE,KMASKN,temp_ksim1,kmaskeim1) &
+            !!$OMP PRIVATE(txpim1,txim1,temp_ksjm1,kmasknjm1,typjm1,tyjm1)NUM_THREADS(60)
             do j=1,ny_block
               do i=1,nx_block
                  KMASK = merge(c1, c0, kk < KMT(i,j,bid))
@@ -490,8 +490,15 @@
                 SLY(i,j,jsouth,ktp,kk+1,bid) = RY(i,j,jsouth,kk+1,bid) / RZ(i,j)
               endif
 
+                   if(my_task == master_task .and. i == 45 .and. j == 45 .and. nsteps_run == 1) then
 
-           endif 
+                         print *,"k is",kk
+                         print *,"RX(i,j,ieast ,kk+1,bid)",RX(i,j,ieast,45+1,bid)
+                         print *,"SLX(i,j,ieast,ktp,kp1,bid)",SLX(i  ,j, ieast ,ktp,45+1,bid)
+                         print *,"RZ(i,j)",RZ(i,j)
+
+                    endif 
+            endif 
 
               enddo
             enddo
@@ -511,6 +518,7 @@
 
         enddo   ! end of kk-loop
 
+
           do n=3,nt 
            !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(kk,j,i)collapse(3)num_threads(60)
            do kk=1,km-1
@@ -521,7 +529,6 @@
              enddo
             enddo
            enddo
-
 
 
         !end_time = omp_get_wtime()

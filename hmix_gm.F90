@@ -1484,14 +1484,14 @@
                        KAPPA_ISOP(i,j,kk_sub,kk,bid) =  KAPPA_LATERAL(i,j,bid)  &
                                                      * KAPPA_VERTICAL(i,j,kk,bid)
 
-                    if(my_task == master_task .and. kk == 45 .and. i == 45 .and. j==45 .and. nsteps_run == 1) then
+                    !if(my_task == master_task .and. kk == 45 .and. i == 45 .and. j==45 .and. nsteps_run == 1) then
 
-                     print *,kk_sub
-                     print *,"KAPPA_ISOP IS",KAPPA_ISOP(i,j,kk_sub,kk,bid)
-                     print *,"KAPPA_LATERAL is",KAPPA_LATERAL(i,j,bid)
-                     print *,"KAPPA_VERTICAL is",KAPPA_VERTICAL(i,j,kk,bid)              
+                     !print *,kk_sub
+                     !print *,"KAPPA_ISOP IS",KAPPA_ISOP(i,j,kk_sub,kk,bid)
+                     !print *,"KAPPA_LATERAL is",KAPPA_LATERAL(i,j,bid)
+                     !print *,"KAPPA_VERTICAL is",KAPPA_VERTICAL(i,j,kk,bid)              
 
-                    endif
+                    !endif
 
                    enddo
                enddo  
@@ -2267,6 +2267,26 @@
                       + SF_SLY(i  ,j  ,jsouth,ktp,kp1,bid)            &
                        * HXY(i  ,j-1,bid) * TY(i  ,j-1,kp1,n,bid) ) )
 
+                 !if(my_task == master_task .and. k == 45 .and. i == 45 .and. j==45 .and. n==1 .and. nsteps_run == 1) then
+
+                     !print *,"kp1",kp1
+                     !print *,"SF_SLX(i  ,j  ,ieast ,ktp,kp1,bid) is",SF_SLX(i,j,ieast ,ktp,kp1,bid)
+                     !print *,"SF_SLY(i  ,j  ,jnorth,ktp,kp1,bid) is",SF_SLY(i,j,jnorth,ktp,kp1,bid)   
+                     !print *,"SF_SLX(i  ,j  ,iwest ,ktp,kp1,bid) is",SF_SLX(i,j,iwest ,ktp,kp1,bid)
+                     !print *,"SF_SLY(i  ,j  ,jsouth,ktp,kp1,bid) is",SF_SLY(i,j,jsouth,ktp,kp1,bid)
+                     !print *,"HYX(i  ,j  ,bid)",HYX(i  ,j  ,bid)
+                     !print *,"HXY(i  ,j  ,bid)",HXY(i  ,j  ,bid)
+                     !print *,"TX(i  ,j  ,kp1,n,bid)",TX(i  ,j  ,kp1,n,bid)
+                     !print *,"TY(i  ,j  ,kp1,n,bid)",TY(i  ,j  ,kp1,n,bid)
+                     !print *,"TX(i-1 ,j  ,kp1,n,bid)",TX(i-1  ,j  ,kp1,n,bid)
+                     !print *,"TY(i  ,j-1 ,kp1,n,bid)",TY(i  ,j -1  ,kp1,n,bid)
+                     !print *,"HYX(i-1,j  ,bid)",HYX(i-1,j  ,bid)
+                     !print *,"HXY(i,j-1 ,bid)",HYX(i,j-1,bid)
+                     
+
+                 !endif
+
+
                enddo
              enddo
 
@@ -2278,7 +2298,7 @@
 
                if(k ==1) then
                  
-                 fzprev = c0  
+                 fzprev = c0 
                  dzbottomprev = dz(k)
 
                else
@@ -2343,6 +2363,14 @@
 
 
                 fz = -KMASK(i,j) * p25 * WORK3(i,j)
+
+                 !if(my_task == master_task .and. k == 45 .and. i == 45 .and. j==45 .and. n==1 .and. nsteps_run == 1) then
+
+                     !print *,"KMASK",-KMASK(i,j)
+                     !print *,"WORK3 is",WORK3(i,j) 
+
+                 !endif
+
 
                  !if(my_task == master_task .and. k == 45 .and. i == 45 .and. j==45 .and. n==1 .and. nsteps_run == 1) then
 
@@ -3858,19 +3886,6 @@
 #ifdef CCSMCOUPLED
 #ifndef _HIRES
 
-      if(my_task == master_task)then
-
-      do i=1,ny_block
-       do j=1,nx_block
-
-          if( COMPUTE_TLT(i,j) ) print *,"At DEPTH comp",i,j
-
-       enddo
-      enddo
-
-     endif
-
-
       if ( any(COMPUTE_TLT) ) then
         print *,"Incorrect DIABATIC_DEPTH value in TLT computation"
       endif
@@ -4414,6 +4429,13 @@
                        SF_SLY(i,j,2,kk,k,bid) = reference_depth(kk) * WORK5(i,j)  &
                              * ( c2 * WORK3(i,j,2) + TLT%THICKNESS(i,j,bid)       &
                                 * WORK4(i,j,2) )
+
+                       !if(my_task == master_task .and. k == 45 + 1 .and. i == 45 .and. j==45 .and. nsteps_run == 1) then
+
+                         !print *,"in Part1"
+                         !print *,"SF_SLX(i,j,ieast,ktp,kp1,bid)",SF_SLX(i  ,j ,1 ,ktp,k,bid) 
+
+                       !endif
      
                 endif
       
@@ -4459,6 +4481,14 @@
                          + reference_depth(kk) * WORK5(i,j)               &
                           * ( c2 * WORK3(i,j,2) + TLT%THICKNESS(i,j,bid)  &
                              * WORK4(i,j,2) )
+
+                      !if(my_task == master_task .and. k == 45 + 1 .and. i == 45 .and. j==45 .and. nsteps_run == 1) then
+
+                         !print *,"in Part2"
+                         !print *,"SF_SLX(i,j,ieast,ktp,kp1,bid)",SF_SLX(i  ,j ,1 ,ktp,k,bid)  
+                            
+                       !endif
+
  
                   endif
 
@@ -4473,6 +4503,7 @@
                  if ( reference_depth(kk) > TLT%INTERIOR_DEPTH(i,j,bid)  & 
                        .and.  k <= KMT(i,j,bid) ) then
 
+
                      SF_SLX(i,j,1,kk,k,bid) =  KAPPA_THIC(i,j,kk,k,bid)  &
                                        * SLX(i,j,1,kk,k,bid) * dz(k)
 
@@ -4484,6 +4515,17 @@
 
                      SF_SLY(i,j,2,kk,k,bid) =  KAPPA_THIC(i,j,kk,k,bid)  &
                                        * SLY(i,j,2,kk,k,bid) * dz(k)
+
+                       !if(my_task == master_task .and. k == 45 + 1 .and. i == 45 .and. j==45 .and. nsteps_run == 1) then
+
+                         !print *,"in Part3"
+                         !print *,"SF_SLX(i,j,ieast,ktp,kp1,bid)",SF_SLX(i  ,j ,1 ,ktp,k,bid)
+                         !print *,"KAPPA_THIC(i,j,kk,k,bid)",KAPPA_THIC(i,j,ktp,k,bid)
+                         !print *,"SLX(i,j,1,kk,k,bid)",SLX(i,j,1,ktp,k,bid)
+                         
+
+                       !endif
+
 
                 endif
 

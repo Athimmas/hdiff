@@ -12,7 +12,7 @@
 !  The module supports four forms of EOS:
 !  \begin{enumerate}
 !     \item The UNESCO equation of state computed using the 
-!           potential-temperature-based bulk modulus from Jackett and 
+!           potential-temper ature-based bulk modulus from Jackett and 
 !           McDougall, JTECH, Vol.12, pp 381-389, April, 1995.
 !     \item The faster and more accurate alternative to the UNESCO eos
 !           of McDougall, Wright, Jackett and Feistel (hereafter 
@@ -62,7 +62,12 @@
 !
 !-----------------------------------------------------------------------
 
-   real (r8), dimension(km) :: & 
+   !dir$ attributes offload:mic :: pressz
+   !dir$ attributes offload:mic :: tmin
+   !dir$ attributes offload:mic :: tmax
+   !dir$ attributes offload:mic :: smin
+   !dir$ attributes offload:mic :: smax
+   real (r8), dimension(km), public :: & 
       tmin, tmax,        &! valid temperature range for level k
       smin, smax,        &! valid salinity    range for level k
       pressz              ! ref pressure (bars) at each level
