@@ -588,7 +588,7 @@
 
      if(my_task == master_task .and. k == 1 .and. nsteps_run == 1) then
 
-             print *,"HDTK cont is",HDTK_BUF(8,20,1,1),nsteps_run
+             print *,"HDTK cont is",HDTK_BUF(40,196,1,1),nsteps_run
 
      endif
 
@@ -632,7 +632,7 @@
 
         if(my_task == master_task .and. k == 1 .and. nsteps_run == 1  ) then
 
-             print *,"TDTK cont is",TDTK(8,20,1,1),nsteps_run
+             print *,"TDTK cont is",TDTK(40,196,1,1),nsteps_run
 
          endif
  

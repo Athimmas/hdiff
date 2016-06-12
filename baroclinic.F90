@@ -1819,14 +1819,14 @@
 
     !endif
 
-    !if(my_task == master_task) then
+    !if(my_task == master_task .and. nsteps_run == 1) then
 
     !do kk=1,km
      !do n=1,nt
       !do j=1,ny_block
        !do i=1,nx_block
 
-          !if( abs(WORKN_HOST(8,20,1,1) - WORKN_PHI(8,20,1,1) ) > 1e-10_r8 ) print *,"error,8,20,1,1"
+          !if( abs(WORKN_HOST(1,196,1,1) - WORKN_PHI(1,196,1,1) ) > 1e-10_r8 ) print *,"error"
 
        !enddo
       !enddo

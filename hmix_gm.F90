@@ -1484,14 +1484,14 @@
                        KAPPA_ISOP(i,j,kk_sub,kk,bid) =  KAPPA_LATERAL(i,j,bid)  &
                                                      * KAPPA_VERTICAL(i,j,kk,bid)
 
-                    !if(my_task == master_task .and. kk == 45 .and. i == 45 .and. j==45 .and. nsteps_run == 1) then
+                    if(my_task == master_task .and. kk == 45 .and. i == 45 .and. j==45 .and. nsteps_run == 1) then
 
-                     !print *,kk_sub
-                     !print *,"KAPPA_ISOP IS",KAPPA_ISOP(i,j,kk_sub,kk,bid)
-                     !print *,"KAPPA_LATERAL is",KAPPA_LATERAL(i,j,bid)
-                     !print *,"KAPPA_VERTICAL is",KAPPA_VERTICAL(i,j,kk,bid)              
+                     print *,kk_sub
+                     print *,"KAPPA_ISOP IS",KAPPA_ISOP(i,j,kk_sub,kk,bid)
+                     print *,"KAPPA_LATERAL is",KAPPA_LATERAL(i,j,bid)
+                     print *,"KAPPA_VERTICAL is",KAPPA_VERTICAL(i,j,kk,bid)              
 
-                    !endif
+                    endif
 
                    enddo
                enddo  
@@ -3741,6 +3741,7 @@
 !-----------------------------------------------------------------------
 
       do k=2,km
+       !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(I,J)NUM_THREADS(60)
        do j=1,ny_block
         do i=1,nx_block
  

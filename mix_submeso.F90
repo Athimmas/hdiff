@@ -499,9 +499,9 @@
 
   enddo
 
-  if(my_task == master_task .and. nsteps_run == 1) then
-  print *,"RY(i,j,2,k,bid)",RY(8,21,2,1,bid)
-  endif 
+  !if(my_task == master_task .and. nsteps_run == 1) then
+  !print *,"RY(i,j,2,k,bid)",RY(8,21,2,1,bid)
+  !endif 
 
 #ifdef CCSMCOUPLED
    if ( any(CONTINUE_INTEGRAL) ) then
@@ -1102,19 +1102,6 @@
                                + FY(i,j,n) - FY(i,j-1,n)  &
                         + fzprev - fz )*dzr(k)*TAREA_R(i,j,bid)
 
-                  !if(my_task == master_task .and. k == 1 .and. i == 8 .and. j==20 .and. n==1 .and. nsteps_run == 1) then
-
-                     !print *,"GTK is",GTK(i,j,n)
-                     !print *,"FX(i,j,n) is",FX(i,j,n) 
-                     !print *,"FX(i,j,n) is",FX(i-1,j,n)
-                     !print *,"FY(i,j,n) is",FY(i,j,n)
-                     !print *,"FY(i,j-1,n) is",FX(i,j-1,n)
-                     !print *,"fz",fz
-                     !print *,"fzprev",fzprev
-
-                  !endif                   
-
- 
                   !FZTOP_SUBM(i,j,n,bid) = fz
 
                else  
