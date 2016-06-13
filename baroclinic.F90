@@ -50,10 +50,10 @@
        DIAG_TRACER_HDIFF_2D, DIAG_PE_2D, DIAG_TRACER_ADV_2D,                 &
        DIAG_TRACER_SFC_FLX, DIAG_TRACER_VDIFF_2D, DIAG_TRACER_SOURCE_2D
    use movie, only: define_movie_field, movie_requested, update_movie_field
-   use state_mod, only: state,sigo,state_coeffs,to,so,pressz,tmin,tmax,smin,smax,state_itype,state_range_iopt
+   use state_mod, only:state,sigo,state_coeffs,to,so,tmin,tmax,smin,smax,pressz,state_range_iopt,state_itype
    use ice, only: liceform, ice_formation, increment_tlast_ice
    use time_management, only: mix_pass, leapfrogts, impcor, c2dtu, beta,     &
-       gamma, c2dtt,dt,dtu , nsteps_total,eod_last
+       gamma, c2dtt,dt,dtu , nsteps_total,eod_last,nsteps_total
    use io_types, only: nml_in, nml_filename, stdout
    use tavg, only: define_tavg_field, accumulate_tavg_field, accumulate_tavg_now, &
        tavg_method_max, tavg_method_min,ltavg_on,num_avail_tavg_fields
@@ -74,12 +74,12 @@
                       kappa_isop_type,kappa_thic_type, kappa_freq,slope_control,SLA_SAVE, &
                       slm_r,slm_b,ah,ah_bolus,ah_bkg_bottom,ah_bkg_srfbl,BUOY_FREQ_SQ,    &
                       SIGMA_TOPO_MASK,use_const_ah_bkg_srfbl,transition_layer_on,compute_kappa,&
-                      SF_SLX,SF_SLY,TLT,read_n2_data,diff_tapering,cancellation_occurs 
+                      SF_SLX,SF_SLY,TLT,read_n2_data,cancellation_occurs,diff_tapering 
    use exit_mod, only: sigAbort, exit_pop, flushm
    use overflows
    use overflow_type
    use mix_submeso, only: SF_SUBM_X,SF_SUBM_Y,luse_const_horiz_len_scale,hor_length_scale, &
-                    TIME_SCALE,efficiency_factor,max_hor_grid_scale,FZTOP_SUBM,sqrt_grav
+                    TIME_SCALE,efficiency_factor,max_hor_grid_scale,FZTOP_SUBM
    use omp_lib
 
    implicit none
@@ -157,7 +157,7 @@
       off_sig = 1       
 
    !dir$ attributes offload:mic :: WORKN_PHI
-   real (r8), dimension(:,:,:,:),allocatable :: &
+   real (r8), dimension(nx_block,ny_block,nt,km) :: &
       WORKN_PHI
 
   real (r8), dimension(nx_block,ny_block,nt,km) :: &
@@ -447,7 +447,7 @@
 
    enddo
 
-   allocate(WORKN_PHI(nx_block,ny_block,nt,km))
+   !allocate(WORKN_PHI(nx_block,ny_block,nt,km))
 
 !-----------------------------------------------------------------------
 !EOC
@@ -571,6 +571,7 @@
 !
 !-----------------------------------------------------------------------
 
+
    !$OMP PARALLEL DO PRIVATE(iblock,this_block,k,kp1,km1,WTK,WORK1,factor)
 
    do iblock = 1,nblocks_clinic
@@ -588,27 +589,26 @@
 !        compute vertical viscosity and diffusion coeffs
 !
 !-----------------------------------------------------------------------
-        !if(k==1)then
+        if(k==1)then
 
-           !if(nsteps_run > 1 ) then
+           if(nsteps_run > 1 ) then
 
-              !!dir$ offload_wait target(mic:1)wait(off_sig)
+              !dir$ offload_wait target(mic:1)wait(off_sig)
 
-              !WORKN_HOST = WORKN_PHI
+              WORKN_HOST = WORKN_PHI
 
-              !VDC_GM_HOST = VDC_GM
-
-              !VDC_PHI = VDC
-              !VDC = VDC_HOST
-              !VDC_HOST = VDC_PHI
+              VDC_PHI = VDC
+              VDC = VDC_HOST
+              VDC_HOST = VDC_PHI
  
-           !else
+           else
 
-               !VDC = VDC_HOST
+               VDC = VDC_HOST
+               VDC_GM = VDC_GM_HOST
 
-           !endif
+           endif
 
-        !endif
+        endif
 
 
          if (lsmft_avail) then
@@ -1748,7 +1748,7 @@
 
    integer (int_kind) :: &
       n,kk,              &! dummy tracer index
-      bid,i,j             ! local_block id
+      bid                 ! local_block id
 
 
    real (r8), dimension(nx_block,ny_block,nt) :: &
@@ -1778,74 +1778,50 @@
 !
 !-----------------------------------------------------------------------
    
-
    if(k==1)then
 
    
    if(itsdone == 0) then   
-   !dir$ offload_transfer target(mic:1)  nocopy(SLX,SLY,SF_SUBM_X,SF_SUBM_Y,SF_SLX,SF_SLY,WORKN_PHI : alloc_if(.true.) free_if(.false.)) &
-   !dir$ in(KAPPA_ISOP,KAPPA_THIC,HOR_DIFF,KAPPA_VERTICAL,KAPPA_LATERAL,WTOP_ISOP,WBOT_ISOP: alloc_if(.true.) free_if(.false.) )  
+   !dir$ offload_transfer target(mic:1)  nocopy(SLX,SLY,SF_SUBM_X,SF_SUBM_Y,SF_SLX,SF_SLY : alloc_if(.true.) free_if(.false.)) &
+   !dir$ in(KAPPA_ISOP,KAPPA_THIC,HOR_DIFF,KAPPA_VERTICAL,KAPPA_LATERAL,WORKN_PHI,WTOP_ISOP,WBOT_ISOP: alloc_if(.true.) free_if(.false.) )  
    itsdone = itsdone + 1
    endif
  
-   !dir$ offload begin target(mic:1)in(kk,TMIX,UMIX,VMIX,this_block,hmix_tracer_itype,tavg_HDIFE_TRACER,tavg_HDIFN_TRACER,tavg_HDIFB_TRACER) &
+   !dir$ offload begin target(mic:1)in(kk,TCUR,UCUR,VCUR,this_block,hmix_tracer_itype,tavg_HDIFE_TRACER,tavg_HDIFN_TRACER,tavg_HDIFB_TRACER) &
    !dir$ in(lsubmesoscale_mixing,dt,dtu,HYX,HXY,RZ_SAVE,RX,RY,TX,TY,TZ,KMT,KMTE,KMTN,implicit_vertical_mix,vmix_itype,KPP_HBLT,HMXL) &
-   !dir$ in(HYXW,HXYS,UIT,VIT,RB,RBR,BL_DEPTH,nsteps_run,read_n2_data,diff_tapering,cancellation_occurs,pressz,tmin,tmax,smin,smax) &
+   !dir$ in(HYXW,HXYS,UIT,VIT,RB,RBR,BL_DEPTH,read_n2_data,diff_tapering,cancellation_occurs,pressz,tmin,tmax,smin,smax) &
    !dir$ in(kappa_isop_type,kappa_thic_type, kappa_freq,slope_control,SLA_SAVE,nsteps_total, ah,ah_bolus, ah_bkg_bottom,ah_bkg_srfbl) &
-   !dir$ in(slm_r,slm_b,compute_kappa,BUOY_FREQ_SQ,SIGMA_TOPO_MASK,dz,dzw,dzwr,zw,dzr,DYT,DXT,HUW,HUS,TAREA_R,HTN,HTE,pi,zt,sqrt_grav) &
+   !dir$ in(slm_r,slm_b,compute_kappa,BUOY_FREQ_SQ,SIGMA_TOPO_MASK,dz,dzw,dzwr,zw,dzr,DYT,DXT,HUW,HUS,TAREA_R,HTN,HTE,pi,zt) &
    !dir$ in(luse_const_horiz_len_scale,hor_length_scale,TIME_SCALE,efficiency_factor,TLT,my_task,master_task,state_itype,state_range_iopt) & 
    !dir$ in(max_hor_grid_scale,mix_pass,grav,zgrid,DZT,partial_bottom_cells,FCORT,linertial,ldiag_cfl,radian,TLAT,eod_last) &
    !dir$ in(ltavg_on,num_avail_tavg_fields,sigo,state_coeffs,to,so,use_const_ah_bkg_srfbl,transition_layer_on,tavg_HDIFS,tavg_HDIFT) &
    !dir$ out(WORKN_PHI:alloc_if(.false.) free_if(.false.)) inout(VDC,VDC_GM) &
    !dir$ nocopy(SLX,SLY,SF_SUBM_X,SF_SUBM_Y,KAPPA_ISOP,KAPPA_THIC,HOR_DIFF,KAPPA_VERTICAL,KAPPA_LATERAL,SF_SLX,SF_SLY,WTOP_ISOP : alloc_if(.false.) free_if(.false.) ) &
-   !dir$ nocopy( WBOT_ISOP : alloc_if(.false.) free_if(.false.) )
+   !dir$ nocopy( WBOT_ISOP : alloc_if(.false.) free_if(.false.) )signal(off_sig)
 
    do kk=1,km
-   call hdifft(kk, WORKN_PHI(:,:,:,kk), TMIX, UMIX, VMIX, this_block)
+   call hdifft(kk, WORKN_PHI(:,:,:,kk), TCUR, UCUR, VCUR, this_block)
    enddo
 
    !dir$ end offload
 
    endif
 
-   !if(nsteps_run == 1)then 
-   !if(k==1)then
 
-    !do kk=1,km
-    !call hdifft(kk, WORKN_HOST(:,:,:,kk), TMIX, UMIX, VMIX, this_block)
-                !VDC_GM_HOST = VDC_GM
-                !VDC_HOST = VDC
-    !enddo
+   if(nsteps_run == 1 )then
+        if(k==1)then
 
-    !endif
+                do kk=1,km
+               call hdifft(kk, WORKN_HOST(:,:,:,kk), TMIX, UMIX,VMIX,this_block)
+                enddo
+                VDC_GM_HOST = VDC_GM
+                VDC_HOST = VDC
 
-    !if(my_task == master_task .and. nsteps_run == 1) then
+        endif
+   endif
 
-    !do kk=1,km
-     !do n=1,nt
-      !do j=1,ny_block
-       !do i=1,nx_block
 
-          !if( abs(WORKN_HOST(1,196,1,1) - WORKN_PHI(1,196,1,1) ) > 1e-10_r8 ) print *,"error"
-
-       !enddo
-      !enddo
-     !enddo
-    !enddo 
-
-    !endif
-
-        !endif
-   !endif 
-
-   WORKN = WORKN_PHI(:,:,:,k)
-
-     !if(my_task == master_task .and. k == 45 .and. nsteps_run == 1) then
-
-      !print *,WORKN(45,45,1),nsteps_run
-
-   !endif
-
+   WORKN = WORKN_HOST(:,:,:,k)
 
    !if(my_task==master_task)then
 

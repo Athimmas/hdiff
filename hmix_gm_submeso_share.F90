@@ -186,11 +186,9 @@
          ktmp,              &! array indices
          kn, ks,            &! cyclic pointers for 2-level local arrays
          bid                 ! local block address for this sub block
-
       !real (r8), dimension(nx_block,ny_block) :: &
       !   KMASKE, KMASKN    ! ocean mask
         !DRDT, DRDS              ! expansion coefficients d(rho)/dT,S
-
       real (r8), dimension(nx_block,ny_block,2) :: &
          TXP, TYP, TZP , TEMP
 
@@ -205,7 +203,7 @@
 
       real (r8) :: tempi,tempip1,tempj,tempjp1
  
-      real (r8) :: temp_ksi,temp_ksip1,temp_ksj,temp_ksjp1,KMASK,KMASKE,KMASKN
+      real (r8) :: temp_ksi,temp_ksip1,temp_ksj,temp_ksjp1,kmask,kmaske,kmaskn
 
       real (r8) :: txpim1,kmaskeim1,temp_ksim1,txim1
 
@@ -258,7 +256,7 @@
 
         kk=1
 
-            !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(j,i,KMASKE,KMASKN,tempi,tempip1,tempj,tempjp1,TYJM1,TYPJM1,KMASKNJM1)num_threads(60)
+            !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(j,i,KMASKE,KMASKN,tempi,tempip1,tempj,tempjp1)num_threads(60)
             do j=1,ny_block
               do i=1,nx_block
 
@@ -318,39 +316,39 @@
                                      + DRDS(i,j,kk) * TX (i-1,j,kk,2,bid)
                  endif 
 
-                  if(j >= 2)then 
+                 if( j>=2) then
 
-                     if ( kk <= KMT(i,j-1,bid) .and. kk <= KMTN(i,j-1,bid) ) then
-                           KMASKNJM1 = c1
-                     else
-                           KMASKNJM1 = c0
-                     endif
+                 if ( kk <= KMT(i,j-1,bid) .and. kk <= KMTN(i,j-1,bid) ) then 
+                    KMASKNJM1 = c1
+                 else
+                    KMASKNJM1 = c0
+                 endif
 
-                      if ( kk <= KMT(i,j-1,bid) .and. kk <= KMTN(i,j-1,bid) ) then
-                           KMASKNJM1 = c1
-                     else
-                           KMASKNJM1 = c0
-                     endif
+                 if ( kk <= KMT(i,j-1,bid) .and. kk <= KMTN(i,j-1,bid) )then
+                    KMASKNJM1 = c1
+                 else
+                    KMASKNJM1 = c0
+                 endif
 
-                     TYJM1 = KMASKNJM1 * (TMIX(i,j,kk,2) - TMIX(i,j-1,kk,2))
+                 TYJM1 = KMASKNJM1 * (TMIX(i,j,kk,2) - TMIX(i,j-1,kk,2))
 
-                     TYPJM1 = KMASKNJM1 * ( max(-c2, TMIX(i,j,kk,1)) - max(-c2, TMIX(i,j-1,kk,1)) )
+                 TYPJM1 = KMASKNJM1 * ( max(-c2, TMIX(i,j,kk,1)) - max(-c2,TMIX(i,j-1,kk,1)) )
 
                      !if(TY(i,j-1,kk,2,bid) .ne. TYJM1 ) print *,"error1"
-                     !if(TYP(i,j-1,kn) .ne. TYPJM1 ) print *,"error2" 
+                     !if(TYP(i,j-1,kn) .ne. TYPJM1 ) print *,"error2"
 
-                     RY(i,j,jsouth,kk,bid) = DRDT(i,j,kk) * TYPJM1  &
+                 RY(i,j,jsouth,kk,bid) = DRDT(i,j,kk) * TYPJM1  &
                                       + DRDS(i,j,kk) * TYJM1
 
-                  endif 
+                 endif 
               enddo
             enddo
 
 
 
        !start_time = omp_get_wtime()
-       match = registry_match('init_gm')
-       match = .true.
+       !match = .true.
+
 !-------------------------------------------------------------------------
 !
 !
@@ -363,7 +361,7 @@
 
             if ( kk < km ) then
 
-            !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(j,i,temp_ksi,temp_ksip1,temp_ksj,temp_ksjp1,KMASK,KMASKE,KMASKN,temp_ksim1,kmaskeim1) &
+            !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(j,i,temp_ksi,temp_ksip1,temp_ksj,temp_ksjp1,kmask,kmaske,kmaskn,temp_ksim1,kmaskeim1) &
             !$OMP PRIVATE(txpim1,txim1,temp_ksjm1,kmasknjm1,typjm1,tyjm1)NUM_THREADS(60)
             do j=1,ny_block
               do i=1,nx_block
@@ -513,15 +511,8 @@
                 SLY(i,j,jsouth,ktp,kk+1,bid) = RY(i,j,jsouth,kk+1,bid) / RZ(i,j)
               endif
 
-                   !if(my_task == master_task .and. i == 45 .and. j == 45 .and. nsteps_run == 1) then
 
-                         !print *,"k is",kk
-                         !print *,"RX(i,j,ieast ,kk+1,bid)",RX(i,j,ieast,45+1,bid)
-                         !print *,"SLX(i,j,ieast,ktp,kp1,bid)",SLX(i  ,j, ieast ,ktp,45+1,bid)
-                         !print *,"RZ(i,j)",RZ(i,j)
-
-                    !endif 
-            endif 
+           endif 
 
               enddo
             enddo
@@ -541,8 +532,7 @@
 
         enddo   ! end of kk-loop
 
-
-          do n=3,nt 
+          do n=3,nt
            !$OMP PARALLEL DO DEFAULT(SHARED)PRIVATE(kk,j,i)collapse(3)num_threads(60)
            do kk=1,km-1
              do j=1,ny_block
@@ -552,6 +542,7 @@
              enddo
             enddo
            enddo
+
 
 
         !end_time = omp_get_wtime()

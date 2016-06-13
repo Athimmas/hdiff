@@ -135,9 +135,7 @@
 !  misc module variables
 !
 !-----------------------------------------------------------------------
-  
-   !dir$ attributes offload:mic :: sqrt_grav
-   real (r8),public :: &
+   real (r8) :: &
       sqrt_grav              ! sqrt(grav)
 !EOC
 !***********************************************************************
@@ -464,7 +462,7 @@
      zw_top = c0
      if ( k > 1 )  zw_top = zw(k-1)
 
-    !$OMP PARALLEL DO SHARED(CONTINUE_INTEGRAL,BX_VERT_AVG,RX,RY,ML_DEPTH,WORK3,zw_top,zw,dz)PRIVATE(i,j)num_threads(60)SCHEDULE(dynamic,16)
+    !$OMP PARALLEL DO SHARED(CONTINUE_INTEGRAL,BX_VERT_AVG,RX,RY,ML_DEPTH)PRIVATE(i,WORK3)num_threads(60)SCHEDULE(dynamic,16)
     do j=1,ny_block
         do i=1,nx_block
 
@@ -499,10 +497,6 @@
 
   enddo
 
-  !if(my_task == master_task .and. nsteps_run == 1) then
-  !print *,"RY(i,j,2,k,bid)",RY(8,21,2,1,bid)
-  !endif 
-
 #ifdef CCSMCOUPLED
    if ( any(CONTINUE_INTEGRAL) ) then
      print *,'Incorrect mixed layer depth in submeso subroutine (I)'
@@ -521,7 +515,7 @@
  
         enddo
      enddo
-
+    
     !end_time = omp_get_wtime()
     ! print *,"Time at part1 is ",end_time - start_time
 
@@ -946,7 +940,7 @@
 
       logical :: reg_match_init_gm
 
-      real (r8) :: WORK1prev,WORK2prev,KMASKprev,fzprev
+      real (r8) :: WORK1prev,WORK2prev,KMASKprev,fzprev,GTKmy
 
      bid = this_block%local_id
 
@@ -971,7 +965,9 @@
  
       do n = 1,nt
           do j=1,ny_block
-            do i=1,nx_block-1
+            do i=1,nx_block
+
+              if(i <= nx_block-1 ) then
 
               FX(i,j,n) = CX(i,j)                          &
                * ( SF_SUBM_X(i  ,j,ieast,ktp,k,bid) * TZ(i,j,k,n,bid)                        &
@@ -979,13 +975,9 @@
                  + SF_SUBM_X(i+1,j,iwest,ktp,k,bid) * TZ(i+1,j,k,n,bid)                    &
                  + SF_SUBM_X(i+1,j,iwest,kbt,k,bid) * TZ(i+1,j,kp1,n,bid) )
 
-             enddo
-           enddo
-       enddo
+              endif  
 
-      do n = 1,nt
-          do j=1,ny_block-1
-            do i=1,nx_block
+              if(j <= ny_block -1 )then
 
               FY(i,j,n) =  CY(i,j)                          &
                * ( SF_SUBM_Y(i,j  ,jnorth,ktp,k,bid) * TZ(i,j,k,n,bid)                        &
@@ -993,21 +985,7 @@
                  + SF_SUBM_Y(i,j+1,jsouth,ktp,k,bid) * TZ(i,j+1,k,n,bid)                    &
                  + SF_SUBM_Y(i,j+1,jsouth,kbt,k,bid) * TZ(i,j+1,kp1,n,bid) )
 
-                 !if(my_task == master_task .and. k == 1 .and. i == 8 .and. j==20 .and. n==1 .and. nsteps_run == 1) then
-
-                    !print *,"FY(i,j,n)", FY(i,j,n)
-                    !print *,"CY(i,j) ",CY(i,j) 
-                    !print *,"SF_SUBM_Y(i  ,j,jnorth,ktp,k,bid) ",SF_SUBM_Y(i,j,jnorth,ktp,k,bid)
-                    !print *,"SF_SUBM_Y(i  ,j,jnorth,kbt,k,bid) ",SF_SUBM_Y(i,j,jnorth,kbt,k,bid)
-                    !print *,"SF_SUBM_Y(i  ,j+1,jsouth,ktp,k,bid) ",SF_SUBM_Y(i,j+1,jsouth,ktp,k,bid) 
-                    !print *,"SF_SUBM_Y(i  ,j+1,jsouth,kbt,k,bid) ",SF_SUBM_Y(i,j+1,jsouth,kbt,k,bid)
-                    !print *,"TZ(i,j,k,n,bid)",TZ(i,j,k,n,bid)
-                    !print *,"TZ(i,j,kp1,n,bid)",TZ(i,j,kp1,n,bid)
-                    !print *,"TZ(i,j+1,k,n,bid)",TZ(i,j+1,k,n,bid)
-                    !print *,"TZ(i,j+1,kp1,n,bid)",TZ(i,j+1,kp1,n,bid)
-
-                 !endif
-
+              endif
 
               WORK1(i,j) = c0 ! zero halo regions so accumulate_tavg_field calls do not trap
               WORK2(i,j) = c0
