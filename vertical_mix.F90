@@ -74,6 +74,8 @@
   real (r8), dimension(:,:,:,:), allocatable, public :: &
       VDC_GM_HOST     ! Gent-McWilliams contribution to VDC
 
+  real (r8), dimension(:,:,:,:), allocatable, public :: &
+      VDC_GM_PHI     ! Gent-McWilliams contribution to VDC
 
 
    integer (int_kind), parameter, public :: &

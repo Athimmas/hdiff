@@ -851,6 +851,8 @@
 
     allocate (VDC_GM_HOST(nx_block,ny_block,km,nblocks_clinic))
 
+    allocate (VDC_GM_PHI(nx_block,ny_block,km,nblocks_clinic))
+
     allocate (compute_kappa(nblocks_clinic))
 
    HYXW     = c0

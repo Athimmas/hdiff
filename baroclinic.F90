@@ -43,7 +43,7 @@
                              lsubmesoscale_mixing,tavg_HDIFS,tavg_HDIFT
    use vertical_mix, only: vmix_coeffs, implicit_vertical_mix, vdiffu,       &
        vdifft, impvmixt, impvmixu, impvmixt_correct, convad, impvmixt_tavg,  &
-       vmix_itype,VDC_GM,VDC,VDC_GM_HOST,VDC_HOST,VDC_PHI 
+       vmix_itype,VDC_GM,VDC,VDC_GM_HOST,VDC_HOST,VDC_PHI,VDC_GM_PHI 
    use vmix_kpp, only: add_kpp_sources,KPP_HBLT,HMXL,zgrid,linertial
    use diagnostics, only: ldiag_cfl, cfl_check, ldiag_global,                &
        DIAG_KE_ADV_2D, DIAG_KE_PRESS_2D, DIAG_KE_HMIX_2D, DIAG_KE_VMIX_2D,   &
@@ -595,16 +595,14 @@
 
               !dir$ offload_wait target(mic:1)wait(off_sig)
 
-              WORKN_HOST = WORKN_PHI
-
               VDC_PHI = VDC
-              VDC = VDC_HOST
-              VDC_HOST = VDC_PHI
- 
-           else
+              VDC_GM_PHI = VDC_GM
 
-               VDC = VDC_HOST
-               VDC_GM = VDC_GM_HOST
+              VDC = VDC_HOST
+              VDC_GM = VDC_GM_HOST 
+
+              VDC_HOST = VDC_PHI
+              VDC_GM_HOST = VDC_GM_PHI
 
            endif
 
@@ -1778,6 +1776,19 @@
 !
 !-----------------------------------------------------------------------
    
+  if(nsteps_run == 1 )then
+        if(k==1)then
+
+                do kk=1,km
+                   call hdifft(kk, WORKN_HOST(:,:,:,kk), TMIX, UMIX,VMIX,this_block)
+                enddo
+                VDC_GM_HOST = VDC_GM
+                VDC_HOST = VDC 
+
+        endif
+   endif
+
+
    if(k==1)then
 
    
@@ -1807,29 +1818,18 @@
 
    endif
 
-
-   if(nsteps_run == 1 )then
-        if(k==1)then
-
-                do kk=1,km
-               call hdifft(kk, WORKN_HOST(:,:,:,kk), TMIX, UMIX,VMIX,this_block)
-                enddo
-                VDC_GM_HOST = VDC_GM
-                VDC_HOST = VDC
-
-        endif
+   if(nsteps_run == 1) then
+         WORKN = WORKN_HOST(:,:,:,k)
+   else
+         WORKN = WORKN_PHI (:,:,:,k)
    endif
 
+   if(my_task==master_task .and. k==1)then
 
-   WORKN = WORKN_HOST(:,:,:,k)
+      open(unit=10,file="/home/aketh/ocn_correctness_data/changed.txt",status="unknown",position="append",action="write",form="formatted")
+      print *,"steps_run is",nsteps_run
 
-   !if(my_task==master_task)then
-
-   !   open(unit=10,file="/home/aketh/ocn_correctness_data/changed.txt",status="unknown",position="append",action="write",form="formatted")
-   !   write(10),WORKN
-   !   close(10)
-
-   !endif
+   endif
 
    FT = FT + WORKN
 
