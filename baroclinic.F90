@@ -1775,8 +1775,19 @@
 !  horizontal diffusion HDiff(T)
 !
 !-----------------------------------------------------------------------
-   
-  if(nsteps_run == 1 )then
+  
+    if(k==1)then
+
+
+        if(itsdone == 0) then
+                !dir$ offload_transfer target(mic:1)nocopy(SLX,SLY,SF_SUBM_X,SF_SUBM_Y,SF_SLX,SF_SLY : alloc_if(.true.) free_if(.false.)) &
+                !dir$ in(KAPPA_ISOP,KAPPA_THIC,HOR_DIFF,KAPPA_VERTICAL,KAPPA_LATERAL,WORKN_PHI,WTOP_ISOP,WBOT_ISOP: alloc_if(.true.) free_if(.false.) )  
+        itsdone = itsdone + 1
+        endif
+   endif
+
+ 
+  !if(nsteps_run == 1 )then
         if(k==1)then
 
                 do kk=1,km
@@ -1785,21 +1796,12 @@
                 VDC_GM_HOST = VDC_GM
                 VDC_HOST = VDC
 
-                VDC = c0
-                VDC_GM = c0 
-
         endif
-   endif
+   !endif
 
 
    if(k==1)then
 
-   
-   if(itsdone == 0) then   
-   !dir$ offload_transfer target(mic:1)  nocopy(SLX,SLY,SF_SUBM_X,SF_SUBM_Y,SF_SLX,SF_SLY : alloc_if(.true.) free_if(.false.)) &
-   !dir$ in(KAPPA_ISOP,KAPPA_THIC,HOR_DIFF,KAPPA_VERTICAL,KAPPA_LATERAL,WORKN_PHI,WTOP_ISOP,WBOT_ISOP: alloc_if(.true.) free_if(.false.) )  
-   itsdone = itsdone + 1
-   endif
  
    !dir$ offload begin target(mic:1)in(kk,TCUR,UCUR,VCUR,this_block,hmix_tracer_itype,tavg_HDIFE_TRACER,tavg_HDIFN_TRACER,tavg_HDIFB_TRACER) &
    !dir$ in(lsubmesoscale_mixing,dt,dtu,HYX,HXY,RZ_SAVE,RX,RY,TX,TY,TZ,KMT,KMTE,KMTN,implicit_vertical_mix,vmix_itype,KPP_HBLT,HMXL) &
@@ -1829,7 +1831,6 @@
 
    if(my_task==master_task .and. k==1)then
 
-      open(unit=10,file="/home/aketh/ocn_correctness_data/changed.txt",status="unknown",position="append",action="write",form="formatted")
       print *,"steps_run is",nsteps_run
 
    endif
