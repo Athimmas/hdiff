@@ -1778,26 +1778,22 @@
   
     if(k==1)then
 
+       if(nsteps_run == 1 )then
+                do kk=1,km
+                   call hdifft(kk, WORKN_HOST(:,:,:,kk), TMIX,UMIX,VMIX,this_block)
+                enddo
+                VDC_GM_HOST = VDC_GM
+                VDC_HOST = VDC
+
+       endif
 
         if(itsdone == 0) then
                 !dir$ offload_transfer target(mic:1)nocopy(SLX,SLY,SF_SUBM_X,SF_SUBM_Y,SF_SLX,SF_SLY,BUOY_FREQ_SQ : alloc_if(.true.) free_if(.false.)) &
                 !dir$ in(KAPPA_ISOP,KAPPA_THIC,HOR_DIFF,KAPPA_VERTICAL,KAPPA_LATERAL,WORKN_PHI,WTOP_ISOP,WBOT_ISOP: alloc_if(.true.) free_if(.false.) )  
         itsdone = itsdone + 1
         endif
+
    endif
-
- 
-  !if(nsteps_run == 1 )then
-        if(k==1)then
-
-                do kk=1,km
-                   call hdifft(kk, WORKN_HOST(:,:,:,kk), TMIX, UMIX,VMIX,this_block)
-                enddo
-                VDC_GM_HOST = VDC_GM
-                VDC_HOST = VDC
-
-        endif
-   !endif
 
 
    if(k==1)then
