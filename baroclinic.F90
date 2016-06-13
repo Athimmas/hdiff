@@ -1780,7 +1780,7 @@
 
 
         if(itsdone == 0) then
-                !dir$ offload_transfer target(mic:1)nocopy(SLX,SLY,SF_SUBM_X,SF_SUBM_Y,SF_SLX,SF_SLY : alloc_if(.true.) free_if(.false.)) &
+                !dir$ offload_transfer target(mic:1)nocopy(SLX,SLY,SF_SUBM_X,SF_SUBM_Y,SF_SLX,SF_SLY,BUOY_FREQ_SQ : alloc_if(.true.) free_if(.false.)) &
                 !dir$ in(KAPPA_ISOP,KAPPA_THIC,HOR_DIFF,KAPPA_VERTICAL,KAPPA_LATERAL,WORKN_PHI,WTOP_ISOP,WBOT_ISOP: alloc_if(.true.) free_if(.false.) )  
         itsdone = itsdone + 1
         endif
@@ -1807,13 +1807,13 @@
    !dir$ in(lsubmesoscale_mixing,dt,dtu,HYX,HXY,RZ_SAVE,RX,RY,TX,TY,TZ,KMT,KMTE,KMTN,implicit_vertical_mix,vmix_itype,KPP_HBLT,HMXL) &
    !dir$ in(HYXW,HXYS,UIT,VIT,RB,RBR,BL_DEPTH,read_n2_data,diff_tapering,cancellation_occurs,pressz,tmin,tmax,smin,smax) &
    !dir$ in(kappa_isop_type,kappa_thic_type, kappa_freq,slope_control,SLA_SAVE,nsteps_total, ah,ah_bolus, ah_bkg_bottom,ah_bkg_srfbl) &
-   !dir$ in(slm_r,slm_b,compute_kappa,BUOY_FREQ_SQ,SIGMA_TOPO_MASK,dz,dzw,dzwr,zw,dzr,DYT,DXT,HUW,HUS,TAREA_R,HTN,HTE,pi,zt) &
+   !dir$ in(slm_r,slm_b,compute_kappa,SIGMA_TOPO_MASK,dz,dzw,dzwr,zw,dzr,DYT,DXT,HUW,HUS,TAREA_R,HTN,HTE,pi,zt,BUOY_FREQ_SQ) &
    !dir$ in(luse_const_horiz_len_scale,hor_length_scale,TIME_SCALE,efficiency_factor,TLT,my_task,master_task,state_itype,state_range_iopt) & 
    !dir$ in(max_hor_grid_scale,mix_pass,grav,zgrid,DZT,partial_bottom_cells,FCORT,linertial,ldiag_cfl,radian,TLAT,eod_last) &
    !dir$ in(ltavg_on,num_avail_tavg_fields,sigo,state_coeffs,to,so,use_const_ah_bkg_srfbl,transition_layer_on,tavg_HDIFS,tavg_HDIFT) &
    !dir$ out(WORKN_PHI:alloc_if(.false.) free_if(.false.)) inout(VDC,VDC_GM) &
    !dir$ nocopy(SLX,SLY,SF_SUBM_X,SF_SUBM_Y,KAPPA_ISOP,KAPPA_THIC,HOR_DIFF,KAPPA_VERTICAL,KAPPA_LATERAL,SF_SLX,SF_SLY,WTOP_ISOP : alloc_if(.false.) free_if(.false.) ) &
-   !dir$ nocopy( WBOT_ISOP : alloc_if(.false.) free_if(.false.) )signal(off_sig)
+   !dir$ nocopy( WBOT_ISOP : alloc_if(.false.) free_if(.false.))signal(off_sig)
 
    do kk=1,km
    call hdifft(kk, WORKN_PHI(:,:,:,kk), TCUR, UCUR, VCUR, this_block)
