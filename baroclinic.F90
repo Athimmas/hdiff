@@ -74,7 +74,7 @@
                       kappa_isop_type,kappa_thic_type, kappa_freq,slope_control,SLA_SAVE, &
                       slm_r,slm_b,ah,ah_bolus,ah_bkg_bottom,ah_bkg_srfbl,BUOY_FREQ_SQ,    &
                       SIGMA_TOPO_MASK,use_const_ah_bkg_srfbl,transition_layer_on,compute_kappa,&
-                      SF_SLX,SF_SLY,TLT,read_n2_data,cancellation_occurs,diff_tapering,FRAC_ADDED 
+                      SF_SLX,SF_SLY,TLT,read_n2_data,cancellation_occurs,diff_tapering
    use exit_mod, only: sigAbort, exit_pop, flushm
    use overflows
    use overflow_type
@@ -595,13 +595,14 @@
 
               !dir$ offload_wait target(mic:1)wait(off_sig)
 
-               !if(nsteps_run == 2) then
-                    !VDC_PHI = VDC - VDC_HOST
-                    !VDC_GM_PHI = VDC_GM - VDC_HOST 
-               !endif
+               if(nsteps_run == 2) then
+                    VDC_PHI = VDC - VDC_HOST
+                    VDC_GM_PHI = VDC_GM - VDC_GM_HOST 
+               else
+                    VDC_PHI = VDC
+                    VDC_GM_PHI = VDC_GM
 
-                VDC_PHI = VDC
-                VDC_GM_PHI = VDC_GM           
+               endif
 
                 VDC = VDC_HOST
                 VDC_GM = VDC_GM_HOST 

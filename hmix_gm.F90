@@ -325,8 +325,8 @@
 
    real (r8) start_time,end_time
 
-   !dir$ attributes offload:mic :: FRAC_ADDED
-   real (r8) FRAC_ADDED(nx_block,ny_block,0:km+1,2,nblocks_clinic)
+   !!dir$ attributes offload:mic :: FRAC_ADDED
+   !real (r8) FRAC_ADDED(nx_block,ny_block,0:km+1,2,nblocks_clinic)
 
 !EOC
 !***********************************************************************
@@ -1934,7 +1934,7 @@
 
               do n=1,size(VDC,DIM=4)
                  VDC_GM(i,j,k,bid) = WORK1(i,j)
-                 FRAC_ADDED(i,j,k,bid) = WORK1(i,j)
+                 !FRAC_ADDED(i,j,k,bid) = WORK1(i,j)
                  VDC(i,j,k,n,bid) = VDC(i,j,k,n,bid) + WORK1(i,j)
               end do
 

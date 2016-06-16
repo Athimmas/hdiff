@@ -1417,7 +1417,7 @@
       do j=jb,je
       do i=ib,ie
 
-         A(i,j) = afac_t(1)*VDC(i,j,1,mt2,bid)
+         A(i,j) = afac_t(1)*VDC_HOST(i,j,1,mt2,bid)
          D(i,j) = H1(i,j) + A(i,j)
          E(i,j,1) = A(i,j)/D(i,j)
          B(i,j) = H1(i,j)*E(i,j,1)
@@ -1432,7 +1432,7 @@
           do j=jb,je
           do i=ib,ie
              C(i,j) = A(i,j)
-             A(i,j) = aidif*VDC(i,j,k,mt2,bid)/ &
+             A(i,j) = aidif*VDC_HOST(i,j,k,mt2,bid)/ &
                       (p5*(DZT(i,j,k  ,bid) + DZT(i,j,k+1,bid)))
              hfac_t(k) = DZT(i,j,k,bid)/c2dtt(k)
 
@@ -1459,7 +1459,7 @@
           do j=jb,je
           do i=ib,ie
              C(i,j) = A(i,j)
-             A(i,j) = afac_t(k)*VDC(i,j,k,mt2,bid)
+             A(i,j) = afac_t(k)*VDC_HOST(i,j,k,mt2,bid)
 
              ! Note: this code is duplicated above for the case where
              !       partial_bottom_cells is .true.
