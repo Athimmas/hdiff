@@ -74,7 +74,7 @@
                       kappa_isop_type,kappa_thic_type, kappa_freq,slope_control,SLA_SAVE, &
                       slm_r,slm_b,ah,ah_bolus,ah_bkg_bottom,ah_bkg_srfbl,BUOY_FREQ_SQ,    &
                       SIGMA_TOPO_MASK,use_const_ah_bkg_srfbl,transition_layer_on,compute_kappa,&
-                      SF_SLX,SF_SLY,TLT,read_n2_data,cancellation_occurs,diff_tapering 
+                      SF_SLX,SF_SLY,TLT,read_n2_data,cancellation_occurs,diff_tapering,FRAC_ADDED 
    use exit_mod, only: sigAbort, exit_pop, flushm
    use overflows
    use overflow_type
@@ -595,19 +595,27 @@
 
               !dir$ offload_wait target(mic:1)wait(off_sig)
 
-              VDC_PHI = VDC
-              VDC_GM_PHI = VDC_GM
+               !if(nsteps_run == 2) then
+                    !VDC_PHI = VDC - VDC_HOST
+                    !VDC_GM_PHI = VDC_GM - VDC_HOST 
+               !endif
 
-              VDC = VDC_HOST
-              VDC_GM = VDC_GM_HOST 
+                VDC_PHI = VDC
+                VDC_GM_PHI = VDC_GM           
 
-              VDC_HOST = VDC_PHI
-              VDC_GM_HOST = VDC_GM_PHI
+                VDC = VDC_HOST
+                VDC_GM = VDC_GM_HOST 
+
+                VDC_HOST = VDC_PHI
+                VDC_GM_HOST = VDC_GM_PHI
 
            endif
 
         endif
 
+         if(k == 1 .and. my_task == master_task) then
+         print *,"VDC entering to vmix is",VDC(45,45,45,1,nblocks_clinic),nsteps_run
+         endif
 
          if (lsmft_avail) then
             call vmix_coeffs(k,TRACER (:,:,:,:,mixtime,iblock), &
@@ -1779,6 +1787,11 @@
     if(k==1)then
 
        if(nsteps_run == 1 )then
+
+         if(my_task == master_task) then
+         print *,"VDC entering to hdifft host is",VDC(45,45,45,1,nblocks_clinic),nsteps_run  
+         endif
+
                 do kk=1,km
                    call hdifft(kk, WORKN_HOST(:,:,:,kk), TMIX,UMIX,VMIX,this_block)
                 enddo
@@ -1798,7 +1811,11 @@
 
    if(k==1)then
 
- 
+   if(my_task == master_task) then
+         print *,"VDC entering to hdifft phi` is",VDC(45,45,45,1,nblocks_clinic),nsteps_run
+   endif
+  
+
    !dir$ offload begin target(mic:1)in(kk,TCUR,UCUR,VCUR,this_block,hmix_tracer_itype,tavg_HDIFE_TRACER,tavg_HDIFN_TRACER,tavg_HDIFB_TRACER) &
    !dir$ in(lsubmesoscale_mixing,dt,dtu,HYX,HXY,RZ_SAVE,RX,RY,TX,TY,TZ,KMT,KMTE,KMTN,implicit_vertical_mix,vmix_itype,KPP_HBLT,HMXL) &
    !dir$ in(HYXW,HXYS,UIT,VIT,RB,RBR,BL_DEPTH,read_n2_data,diff_tapering,cancellation_occurs,pressz,tmin,tmax,smin,smax) &

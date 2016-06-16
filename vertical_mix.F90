@@ -753,7 +753,7 @@
       kp1 = km
    endif
 
-   kvdc = min(k,size(VDC,DIM=3))  !*** reduce to 1 if VDC 2-d array 
+   kvdc = min(k,size(VDC_HOST,DIM=3))  !*** reduce to 1 if VDC 2-d array 
 
 !-----------------------------------------------------------------------
 !
@@ -764,7 +764,7 @@
 !-----------------------------------------------------------------------
 
    do n = 1,nt
-      mt2 = min(n,size(VDC,DIM=4))
+      mt2 = min(n,size(VDC_HOST,DIM=4))
 
 !-----------------------------------------------------------------------
 !
@@ -785,7 +785,7 @@
 
       if (partial_bottom_cells) then
 !CDIR COLLAPSE
-         VTFB = merge(VDC(:,:,kvdc,mt2,bid)*                    &
+         VTFB = merge(VDC_HOST(:,:,kvdc,mt2,bid)*                    &
                       (TOLD(:,:,k  ,n) - TOLD(:,:,kp1,n))/      &
                       (p5*(DZT(:,:,k,bid) + DZT(:,:,kp1,bid)))  &
                       ,c0, KMT(:,:,bid) > k)
@@ -804,7 +804,7 @@
 
       else
 !CDIR COLLAPSE
-         VTFB = merge(VDC(:,:,kvdc,mt2,bid)*                      &
+         VTFB = merge(VDC_HOST(:,:,kvdc,mt2,bid)*                      &
                       (TOLD(:,:,k  ,n) - TOLD(:,:,kp1,n))*dzwr(k) &
                       ,c0, KMT(:,:,bid) > k)
 
@@ -1128,7 +1128,7 @@
          !*** perform tridiagonal solve in the vertical for every
          !*** horizontal grid point
 
-         A(i,j) = afac_t(1)*VDC(i,j,1,mt2,bid)
+         A(i,j) = afac_t(1)*VDC_HOST(i,j,1,mt2,bid)
          D(i,j) = H1(i,j) + A(i,j)
          E(i,j,1) = A(i,j)/D(i,j)
          B(i,j) = H1(i,j)*E(i,j,1)
@@ -1142,7 +1142,7 @@
         do j=jb,je
         do i=ib,ie
            C(i,j) = A(i,j)
-           A(i,j) = aidif*VDC(i,j,k,mt2,bid)/ &
+           A(i,j) = aidif*VDC_HOST(i,j,k,mt2,bid)/ &
                     (p5*(DZT(i,j,k  ,bid) + &
                          DZT(i,j,k+1,bid)))
            hfac_t(k) = DZT(i,j,k,bid)/c2dtt(k)
@@ -1171,7 +1171,7 @@
         do j=jb,je
         do i=ib,ie
            C(i,j) = A(i,j)
-           A(i,j) = afac_t(k)*VDC(i,j,k,mt2,bid)
+           A(i,j) = afac_t(k)*VDC_HOST(i,j,k,mt2,bid)
 
            ! Note: this code is duplicated above for the case where
            !       partial_bottom_cells is .true.
@@ -1276,9 +1276,9 @@
       if (accumulate_tavg_now(tavg_DIA_IMPVF_TRACER(n))) then
          do k=1,km-1
             if (allocated(VDC_GM_HOST)) then
-               WORK1 = VDC(:,:,k,mt2,bid) - VDC_GM_HOST(:,:,k,bid)
+               WORK1 = VDC_HOST(:,:,k,mt2,bid) - VDC_GM_HOST(:,:,k,bid)
             else
-               WORK1 = VDC(:,:,k,mt2,bid)
+               WORK1 = VDC_HOST(:,:,k,mt2,bid)
             endif
             if (partial_bottom_cells) then
                WORK2 = merge(WORK1*(TNEW(:,:,k,n) - TNEW(:,:,k+1,n))/        &
